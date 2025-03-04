@@ -53,6 +53,8 @@ class Anggota extends Model
         'sio'
     ];
 
+    protected $dates = ['created_at', 'updated_at'];
+
     protected static function booted()
     {
         static::creating(function ($model) {
@@ -63,4 +65,5 @@ class Anggota extends Model
             $model->updated_by = Auth()->user()->id;
         });
     }
+    
 }

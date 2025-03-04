@@ -118,10 +118,18 @@
 
     <div class="header">
         <h5>SURAT KEPUTUSAN ANGGOTA ASKLIN<br><br>
+              @php
+            $createdOn = !empty($anggota->created_on)
+                ? \Carbon\Carbon::createFromTimestamp($anggota->created_on)->format('Y')
+                : ($anggota->created_at
+                    ? \Carbon\Carbon::parse($anggota->created_at)->format('Y')
+                    : \Carbon\Carbon::parse($anggota->verifikasi_pusat)->format('Y'));  @endphp
+
             &nbsp;&nbsp;&nbsp;&nbsp; <?php $kalimat = $anggota->no_anggota;
             $sub_kalimat = substr($kalimat, 13, 3); ?>
-            {{ $sub_kalimat }}/SK-Anggota/PP-Asklin/II/2023</h5>
+            {{ $sub_kalimat }}/SK-Anggota/PP-Asklin/{{ $createdOn }}</h5>
     </div>
+
 
     <div class="isi">
         <p>Dengan ini menyatakan bahwa Pengurus Pusat Asosiasi Klinik Indonesia yang berkedudukan di Jakarta memberikan
@@ -132,7 +140,11 @@
     <table cellpadding="100" cellspacing="15" class="huruf">
         <tr>
             <td width="138">1. Nama Klinik </td>
-            <td>: {{ $anggota->nama_klinik }}</td>
+            <td>:  <?php
+                $nama_klinik = Str::lower($anggota->nama_klinik);
+                $nama_klinik = ucwords($nama_klinik);
+                echo $nama_klinik;
+                ?></td>
         </tr>
 
         <tr>
@@ -147,8 +159,11 @@
 
         <tr>
             <td>4. Alamat</td>
-            <td>: <?php $alamat = Str::lower(substr($anggota->alamat_klinik, 0, 30));
-            echo $alamat; ?>
+            <td>:  <?php
+                $alamat = Str::lower(substr($anggota->alamat_klinik, 0, 100));
+                $alamat = ucwords($alamat);
+                echo $alamat;
+                ?>
             </td>
         </tr>
 
@@ -159,12 +174,20 @@
 
         <tr>
             <td>6. Kabupaten/Kota </td>
-            <td>: {{ $anggota->kota }}</td>
+            <td>:   <?php
+                $kota = Str::lower($anggota->kota);
+                $kota = ucwords($kota);
+                echo $kota;
+                ?></td>
         </tr>
 
         <tr>
             <td>7. Propinsi</td>
-            <td>: {{ $anggota->provinsi }}</td>
+            <td>:  <?php
+                $provinsi = Str::lower($anggota->provinsi);
+                $provinsi = ucwords($provinsi);
+                echo $provinsi;
+                ?></td>
         </tr>
 
         <tr>

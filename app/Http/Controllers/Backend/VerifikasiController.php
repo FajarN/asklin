@@ -11,6 +11,7 @@ use Auth;
 use Spipu\Html2Pdf\Html2Pdf;
 use Spipu\Html2Pdf\Exception\Html2PdfException;
 use Spipu\Html2Pdf\Exception\ExceptionFormatter;
+use Carbon\Carbon;
 
 class VerifikasiController extends Controller
 {
@@ -131,41 +132,43 @@ class VerifikasiController extends Controller
         exit();
     }
 
+public function printsk($id)
+{
+    $anggota = Anggota::select(
+        'anggota.*',
+        \DB::raw('GROUP_CONCAT(DISTINCT a.nama SEPARATOR ", ") as nama_fasilitas_klinik'),
+        'b.name as kota',
+        'c.name as provinsi'
+    )
+        ->leftJoin('fasilitas_klinik as a', \DB::raw("FIND_IN_SET(a.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
+        ->leftJoin('indonesia_cities as b', 'b.code', '=', 'anggota.id_kota')
+        ->leftJoin('indonesia_provinces as c', 'c.code', '=', 'anggota.id_provinsi')
+        ->groupBy('anggota.id')
+        ->where('anggota.id', $id)
+        ->first();
 
-    public function printsk($id)
-    {
+    $id = $anggota->id;
 
+    // Menggunakan Carbon untuk memformat tanggal dari timestamp Unix
+    $created_on = Carbon::createFromTimestamp($anggota->created_on)->format('Y');
 
-        $anggota = Anggota::select(
-            'anggota.*',
-            \DB::raw('GROUP_CONCAT(DISTINCT a.nama SEPARATOR ", ") as nama_fasilitas_klinik'),
-            'b.name as kota',
-            'c.name as provinsi'
-        )
-            ->leftJoin('fasilitas_klinik as a', \DB::raw("FIND_IN_SET(a.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
-            ->leftJoin('indonesia_cities as b', 'b.code', '=', 'anggota.id_kota')
-            ->leftJoin('indonesia_provinces as c', 'c.code', '=', 'anggota.id_provinsi')
-            ->groupBy('anggota.id')
-            ->where('anggota.id', $id)
-            ->first();
+    try {
+        ob_start();
+        $content = view('backend.verifikasi.printsk', compact('anggota', 'created_on'));
 
-        $id = $anggota->id;
+        $html2pdf = new Html2Pdf('P', 'F4', 'fr', true, 'UTF-8', 1);
+        $html2pdf->pdf->SetDisplayMode('fullpage');
+        $html2pdf->pdf->SetTitle('SK Anggota ASKLIN');
+        $html2pdf->writeHTML($content);
+        $html2pdf->output('sk_anggota.pdf');
+    } catch (Html2PdfException $e) {
+        $html2pdf->clean();
 
-        try {
-            ob_start();
-            $content = view('backend.verifikasi.printsk', compact('anggota'));
-
-            $html2pdf = new Html2Pdf('P', 'F4', 'fr', true, 'UTF-8', 1);
-            $html2pdf->pdf->SetDisplayMode('fullpage');
-            $html2pdf->pdf->SetTitle('SK Anggota ASKLIN');
-            $html2pdf->writeHTML($content);
-            $html2pdf->output('sk_anggota.pdf');
-        } catch (Html2PdfException $e) {
-            $html2pdf->clean();
-
-            $formatter = new ExceptionFormatter($e);
-            echo $formatter->getHtmlMessage();
-        }
-        exit();
+        $formatter = new ExceptionFormatter($e);
+        echo $formatter->getHtmlMessage();
     }
+    exit();
+}
+
+
 }

@@ -64,10 +64,21 @@
     </table>
 
     <table cellpadding="100" cellspacing="10" class="huruf">
-        <tr>
+        {{-- <tr>
             <td>Nama Klinik</td>
             <td>:</td>
             <td><b>{{ $anggota->nama_klinik }}</b></td>
+        </tr> --}}
+
+        <tr>
+            <td>Alamat</td>
+            <td>:</td>
+            <td><?php
+            $nama = $anggota->nama_klinik;
+            $nama = ucwords($nama);
+            echo $nama;
+            ?>
+            </td>
         </tr>
         <tr>
             <td>No. Anggota</td>
@@ -83,8 +94,11 @@
             <td>Alamat</td>
             <td>:</td>
             {{-- <td><b>{{ $anggota->alamat_klinik }}<br/>RT {{ $anggota->rt.'/'.$anggota->rw }} Kel. {{ $anggota->kelurahan }}Kec. {{ $anggota->kecamatan }}<br/>{{ $anggota->kota }}{{ $anggota->provinsi }}</b></td> --}}
-            <td><?php $alamat = Str::lower(substr($anggota->alamat_klinik, 0, 30));
-            echo $alamat; ?>
+            <td><?php
+            $alamat = Str::lower(substr($anggota->alamat_klinik, 0, 100));
+            $alamat = ucwords($alamat);
+            echo $alamat;
+            ?>
             </td>
         </tr>
     </table>

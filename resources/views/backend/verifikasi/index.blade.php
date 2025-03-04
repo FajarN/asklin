@@ -30,10 +30,10 @@
                                         <th>No. Anggota</th>
                                         <th>Kab/Kota</th>
                                         <th>Nama Klinik</th>
+                                        <th>Email</th>
                                         <th>Jenis Klinik</th>
                                         <th>Kriteria Klinik</th>
                                         <th>Status Verifikasi</th>
-                                        <th>Status Pembayaran</th>
                                         <th>Print</th>
                                     </tr>
                                 </thead>
@@ -92,6 +92,10 @@
                         data: 'name',
                         name: 'name'
                     },
+                     {
+                        data: 'email',
+                        name: 'email'
+                    },
                     {
                         data: 'nama_klinik',
                         name: 'nama_klinik'
@@ -108,9 +112,9 @@
                         data: 'status',
                         name: 'status'
                     },
-                    {
-                        data: 'status_pembayaran'
-                    },
+                    // {
+                    //     data: 'status_pembayaran'
+                    // },
                     {
                         data: 'action',
                         name: 'action',

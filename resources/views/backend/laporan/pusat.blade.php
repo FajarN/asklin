@@ -43,9 +43,8 @@
                                         <th>Jenis Klinik</th>
                                         <th>Kriteria Klinik</th>
                                         <th>Status Verifikasi</th>
-                                        {{-- <th>Status Uang Pangkal</th> --}}
-                                        <th>Telp 1</th>
-                                        <th>Telp 2</th>
+                                        <th>no ijin</th>
+                                        <th>tgl izin</th>
                                         <th>Created</th>
                                     </tr>
                                 </thead>
@@ -135,48 +134,16 @@
                         data: 'status',
                         name: 'status'
                     },
-                    {
-                        data: 'tlf',
-                        name: 'tlf',
-                        render: function(data, type, row, meta) {
-                            // Periksa apakah nomor telepon tidak kosong
-                            if (data) {
-                                // Format nomor telepon jika perlu
-                                var formattedPhoneNumber =
-                                    data; // Tidak ada format yang dilakukan dalam contoh ini
-
-                                // Buat tautan WhatsApp
-                                var whatsappLink = "https://wa.me/" + formattedPhoneNumber;
-
-                                // Kembalikan tautan sebagai string HTML
-                                return '<a href="' + whatsappLink + '" target="_blank">' +
-                                    formattedPhoneNumber + '</a>';
-                            } else {
-                                return ''; // Jika nomor telepon kosong, kembalikan string kosong
-                            }
-                        }
+                      {
+                        data: 'no_ijin',
+                        name: 'no_ijin'
                     },
-                    {
-                        data: 'tlf_klinik',
-                        name: 'tlf_klinik',
-                        render: function(data, type, row, meta) {
-                            // Periksa apakah nomor telepon tidak kosong
-                            if (data) {
-                                // Format nomor telepon jika perlu
-                                var formattedPhoneNumber =
-                                    data; // Tidak ada format yang dilakukan dalam contoh ini
-
-                                // Buat tautan WhatsApp
-                                var whatsappLink = "https://wa.me/" + formattedPhoneNumber;
-
-                                // Kembalikan tautan sebagai string HTML
-                                return '<a href="' + whatsappLink + '" target="_blank">' +
-                                    formattedPhoneNumber + '</a>';
-                            } else {
-                                return ''; // Jika nomor telepon kosong, kembalikan string kosong
-                            }
-                        }
+                      {
+                        data: 'tgl_ijin',
+                        name: 'tgl_ijin'
                     },
+                   
+                   
                     // {
                     //     data: 'status_pembayaran',
                     //     "render": function(data, type, row, meta) {
