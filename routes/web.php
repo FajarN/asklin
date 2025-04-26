@@ -117,13 +117,15 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
             Route::put('/update/{id}', 'update')->name('users.update');
             Route::post('/delete', 'destroy')->name('users.delete');
         });
-        Route::prefix('roles')->controller(App\Http\Controllers\Backend\secret\RoleController::class)->group(function () {
+        
+        Route::prefix('roles')->controller(App\Http\Controllers\Backend\Secret\RoleController::class)->group(function () {
             Route::get('/', 'index')->name('roles.index');
             Route::get('/list', 'list')->name('roles.list');
-            Route::post('/edit', 'edit')->name('roles.edit');
+            Route::get('/edit/{id}', 'edit')->name('roles.edit');
             Route::post('/store', 'store')->name('roles.store');
             Route::post('/delete', 'destroy')->name('roles.delete');
         });
+
         Route::prefix('permissions')->controller(App\Http\Controllers\Backend\secret\PermissionController::class)->group(function () {
             Route::get('/', 'index')->name('permissions.index');
             Route::get('/list', 'list')->name('permissions.list');
