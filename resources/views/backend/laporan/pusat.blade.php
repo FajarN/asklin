@@ -39,6 +39,8 @@
                                         <th>No. Anggota</th>
                                         <th>Provinsi</th>
                                         <th>Kab/Kota</th>
+                                        <th>Kecamatan</th>
+                                        <th>Kelurahan</th>
                                         <th>Nama Klinik</th>
                                         <th>Jenis Klinik</th>
                                         <th>Kriteria Klinik</th>
@@ -84,7 +86,7 @@
                     extend: 'excel',
                     text: 'Export To Excel'
                 }],
-                pageLength: 30,
+                pageLength: 200,
                 processing: true,
                 serverSide: true,
                 searching: false,
@@ -116,6 +118,14 @@
                     {
                         data: 'name',
                         name: 'name'
+                    },
+                    {
+                        data: 'kecamatan',
+                        name: 'kecamatan'
+                    },
+                    {
+                        data: 'kelurahan',
+                        name: 'kelurahan'
                     },
                     {
                         data: 'nama_klinik',

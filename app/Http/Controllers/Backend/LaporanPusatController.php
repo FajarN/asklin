@@ -31,11 +31,15 @@ class LaporanPusatController extends Controller
                 'anggota.*',
                 'indonesia_cities.name',
                 'indonesia_provinces.name as provinsi',
+                'indonesia_districts.name as kecamatan',
+                'indonesia_villages.name as kelurahan',
                 \DB::raw('GROUP_CONCAT(DISTINCT fasilitas_klinik.nama SEPARATOR ", ") as kriteria')
             )
                 ->leftjoin("fasilitas_klinik", \DB::raw("FIND_IN_SET(fasilitas_klinik.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
                 ->leftjoin("indonesia_cities", 'indonesia_cities.code', '=', 'anggota.id_kota')
                 ->leftjoin("indonesia_provinces", 'indonesia_provinces.code', '=', 'anggota.id_provinsi')
+                ->leftjoin("indonesia_districts", 'indonesia_districts.code', '=', 'anggota.id_kecamatan')
+                ->leftjoin("indonesia_villages", 'indonesia_villages.code', '=', 'anggota.id_kelurahan')
                 ->groupBy('anggota.id')
                 ->get();
 
