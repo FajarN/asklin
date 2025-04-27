@@ -13,7 +13,7 @@ use Spipu\Html2Pdf\Exception\Html2PdfException;
 use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 use Carbon\Carbon;
 
-class VerifikasiController extends Controller
+class AnggotaController extends Controller
 {
     function __construct()
     {
@@ -22,7 +22,7 @@ class VerifikasiController extends Controller
 
     public function index()
     {
-        return view('backend.verifikasi.index');
+        return view('backend.anggota.index');
     }
 
     public function list(Request $request)
@@ -44,43 +44,32 @@ class VerifikasiController extends Controller
                     $query->where('id_provinsi', Auth::user()->provinsi);
                 })
                 ->get();
-            // return Datatables::of($data)
-            //     ->filter(function ($instance) use ($request) {
-            //         if (!empty($request->get('search'))) {
-            //             $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-            //                 if (Str::contains(Str::lower($data['nama_klinik']), Str::lower($request->get('search')))){
-            //                     return true;
-            //                 }
-            //                 return false;
-            //             });
-            //         }
-            //     })
-            return Datatables::of($data)
-                ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $searchQuery = Str::lower($request->get('search'));
-                        $instance->collection = $instance->collection->filter(function ($data) use ($searchQuery) {
-                            if (Str::contains(Str::lower($data['nama_klinik']), $searchQuery)) {
-                                return true;
-                            }
-                            if (Str::contains(
-                                Str::lower($data['no_anggota']),
-                                $searchQuery
-                            )) {
-                                return true;
-                            }
-                            if (Str::contains(Str::lower($data['name']), $searchQuery)) {
-                                return true;
-                            }
-                            return false;
-                        });
-                    }
-                })
-                ->addIndexColumn()
-                ->addColumn('action', 'backend.verifikasi.action')
-                ->rawColumns(['action'])
-                ->make(true);
-        }
+                return Datatables::of($data)
+                    ->filter(function ($instance) use ($request) {
+                        if (!empty($request->get('search'))) {
+                            $searchQuery = Str::lower($request->get('search'));
+                            $instance->collection = $instance->collection->filter(function ($data) use ($searchQuery) {
+                                if (Str::contains(Str::lower($data['nama_klinik']), $searchQuery)) {
+                                    return true;
+                                }
+                                if (Str::contains(
+                                    Str::lower($data['no_anggota']),
+                                    $searchQuery
+                                )) {
+                                    return true;
+                                }
+                                if (Str::contains(Str::lower($data['name']), $searchQuery)) {
+                                    return true;
+                                }
+                                return false;
+                            });
+                        }
+                    })
+                    ->addIndexColumn()
+                    ->addColumn('action', 'backend.anggota.action')
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }
     }
 
     public function print($id)
@@ -116,7 +105,7 @@ class VerifikasiController extends Controller
 
         try {
             ob_start();
-            $content = view('backend.verifikasi.print', compact('anggota'));
+            $content = view('backend.anggota.print', compact('anggota'));
 
             $html2pdf = new Html2Pdf('L', 'A4', 'fr', true, 'UTF-8', 1);
             $html2pdf->pdf->SetDisplayMode('fullpage');
@@ -154,7 +143,7 @@ public function printsk($id)
 
     try {
         ob_start();
-        $content = view('backend.verifikasi.printsk', compact('anggota', 'created_on'));
+        $content = view('backend.anggota.printsk', compact('anggota', 'created_on'));
 
         $html2pdf = new Html2Pdf('P', 'F4', 'fr', true, 'UTF-8', 1);
         $html2pdf->pdf->SetDisplayMode('fullpage');

@@ -7,7 +7,7 @@
                 <h1>Data Anggota ASKLIN</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Verifikasi Anggota</div>
+                    <div class="breadcrumb-item">Anggota</div>
                 </div>
             </div>
         </section>
@@ -73,7 +73,7 @@
                 searching: false,
                 pageLength: 50,
                 ajax: {
-                    url: "{{ route('verifikasi.list') }}",
+                    url: "{{ route('anggota.list') }}",
                     data: function(d) {
                         d.search = $('#search').val()
                     }
@@ -112,9 +112,6 @@
                         data: 'status',
                         name: 'status'
                     },
-                    // {
-                    //     data: 'status_pembayaran'
-                    // },
                     {
                         data: 'action',
                         name: 'action',

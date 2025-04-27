@@ -72,8 +72,8 @@
 
             @can('verifikasi')
                 <li class="menu-header">Data Terverifikasi</li>
-                <li class="dropdown @if (Request::url() == route('verifikasi.index')) active @endif"><a class="nav-link"
-                        href="{{ route('verifikasi.index') }}"><i class="far fa-user"></i><span>Data Anggota</span></a>
+                <li class="dropdown @if (Request::url() == route('anggota.index')) active @endif"><a class="nav-link"
+                        href="{{ route('anggota.index') }}"><i class="far fa-user"></i><span>Data Anggota</span></a>
                 </li>
             @endcan
 

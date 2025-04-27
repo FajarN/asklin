@@ -228,11 +228,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/verify/edit_bendahara', 'editBendahara')->name('verifikasi_anggota.edit_bendahara');
     });
 
-    Route::prefix('verifikasi')->controller(App\Http\Controllers\Backend\VerifikasiController::class)->group(function () {
-        Route::get('/', 'index')->name('verifikasi.index');
-        Route::get('/list', 'list')->name('verifikasi.list');
-        Route::get('/print/{id}', 'print')->name('verifikasi.print');
-        Route::get('/printsk/{id}', 'printsk')->name('verifikasi.printsk');
+    Route::prefix('anggota')->controller(App\Http\Controllers\Backend\AnggotaController::class)->group(function () {
+        Route::get('/', 'index')->name('anggota.index');
+        Route::get('/list', 'list')->name('anggota.list');
+        Route::get('/print/{id}', 'print')->name('anggota.print');
+        Route::get('/printsk/{id}', 'printsk')->name('anggota.printsk');
     });
 
     Route::prefix('kerjasama_asuransi')->controller(App\Http\Controllers\Backend\KerjasamaAsuransiController::class)->group(function () {
