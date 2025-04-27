@@ -323,10 +323,10 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Nama Rumah Sakit</th>
+                                                <th>Nama&nbsp;Rumah&nbsp;Sakit</th>
                                                 <th>Alamat</th>
                                                 <th>Jarak</th>
-                                                <th>No. Telepon</th>
+                                                <th>No.&nbsp;Telepon</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -339,8 +339,8 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Nama Perusahaan</th>
-                                                <th>Nama Kontak</th>
+                                                <th>Nama&nbsp;Perusahaan</th>
+                                                <th>Nama&nbsp;Kontak</th>
                                                 <th>Alamat</th>
                                                 <th>No. Telepon</th>
                                             </tr>
@@ -354,7 +354,7 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Nama Ruang</th>
+                                            <th>Nama&nbsp;Ruang</th>
                                             <th>Foto</th>
                                         </tr>
                                     </thead>

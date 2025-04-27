@@ -31,8 +31,6 @@ class SertifikatController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            // $data = Sertifikat::select('sertifikat.*', 'a.nama_klinik')
-            //     ->join('anggota as a', 'a.id', '=', 'sertifikat.id_anggota')
             $data = Sertifikat::select(
                 'sertifikat.*',
                 'a.nama_klinik',
@@ -81,7 +79,7 @@ class SertifikatController extends Controller
                     $actionBtn = '
                         <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
                         <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 28px, 0px); top: 0px; left: 0px; will-change: transform;">
-                            <a href="' . route('verifikasi.print', $data["id"]) . '" class="dropdown-item has-icon"><i class="fas fa-print"></i> Print Sertifikat</a>
+                            <a href="' . route('anggota.print', $data["id"]) . '" class="dropdown-item has-icon"><i class="fas fa-print"></i> Print Sertifikat</a>
                              <div class="dropdown-divider"></div>
                             <a href="javascript:void(0)" onclick="edit(' . $data["id"] . ')" class="dropdown-item has-icon"><i class="fas fa-edit"></i> Edit</a>
                             <div class="dropdown-divider"></div>

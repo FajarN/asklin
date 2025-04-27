@@ -28,7 +28,6 @@
                                     <th>No</th>
                                     <th>Nama Klinik</th>
                                     <th>Asuransi</th>
-                                    <th>Tanggal Input</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -70,7 +69,6 @@ $(function () {
             {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
             {data: 'nama_klinik', name: 'nama_klinik'},
             {data: "asuransi" , name: 'asuransi'},
-            {data: 'created_at', name: 'created_at'},
         ]
     });
 
