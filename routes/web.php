@@ -231,6 +231,18 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     Route::prefix('anggota')->controller(App\Http\Controllers\Backend\AnggotaController::class)->group(function () {
         Route::get('/', 'index')->name('anggota.index');
         Route::get('/list', 'list')->name('anggota.list');
+        Route::get('/detail_anggota/{id}', 'detail_anggota')->name('anggota.detail_anggota');
+        Route::put('/detail_anggota/update/{id}', 'verifyUpdate')->name('anggota.update_anggota');
+        Route::get('/detail_anggota/sdm/sdm_pjk/{id}', 'sdm_pjk')->name('anggota.sdm.pjk');
+        Route::get('/detail_anggota/sdm/sdm_dp/{id}', 'sdm_dp')->name('anggota.sdm.dp');
+        Route::get('/detail_anggota/sdm/sdm_tk/{id}', 'sdm_tk')->name('anggota.sdm.tk');
+        Route::get('/detail_anggota/sdm/sdm_tkl/{id}', 'sdm_tkl')->name('anggota.sdm.tkl');
+        Route::get('/detail_anggota/sdm/sdm_lain/{id}', 'sdm_lain')->name('anggota.sdm.lain');
+        Route::get('/detail_anggota/sdm/sdm_rumah_sakit/{id}', 'sdm_rumah_sakit')->name('anggota.sdm.rumah_sakit');
+        Route::get('/detail_anggota/sdm/sdm_asuransi/{id}', 'sdm_asuransi')->name('anggota.sdm.asuransi');
+        Route::get('/detail_anggota/sdm/sdm_foto/{id}', 'sdm_foto')->name('anggota.sdm.foto');
+        Route::post('/detail_anggota/verifikasi_bendahara', 'verifyBendahara')->name('anggota.bendahara');
+        Route::post('/detail_anggota/edit_bendahara', 'editBendahara')->name('anggota.edit_bendahara');
         Route::get('/print/{id}', 'print')->name('anggota.print');
         Route::get('/printsk/{id}', 'printsk')->name('anggota.printsk');
     });

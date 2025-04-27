@@ -27,14 +27,20 @@ class AnggotaController extends Controller
 
     public function list(Request $request)
     {
-        if ($request->ajax()) {
+            if ($request->ajax()) {
             $data = Anggota::select(
                 'anggota.*',
                 'indonesia_cities.name',
+                'indonesia_villages.name as kelurahan',
+                'indonesia_districts.name as kecamatan',
+                'indonesia_provinces.name as provinsi',
                 \DB::raw('GROUP_CONCAT(DISTINCT fasilitas_klinik.nama SEPARATOR ", ") as kriteria')
-            )
+                )
                 ->leftjoin("fasilitas_klinik", \DB::raw("FIND_IN_SET(fasilitas_klinik.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
                 ->leftjoin("indonesia_cities", 'indonesia_cities.code', '=', 'anggota.id_kota')
+                ->leftjoin("indonesia_villages", 'indonesia_villages.code', '=', 'anggota.id_kelurahan')
+                ->leftjoin("indonesia_districts", 'indonesia_districts.code', '=', 'anggota.id_kecamatan')
+                ->leftjoin("indonesia_provinces", 'indonesia_provinces.code', '=', 'anggota.id_provinsi')
                 ->groupBy('anggota.id')
                 ->where('anggota.status', 'approved')
                 ->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
@@ -42,6 +48,15 @@ class AnggotaController extends Controller
                 })
                 ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
                     $query->where('id_provinsi', Auth::user()->provinsi);
+                })
+                ->when(Auth::user()->hasRole('Sekjen'), function ($query) use ($request) {
+                    $query->where('anggota.status', 'Verifikasi Sekjen');
+                })
+                ->when(Auth::user()->hasRole('Ketua Umum'), function ($query) use ($request) {
+                    $query->where('anggota.status_pembayaran', '1');
+                })
+                ->when(Auth::user()->hasRole('Bendahara'), function ($query) use ($request) {
+                    $query->where('anggota.status', 'Verifikasi Bendahara');
                 })
                 ->get();
                 return Datatables::of($data)
@@ -71,7 +86,118 @@ class AnggotaController extends Controller
                     ->make(true);
             }
     }
+    public function detail_anggota($id)
+    {
+        $anggota = Anggota::select('anggota.*', 'indonesia_cities.name as kota', 'indonesia_districts.name as kecamatan', 'indonesia_villages.name as kelurahan', 'indonesia_provinces.name as provinsi')
+            ->leftjoin("indonesia_cities", 'indonesia_cities.code', '=', 'anggota.id_kota')
+            ->leftjoin("indonesia_districts", 'indonesia_districts.code', '=', 'anggota.id_kecamatan')
+            ->leftjoin("indonesia_villages", 'indonesia_villages.code', '=', 'anggota.id_kelurahan')
+            ->leftjoin("indonesia_provinces", 'indonesia_provinces.code', '=', 'anggota.id_provinsi')
+            ->where('anggota.id', $id)
+            ->first();
 
+
+        return view('backend.anggota.detail_anggota', compact('anggota'));
+    }
+
+    public function verifyBendahara(Request $request)
+    {
+        $id = $request->id;
+        $data = Anggota::where('id', $id)->update([
+            'status_pembayaran' => $request->status_pembayaran
+        ]);
+
+        return Response()->json($data);
+    }
+
+    public function editBendahara(Request $request)
+    {
+        $data = Anggota::find($request->id);
+
+        return Response()->json($data);
+    }
+
+    public function sdm_pjk(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $data = SDM::where(['id_klinik' => $id, 'id_kategori_sdm' => '1'])->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+        }
+    }
+
+    public function sdm_dp(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $data = SDM::where(['id_klinik' => $id, 'id_kategori_sdm' => '2'])->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+        }
+    }
+
+    public function sdm_tk(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $data = SDM::where(['id_klinik' => $id, 'id_kategori_sdm' => '3'])->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+        }
+    }
+
+    public function sdm_tkl(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $data = SDM::where(['id_klinik' => $id, 'id_kategori_sdm' => '4'])->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+        }
+    }
+
+    public function sdm_lain(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $data = SDM::where(['id_klinik' => $id, 'id_kategori_sdm' => '5'])->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+        }
+    }
+
+    public function sdm_rumah_sakit(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $data = RumahSakit::where('id_klinik', $id)->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+        }
+    }
+
+    public function sdm_asuransi(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $data = Asuransi::where('id_klinik', $id)->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+        }
+    }
+
+    public function sdm_foto(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $data = FotoKlinik::where('id_klinik', $id)->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+        }
+    }
+
+    
     public function print($id)
     {
 
@@ -121,43 +247,43 @@ class AnggotaController extends Controller
         exit();
     }
 
-public function printsk($id)
-{
-    $anggota = Anggota::select(
-        'anggota.*',
-        \DB::raw('GROUP_CONCAT(DISTINCT a.nama SEPARATOR ", ") as nama_fasilitas_klinik'),
-        'b.name as kota',
-        'c.name as provinsi'
-    )
-        ->leftJoin('fasilitas_klinik as a', \DB::raw("FIND_IN_SET(a.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
-        ->leftJoin('indonesia_cities as b', 'b.code', '=', 'anggota.id_kota')
-        ->leftJoin('indonesia_provinces as c', 'c.code', '=', 'anggota.id_provinsi')
-        ->groupBy('anggota.id')
-        ->where('anggota.id', $id)
-        ->first();
 
-    $id = $anggota->id;
+    public function printsk($id)
+    {
+        $anggota = Anggota::select(
+            'anggota.*',
+            \DB::raw('GROUP_CONCAT(DISTINCT a.nama SEPARATOR ", ") as nama_fasilitas_klinik'),
+            'b.name as kota',
+            'c.name as provinsi'
+        )
+            ->leftJoin('fasilitas_klinik as a', \DB::raw("FIND_IN_SET(a.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
+            ->leftJoin('indonesia_cities as b', 'b.code', '=', 'anggota.id_kota')
+            ->leftJoin('indonesia_provinces as c', 'c.code', '=', 'anggota.id_provinsi')
+            ->groupBy('anggota.id')
+            ->where('anggota.id', $id)
+            ->first();
 
-    // Menggunakan Carbon untuk memformat tanggal dari timestamp Unix
-    $created_on = Carbon::createFromTimestamp($anggota->created_on)->format('Y');
+        $id = $anggota->id;
 
-    try {
-        ob_start();
-        $content = view('backend.anggota.printsk', compact('anggota', 'created_on'));
+        $created_on = Carbon::createFromTimestamp($anggota->created_on)->format('Y');
 
-        $html2pdf = new Html2Pdf('P', 'F4', 'fr', true, 'UTF-8', 1);
-        $html2pdf->pdf->SetDisplayMode('fullpage');
-        $html2pdf->pdf->SetTitle('SK Anggota ASKLIN');
-        $html2pdf->writeHTML($content);
-        $html2pdf->output('sk_anggota.pdf');
-    } catch (Html2PdfException $e) {
-        $html2pdf->clean();
+        try {
+            ob_start();
+            $content = view('backend.anggota.printsk', compact('anggota', 'created_on'));
 
-        $formatter = new ExceptionFormatter($e);
-        echo $formatter->getHtmlMessage();
+            $html2pdf = new Html2Pdf('P', 'F4', 'fr', true, 'UTF-8', 1);
+            $html2pdf->pdf->SetDisplayMode('fullpage');
+            $html2pdf->pdf->SetTitle('SK Anggota ASKLIN');
+            $html2pdf->writeHTML($content);
+            $html2pdf->output('sk_anggota.pdf');
+        } catch (Html2PdfException $e) {
+            $html2pdf->clean();
+
+            $formatter = new ExceptionFormatter($e);
+            echo $formatter->getHtmlMessage();
+        }
+        exit();
     }
-    exit();
-}
 
 
 }
