@@ -360,4 +360,21 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/store', 'store')->name('partner.store');
         Route::post('/delete', 'destroy')->name('partner.delete');
     });
+
+    Route::prefix('struktur_organisasi')->controller(App\Http\Controllers\Backend\StrukturOrganisasiController::class)->group(function () { 
+        Route::get('/', 'index')->name('struktur_organisasi.index');
+        Route::get('/list', 'list')->name('struktur_organisasi.list');
+        Route::get('/edit/{id}', 'edit')->name('struktur_organisasi.edit');
+        Route::post('/store', 'store')->name('struktur_organisasi.store');
+        Route::post('/delete', 'destroy')->name('struktur_organisasi.delete');
+        Route::get('/detail/{id}', 'detail')->name('struktur_organisasi.detail');
+        Route::get('/print/{id}', 'printDetail')->name('struktur_organisasi.print');
+    });
+    
+
+    Route::prefix('pengurus')->controller(App\Http\Controllers\Backend\StrukturOrganisasiController::class)->group(function () { 
+        Route::post('/store', 'storePengurus')->name('pengurus.store');
+        Route::post('/edit', 'editPengurus')->name('pengurus.edit');
+        Route::post('/delete', 'destroyPengurus')->name('pengurus.delete');
+    });
 });

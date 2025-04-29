@@ -107,10 +107,17 @@
                                 href="{{ route('pembayaran.index') }}">Verif Iuran</a></li>
                     </ul>
                 </li>
+
                 @can('pembayaran-pusat')
                     <li class="dropdown @if (Request::url() == route('pembayaran_pusat.index')) active @endif"><a class="nav-link"
                             href="{{ route('pembayaran_pusat.index') }}"><i class="far  fa-file-alt"></i>
                             <span>Bukti Pembayaran Daerah/Pusat</span></a></li>
+                @endcan
+
+                @can('ruang-pengurus-list')
+                <li class="menu-header">Ruang Pengurus</li>
+                <li class="dropdown @if (Request::url() == route('struktur_organisasi.index')) active @endif"><a class="nav-link"
+                        href="{{ route('struktur_organisasi.index') }}"><i class="fas fa-user-md"></i></i> Struktur Organisasi</a></li>
                 @endcan
 
 
