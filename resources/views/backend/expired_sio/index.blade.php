@@ -4,20 +4,31 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>Data Anggota ASKLIN</h1>
+                <h1>Expired SIO</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Anggota</div>
+                    <div class="breadcrumb-item">Exired SIO</div>
                 </div>
             </div>
         </section>
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4></h4>
-                        <div class="card-header-form">
-                            <input type="text" class="form-control" placeholder="Search" id="search">
+                    <div class="card-header d-flex align-items-center justify-content-between flex-wrap">
+                        <h4 class="mb-0 mr-3">Filter</h4>
+                        <div class="d-flex align-items-center flex-wrap">
+                            <div class="form-group mb-0 mr-2">
+                                <select id="filter_expired" class="form-control">
+                                    <option value="">-- Semua --</option>
+                                    <option value="expired">Sudah Expired</option>
+                                    <option value="besok">Besok</option>
+                                    <option value="seminggu">Dalam Seminggu</option>
+                                    <option value="sebulan">Dalam Sebulan</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-0">
+                                <input type="text" class="form-control" placeholder="Search" id="search">
+                            </div>
                         </div>
                     </div>
 
@@ -27,14 +38,12 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>No. Anggota</th>
                                         <th>Kab/Kota</th>
-                                        <th>Nama Klinik</th>
+                                        <th>Nama&nbsp;Klinik</th>
                                         <th>Email</th>
-                                        <th>Jenis Klinik</th>
-                                        <th>Kriteria Klinik</th>
-                                        <th>Status Verifikasi</th>
-                                        <th>Print</th>
+                                        <th>No&nbsp;Ijin</th>
+                                        <th>Tgl&nbsp;Ijin</th>
+                                        <th>Tgl&nbsp;Akhir&nbsp;Ijin</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -42,6 +51,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -73,9 +83,10 @@
                 searching: false,
                 pageLength: 50,
                 ajax: {
-                    url: "{{ route('anggota.list') }}",
+                    url: "{{ route('expired_sio.list') }}",
                     data: function(d) {
-                        d.search = $('#search').val()
+                        d.search = $('#search').val();
+                        d.filter_expired = $('#filter_expired').val();
                     }
                 },
                 columns: [{
@@ -83,10 +94,6 @@
                         name: 'DT_RowIndex',
                         orderable: false,
                         searchable: false
-                    },
-                    {
-                        data: 'no_anggota',
-                        name: 'no_anggota'
                     },
                     {
                         data: 'name',
@@ -101,24 +108,22 @@
                         name: 'email'
                     },
                     {
-                        data: 'jenis_klinik',
-                        name: 'jenis_klinik'
+                        data: 'no_ijin',
+                        name: 'no_ijin'
                     },
                     {
-                        data: 'kriteria',
-                        name: 'kriteria'
+                        data: 'tgl_ijin',
+                        name: 'tgl_ijin'
                     },
                     {
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
+                        data: 'tgl_akhir_ijin',
+                        name: 'tgl_akhir_ijin'
                     },
                 ]
+            });
+
+            $('#filter_expired').change(function() {
+                table.draw();
             });
 
             $("#search").keyup(function() {

@@ -376,4 +376,15 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/edit', 'editPengurus')->name('pengurus.edit');
         Route::post('/delete', 'destroyPengurus')->name('pengurus.delete');
     });
+
+    Route::prefix('expired_sio')->controller(App\Http\Controllers\Backend\ExpiredSIOController::class)->group(function () {
+        Route::get('/', 'index')->name('expired_sio.index');
+        Route::get('/list', 'list')->name('expired_sio.list');
+    });
+
+    Route::prefix('expired_serfitikat')->controller(App\Http\Controllers\Backend\ExpiredSertifikatController::class)->group(function () {
+        Route::get('/', 'index')->name('expired_serfitikat.index');
+        Route::get('/list', 'list')->name('expired_serfitikat.list');
+    });
+    
 });

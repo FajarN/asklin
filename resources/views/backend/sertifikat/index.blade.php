@@ -22,6 +22,15 @@
                             </a>
                         </h4>
                         <div class="card-header-form">
+                            <select name="tahun" id="filterTahun" class="form-control">
+                            <option value="">-- Filter Tahun --</option>
+                            @for ($i = date('Y'); $i >= 2019; $i--)
+                                <option value="{{ $i }}">{{ $i }}</option>
+                            @endfor
+                        </select>
+
+                        </div>
+                        <div class="card-header-form">
                             <input type="text" class="form-control" placeholder="Search" id="search">
                         </div>
                     </div>
@@ -112,7 +121,8 @@
                 ajax: {
                     url: "{{ route('sertifikat.list') }}",
                     data: function(d) {
-                        d.search = $('#search').val()
+                        d.search = $('#search').val();
+                        d.tahun = $('#filterTahun').val();
                     }
                 },
                 columns: [{
@@ -143,10 +153,15 @@
                     },
                 ]
             });
-
-            $("#search").keyup(function() {
+            
+            $('#search').keyup(function () {
                 table.draw();
             });
+
+            $('#filterTahun').change(function () {
+                table.draw();
+            });
+
         });
 
         function add() {

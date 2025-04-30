@@ -83,6 +83,11 @@
                         Anggota</a></li>
             @endcan
 
+            @can('kerjasama-asuransi')
+                <li class="dropdown @if (Request::url() == route('expired_sio.index')) active @endif"><a class="nav-link"
+                        href="{{ route('expired_sio.index') }}"><i class="fas fa-calendar-times"></i>Expired SIO</a></li>
+            @endcan
+
             @can('agenda-list')
                 <li class="menu-header">Ruang Administrasi</li>
                 <li class="dropdown @if (Request::url() == route('agenda.index')) active @endif"><a class="nav-link"
@@ -95,11 +100,17 @@
                 </li>
             @endcan
 
+            @can('sertifikat')
+                <li class="dropdown @if (Request::url() == route('expired_serfitikat.index')) active @endif"><a class="nav-link"
+                        href="{{ route('expired_serfitikat.index') }}"><i class="fas fa-calendar-times"></i>Expired
+                        Sertifikat</a></li>
+            @endcan
+
             @can('pembayaran')
-                <li class="menu-header">Pembayaran Iuran</li>
+                <li class="menu-header">Pembayaran Iuran Anggota</li>
                 <li class="dropdown">
                     <a href="#" class="nav-link has-dropdown"><i class="fas fa-folder-open"></i> <span>
-                            Pembayaran Cabang</span></a>
+                            Verifikasi Iuran</span></a>
                     <ul class="dropdown-menu">
                         <li class="dropdown @if (Request::url() == route('pembayaran.pangkal')) active @endif"><a class="nav-link"
                                 href="{{ route('pembayaran.pangkal') }}">Verif Uang Pangkal</a></li>
@@ -115,11 +126,37 @@
                 @endcan
 
                 @can('ruang-pengurus-list')
-                <li class="menu-header">Ruang Pengurus</li>
-                <li class="dropdown @if (Request::url() == route('struktur_organisasi.index')) active @endif"><a class="nav-link"
-                        href="{{ route('struktur_organisasi.index') }}"><i class="fas fa-user-md"></i></i> Struktur Organisasi</a></li>
+                    <li class="menu-header">Ruang Pengurus</li>
+                    <li class="dropdown @if (Request::url() == route('struktur_organisasi.index')) active @endif"><a class="nav-link"
+                            href="{{ route('struktur_organisasi.index') }}"><i class="fas fa-user-md"></i></i> Struktur
+                            Organisasi</a></li>
+                    {{-- <li class="dropdown">
+                        <a href="javascript:void(0)" class="nav-link has-dropdown"><i class="fas fa-regular fa-envelope"></i>
+                            <span>Surat</span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown @if (Request::url() == route('jenis_surat.index')) active @endif"><a class="nav-link"
+                                    href="{{ route('jenis_surat.index') }}">Jenis Surat</a></li>
+                            <li class="dropdown @if (Request::url() == route('surat_penomoran.index')) active @endif"><a class="nav-link"
+                                    href="{{ route('surat_penomoran.index') }}">Penomoran Surat</a></li>
+                            <li class="dropdown @if (Request::url() == route('surat_keluar.index')) active @endif"><a class="nav-link"
+                                    href="{{ route('surat_keluar.index') }}">Surat Keluar</a></li>
+                            <li class="dropdown @if (Request::url() == route('surat_tugas.index')) active @endif"><a class="nav-link"
+                                    href="{{ route('surat_tugas.index') }}">Surat Tugas</a></li>
+                            <li class="dropdown @if (Request::url() == route('surat_undangan.index')) active @endif"><a class="nav-link"
+                                    href="{{ route('surat_undangan.index') }}">Surat Undangan</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="nav-link has-dropdown"><i class="fas fa-balance-scale"></i>
+                            <span>Operasional</span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown @if (Request::url() == route('kategori_operasional.index')) active @endif"><a class="nav-link"
+                                    href="{{ route('kategori_operasional.index') }}">Kategori Operasional</a></li>
+                            <li class="dropdown @if (Request::url() == route('operasional.index')) active @endif"><a class="nav-link"
+                                    href="{{ route('operasional.index') }}">Operasional</a></li>
+                        </ul>
+                    </li> --}}
                 @endcan
-
 
                 @can('secret')
                     <li class="menu-header">Laporan</li>
@@ -152,15 +189,12 @@
                         <li class="dropdown @if (Request::url() == route('berita.index')) active @endif"><a
                                 href="{{ route('berita.index') }}">Berita</a></li>
                     @endcan
-                    <!--<li><a href="banner.html">Banner</a></li> -->
                     @can('galery')
                         <li class="dropdown @if (Request::url() == route('galery.index')) active @endif"><a
                                 href="{{ route('galery.index') }}">Gallery</a></li>
                     @endcan
-                    <!--<li><a href="kontak.html">Kontak</a></li> -->
                 </ul>
             </li>
-
 
             @can('secret')
                 <li class="dropdown">
