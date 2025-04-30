@@ -1,29 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Backend\konas;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Layanan;
+use App\Models\KonasPartner;
 use DataTables;
 use Illuminate\Support\Str;
 
-class LayananController extends Controller
+class KonasPartnerController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('permission:layanan', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
-    }
-
     public function index()
     {
-        return view('backend.layanan.index');
+        return view('backend.partner.index');
     }
 
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = Layanan::latest()->get();
+            $data = KonasPartner::get();
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('search'))) {
@@ -55,11 +50,21 @@ class LayananController extends Controller
     public function store(Request $request)
     {
         $id = $request->id;
-        $data = Layanan::updateOrCreate(
+        if($request->hasFile('photo')) {
+            $destinationPath = 'images/partner/';
+            $img_ext = $request->file('photo')->getClientOriginalExtension();
+            $partner = 'partner-' . time() . '.' . $img_ext;
+            $path = $request->file('photo')->move($destinationPath, $partner);
+        }else{
+            $partner = NULL;
+        }
+
+        $data = KonasPartner::updateOrCreate(
             ['id' => $id],
             [
                 'nama' => $request->nama,
-                'status' => $request->status,
+                'photo' => $partner,
+                'link' => $request->link
             ]
         );
 
@@ -68,14 +73,18 @@ class LayananController extends Controller
 
     public function edit(Request $request)
     {
-        $data = Layanan::find($request->id);
+        $data = KonasPartner::find($request->id);
 
         return Response()->json($data);
     }
 
     public function destroy(Request $request)
     {
-        $data = Layanan::where('id',$request->id)->delete();
+        $data = KonasPartner::where('id',$request->id);
+        if(file_exists(public_path() .  '/images/partner/' . $data->photo)) {
+            unlink(public_path() .  '/images/partner/' . $data->photo);
+        }
+        $data->delete();
         return Response()->json($data);
     }
 }

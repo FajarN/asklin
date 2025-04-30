@@ -1,29 +1,29 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Backend\web;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Fasilitas;
+use App\Models\EventKategori;
 use DataTables;
 use Illuminate\Support\Str;
 
-class FasilitasController extends Controller
+class EventKategoriController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:fasilitas', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:kategori-event', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
     }
 
     public function index()
     {
-        return view('backend.fasilitas.index');
+        return view('backend.events.kategori.index');
     }
 
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = Fasilitas::latest()->get();
+            $data = EventKategori::latest()->get();
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('search'))) {
@@ -55,11 +55,10 @@ class FasilitasController extends Controller
     public function store(Request $request)
     {
         $id = $request->id;
-        $data = Fasilitas::updateOrCreate(
+        $data = EventKategori::updateOrCreate(
             ['id' => $id],
             [
-                'nama' => $request->nama,
-                'status' => $request->status,
+                'nama' => $request->nama
             ]
         );
 
@@ -68,14 +67,14 @@ class FasilitasController extends Controller
 
     public function edit(Request $request)
     {
-        $data = Fasilitas::find($request->id);
+        $data = EventKategori::find($request->id);
 
         return Response()->json($data);
     }
 
     public function destroy(Request $request)
     {
-        $data = Fasilitas::where('id',$request->id)->delete();
+        $data = EventKategori::where('id',$request->id)->delete();
         return Response()->json($data);
     }
 }

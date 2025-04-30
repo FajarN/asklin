@@ -1,29 +1,29 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Backend\web;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\PembayaranKategori;
+use App\Models\BeritaKategori;
 use DataTables;
 use Illuminate\Support\Str;
 
-class PembayaranKategoriController extends Controller
+class BeritaKategoriController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:kategori-pembayaran', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:kategori-berita', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
     }
 
     public function index()
     {
-        return view('backend.kategori_pembayaran.index');
+        return view('backend.berita.kategori.index');
     }
 
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = PembayaranKategori::latest()->get();
+            $data = BeritaKategori::latest()->get();
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('search'))) {
@@ -55,11 +55,10 @@ class PembayaranKategoriController extends Controller
     public function store(Request $request)
     {
         $id = $request->id;
-        $data = PembayaranKategori::updateOrCreate(
+        $data = BeritaKategori::updateOrCreate(
             ['id' => $id],
             [
-                'nama' => $request->nama,
-                'status' => $request->status,
+                'nama' => $request->nama
             ]
         );
 
@@ -68,14 +67,14 @@ class PembayaranKategoriController extends Controller
 
     public function edit(Request $request)
     {
-        $data = PembayaranKategori::find($request->id);
+        $data = BeritaKategori::find($request->id);
 
         return Response()->json($data);
     }
 
     public function destroy(Request $request)
     {
-        $data = PembayaranKategori::where('id',$request->id)->delete();
+        $data = BeritaKategori::where('id',$request->id)->delete();
         return Response()->json($data);
     }
 }

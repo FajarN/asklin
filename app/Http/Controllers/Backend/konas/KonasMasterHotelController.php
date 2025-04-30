@@ -1,34 +1,34 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Backend\konas;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\EventKategori;
+use App\Models\KonasMasterHotel;
 use DataTables;
 use Illuminate\Support\Str;
 
-class EventKategoriController extends Controller
+class KonasMasterHotelController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:kategori-event', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:konas-master-hotel', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
     }
 
     public function index()
     {
-        return view('backend.events.kategori.index');
+        return view('backend.konas.hotel');
     }
 
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = EventKategori::latest()->get();
+            $data = KonasMasterHotel::latest()->get();
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('search'))) {
                         $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            if (Str::contains(Str::lower($data['nama']), Str::lower($request->get('search')))){
+                            if (Str::contains(Str::lower($data['hotel']), Str::lower($request->get('search')))){
                                 return true;
                             }
                             return false;
@@ -55,10 +55,12 @@ class EventKategoriController extends Controller
     public function store(Request $request)
     {
         $id = $request->id;
-        $data = EventKategori::updateOrCreate(
+        $data = KonasMasterHotel::updateOrCreate(
             ['id' => $id],
             [
-                'nama' => $request->nama
+                'hotel' => $request->hotel,
+                'status' => $request->status,
+                'alamat' => $request->alamat,
             ]
         );
 
@@ -67,14 +69,14 @@ class EventKategoriController extends Controller
 
     public function edit(Request $request)
     {
-        $data = EventKategori::find($request->id);
+        $data = KonasMasterHotel::find($request->id);
 
         return Response()->json($data);
     }
 
     public function destroy(Request $request)
     {
-        $data = EventKategori::where('id',$request->id)->delete();
+        $data = KonasMasterHotel::where('id',$request->id)->delete();
         return Response()->json($data);
     }
 }

@@ -133,35 +133,35 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
             Route::post('/store', 'store')->name('permissions.store');
             Route::post('/delete', 'destroy')->name('permissions.delete');
         });
-        Route::prefix('berita_kategori')->controller(App\Http\Controllers\Backend\BeritaKategoriController::class)->group(function () {
+        Route::prefix('berita_kategori')->controller(App\Http\Controllers\Backend\web\BeritaKategoriController::class)->group(function () {
             Route::get('/', 'index')->name('berita_kategori.index');
             Route::get('/list', 'list')->name('berita_kategori.list');
             Route::post('/edit', 'edit')->name('berita_kategori.edit');
             Route::post('/store', 'store')->name('berita_kategori.store');
             Route::post('/delete', 'destroy')->name('berita_kategori.delete');
         });
-        Route::prefix('event_kategori')->controller(App\Http\Controllers\Backend\EventKategoriController::class)->group(function () {
+        Route::prefix('event_kategori')->controller(App\Http\Controllers\Backend\web\EventKategoriController::class)->group(function () {
             Route::get('/', 'index')->name('event_kategori.index');
             Route::get('/list', 'list')->name('event_kategori.list');
             Route::post('/edit', 'edit')->name('event_kategori.edit');
             Route::post('/store', 'store')->name('event_kategori.store');
             Route::post('/delete', 'destroy')->name('event_kategori.delete');
         });
-        Route::prefix('fasilitas')->controller(App\Http\Controllers\Backend\FasilitasController::class)->group(function () {
+        Route::prefix('fasilitas')->controller(App\Http\Controllers\Backend\masterdata\FasilitasController::class)->group(function () {
             Route::get('/', 'index')->name('fasilitas.index');
             Route::get('/list', 'list')->name('fasilitas.list');
             Route::post('/edit', 'edit')->name('fasilitas.edit');
             Route::post('/store', 'store')->name('fasilitas.store');
             Route::post('/delete', 'destroy')->name('fasilitas.delete');
         });
-        Route::prefix('fasilitas_klinik')->controller(App\Http\Controllers\Backend\FasilitasKlinikController::class)->group(function () {
+        Route::prefix('fasilitas_klinik')->controller(App\Http\Controllers\Backend\masterdata\FasilitasKlinikController::class)->group(function () {
             Route::get('/', 'index')->name('fasilitas_klinik.index');
             Route::get('/list', 'list')->name('fasilitas_klinik.list');
             Route::post('/edit', 'edit')->name('fasilitas_klinik.edit');
             Route::post('/store', 'store')->name('fasilitas_klinik.store');
             Route::post('/delete', 'destroy')->name('fasilitas_klinik.delete');
         });
-        Route::prefix('kategori_pembayaran')->controller(App\Http\Controllers\Backend\PembayaranKategoriController::class)->group(function () {
+        Route::prefix('kategori_pembayaran')->controller(App\Http\Controllers\Backend\masterdata\PembayaranKategoriController::class)->group(function () {
             Route::get('/', 'index')->name('kategori_pembayaran.index');
             Route::get('/list', 'list')->name('kategori_pembayaran.list');
             Route::post('/edit', 'edit')->name('kategori_pembayaran.edit');
@@ -170,7 +170,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         });
     });
 
-    Route::prefix('berita')->controller(App\Http\Controllers\Backend\BeritaController::class)->group(function () {
+    Route::prefix('berita')->controller(App\Http\Controllers\Backend\web\BeritaController::class)->group(function () {
         Route::get('/', 'index')->name('berita.index');
         Route::get('/list', 'list')->name('berita.list');
         Route::get('/create', 'create')->name('berita.create');
@@ -180,7 +180,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('berita.delete');
     });
 
-    Route::prefix('events')->controller(App\Http\Controllers\Backend\EventController::class)->group(function () {
+    Route::prefix('events')->controller(App\Http\Controllers\Backend\web\EventController::class)->group(function () {
         Route::get('/', 'index')->name('events.index');
         Route::get('/list', 'list')->name('events.list');
         Route::get('/create', 'create')->name('events.create');
@@ -200,7 +200,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('agenda.delete');
     });
 
-    Route::prefix('layanan')->controller(App\Http\Controllers\Backend\LayananController::class)->group(function () {
+    Route::prefix('layanan')->controller(App\Http\Controllers\Backend\masterdata\LayananController::class)->group(function () {
         Route::get('/', 'index')->name('layanan.index');
         Route::get('/list', 'list')->name('layanan.list');
         Route::post('/edit', 'edit')->name('layanan.edit');
@@ -268,7 +268,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('pembayaran.delete');
     });
 
-    Route::prefix('galery')->controller(App\Http\Controllers\Backend\GaleryController::class)->group(function () {
+    Route::prefix('galery')->controller(App\Http\Controllers\Backend\web\GaleryController::class)->group(function () {
         Route::get('/', 'index')->name('galery.index');
         Route::get('/list', 'list')->name('galery.list');
         Route::post('/edit', 'edit')->name('galery.edit');
@@ -292,22 +292,22 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('pembayaran_pusat.delete');
     });
 
-    Route::prefix('laporan')->controller(App\Http\Controllers\Backend\LaporanPusatController::class)->group(function () {
+    Route::prefix('laporan')->controller(App\Http\Controllers\Backend\laporan\LaporanPusatController::class)->group(function () {
         Route::get('/pusat', 'index')->name('laporan_pusat');
         Route::get('/pusat/list', 'list')->name('laporan_pusat.list');
     });
 
-    Route::prefix('laporan')->controller(App\Http\Controllers\Backend\LaporanDaerahController::class)->group(function () {
+    Route::prefix('laporan')->controller(App\Http\Controllers\Backend\laporan\LaporanDaerahController::class)->group(function () {
         Route::get('/daerah', 'index')->name('laporan_daerah');
         Route::get('/daerah/list', 'list')->name('laporan_daerah.list');
     });
 
-    Route::prefix('laporan')->controller(App\Http\Controllers\Backend\LaporanCabangController::class)->group(function () {
+    Route::prefix('laporan')->controller(App\Http\Controllers\Backend\laporan\LaporanCabangController::class)->group(function () {
         Route::get('/cabang', 'index')->name('laporan_cabang');
         Route::get('/cabang/list', 'list')->name('laporan_cabang.list');
     });
 
-    Route::prefix('konas-master-hotel')->controller(App\Http\Controllers\Backend\KonasMasterHotelController::class)->group(function () {
+    Route::prefix('konas-master-hotel')->controller(App\Http\Controllers\Backend\konas\KonasMasterHotelController::class)->group(function () {
         Route::get('/', 'index')->name('konas_master_hotel.index');
         Route::get('/list', 'list')->name('konas_master_hotel.list');
         Route::post('/edit', 'edit')->name('konas_master_hotel.edit');
@@ -315,7 +315,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('konas_master_hotel.delete');
     });
 
-    Route::prefix('konas-master-tipe-hotel')->controller(App\Http\Controllers\Backend\KonasMasterTipeHotelController::class)->group(function () {
+    Route::prefix('konas-master-tipe-hotel')->controller(App\Http\Controllers\Backend\konas\KonasMasterTipeHotelController::class)->group(function () {
         Route::get('/', 'index')->name('konas_master_tipe_hotel.index');
         Route::get('/list', 'list')->name('konas_master_tipe_hotel.list');
         Route::post('/edit', 'edit')->name('konas_master_tipe_hotel.edit');
@@ -323,7 +323,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('konas_master_tipe_hotel.delete');
     });
 
-    Route::prefix('peserta-konas')->controller(App\Http\Controllers\Backend\KonasPesertaController::class)->group(function () {
+    Route::prefix('peserta-konas')->controller(App\Http\Controllers\Backend\konas\KonasPesertaController::class)->group(function () {
         Route::get('/', 'index')->name('konas.index');
         Route::get('/list', 'list')->name('konas.list');
         Route::post('/edit', 'edit')->name('konas.edit');
@@ -337,7 +337,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/invoice/{id}', 'invoice')->name('konas.invoice');
     });
 
-    Route::prefix('booking-hotel')->controller(App\Http\Controllers\Backend\KonasBookingController::class)->group(function () {
+    Route::prefix('booking-hotel')->controller(App\Http\Controllers\Backend\konas\KonasBookingController::class)->group(function () {
         Route::get('/', 'index')->name('konas_booking.index');
         Route::get('/list', 'list')->name('konas_booking.list');
         Route::post('/edit', 'edit')->name('konas_booking.edit');
@@ -345,7 +345,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('konas_booking.delete');
     });
 
-    Route::prefix('data-penerbangan')->controller(App\Http\Controllers\Backend\KonasPenerbanganController::class)->group(function () {
+    Route::prefix('data-penerbangan')->controller(App\Http\Controllers\Backend\konas\KonasPenerbanganController::class)->group(function () {
         Route::get('/', 'index')->name('konas_penerbangan.index');
         Route::get('/list', 'list')->name('konas_penerbangan.list');
         Route::post('/edit', 'edit')->name('konas_penerbangan.edit');
@@ -353,7 +353,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('konas_penerbangan.delete');
     });
 
-    Route::prefix('partner')->controller(App\Http\Controllers\Backend\KonasPartnerController::class)->group(function () {
+    Route::prefix('partner')->controller(App\Http\Controllers\Backend\konas\KonasPartnerController::class)->group(function () {
         Route::get('/', 'index')->name('partner.index');
         Route::get('/list', 'list')->name('partner.list');
         Route::post('/edit', 'edit')->name('partner.edit');
@@ -361,7 +361,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('partner.delete');
     });
 
-    Route::prefix('struktur_organisasi')->controller(App\Http\Controllers\Backend\StrukturOrganisasiController::class)->group(function () { 
+    Route::prefix('struktur_organisasi')->controller(App\Http\Controllers\Backend\ruang_pengurus\StrukturOrganisasiController::class)->group(function () { 
         Route::get('/', 'index')->name('struktur_organisasi.index');
         Route::get('/list', 'list')->name('struktur_organisasi.list');
         Route::get('/edit/{id}', 'edit')->name('struktur_organisasi.edit');
@@ -371,8 +371,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/print/{id}', 'printDetail')->name('struktur_organisasi.print');
     });
     
-
-    Route::prefix('pengurus')->controller(App\Http\Controllers\Backend\StrukturOrganisasiController::class)->group(function () { 
+    Route::prefix('pengurus')->controller(App\Http\Controllers\Backend\ruang_pengurus\StrukturOrganisasiController::class)->group(function () { 
         Route::post('/store', 'storePengurus')->name('pengurus.store');
         Route::post('/edit', 'editPengurus')->name('pengurus.edit');
         Route::post('/delete', 'destroyPengurus')->name('pengurus.delete');

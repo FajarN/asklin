@@ -1,34 +1,34 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Backend\masterdata;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\KonasMasterHotel;
+use App\Models\PembayaranKategori;
 use DataTables;
 use Illuminate\Support\Str;
 
-class KonasMasterHotelController extends Controller
+class PembayaranKategoriController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:konas-master-hotel', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:kategori-pembayaran', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
     }
 
     public function index()
     {
-        return view('backend.konas.hotel');
+        return view('backend.kategori_pembayaran.index');
     }
 
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = KonasMasterHotel::latest()->get();
+            $data = PembayaranKategori::latest()->get();
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('search'))) {
                         $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            if (Str::contains(Str::lower($data['hotel']), Str::lower($request->get('search')))){
+                            if (Str::contains(Str::lower($data['nama']), Str::lower($request->get('search')))){
                                 return true;
                             }
                             return false;
@@ -55,12 +55,11 @@ class KonasMasterHotelController extends Controller
     public function store(Request $request)
     {
         $id = $request->id;
-        $data = KonasMasterHotel::updateOrCreate(
+        $data = PembayaranKategori::updateOrCreate(
             ['id' => $id],
             [
-                'hotel' => $request->hotel,
+                'nama' => $request->nama,
                 'status' => $request->status,
-                'alamat' => $request->alamat,
             ]
         );
 
@@ -69,14 +68,14 @@ class KonasMasterHotelController extends Controller
 
     public function edit(Request $request)
     {
-        $data = KonasMasterHotel::find($request->id);
+        $data = PembayaranKategori::find($request->id);
 
         return Response()->json($data);
     }
 
     public function destroy(Request $request)
     {
-        $data = KonasMasterHotel::where('id',$request->id)->delete();
+        $data = PembayaranKategori::where('id',$request->id)->delete();
         return Response()->json($data);
     }
 }
