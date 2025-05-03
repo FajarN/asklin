@@ -386,5 +386,53 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/', 'index')->name('expired_serfitikat.index');
         Route::get('/list', 'list')->name('expired_serfitikat.list');
     });
+
+     Route::prefix('jenis_surat')->controller(App\Http\Controllers\Backend\ruang_pengurus\JenisSuratController::class)->group(function () {
+        Route::get('/', 'index')->name('jenis_surat.index');
+        Route::get('/list', 'list')->name('jenis_surat.list');
+        Route::post('/edit', 'edit')->name('jenis_surat.edit');
+        Route::post('/store', 'store')->name('jenis_surat.store');
+        Route::post('/delete', 'destroy')->name('jenis_surat.delete');
+    });
+
+    Route::prefix('surat_penomoran')->controller(App\Http\Controllers\Backend\ruang_pengurus\SuratPenomoranController::class)->group(function () {
+        Route::get('/', 'index')->name('surat_penomoran.index');
+        Route::get('/list', 'list')->name('surat_penomoran.list');
+        Route::post('/edit', 'edit')->name('surat_penomoran.edit');
+        Route::post('/store', 'store')->name('surat_penomoran.store');
+        Route::post('/delete', 'destroy')->name('surat_penomoran.delete');
+    });
+    
+    Route::prefix('surat_keluar')->controller(App\Http\Controllers\Backend\ruang_pengurus\SuratKeluarController::class)->group(function () {
+        Route::get('/', 'index')->name('surat_keluar.index');
+        Route::get('/list', 'list')->name('surat_keluar.list');
+        Route::get('/create', 'create')->name('surat_keluar.create');
+        Route::get('/edit/{id}', 'edit')->name('surat_keluar.edit');
+        Route::get('/detail/{id}', 'show')->name('surat_keluar.show');
+        Route::get('/print/{id}', 'print')->name('surat_keluar.print');
+        Route::post('/store', 'store')->name('surat_keluar.store');
+        Route::put('/update/{id}', 'update')->name('surat_keluar.update');
+        Route::post('/delete', 'destroy')->name('surat_keluar.delete');
+    });
+
+      Route::post('surat_keluar/generate-nomor', [App\Http\Controllers\Backend\ruang_pengurus\SuratKeluarController::class, 'generateNomor'])
+        ->name('surat_keluar.generate-nomor');
+
+
+    // Route::prefix('kategori_operasional')->controller(App\Http\Controllers\Backend\ruang_pengurus\KategoriOperasionalController::class)->group(function () {
+    //     Route::get('/', 'index')->name('kategori_operasional.index');
+    //     Route::get('/list', 'list')->name('kategori_operasional.list');
+    //     Route::post('/edit', 'edit')->name('kategori_operasional.edit');
+    //     Route::post('/store', 'store')->name('kategori_operasional.store');
+    //     Route::post('/delete', 'destroy')->name('kategori_operasional.delete');
+    // });
+    
+    // Route::prefix('operasional')->controller(App\Http\Controllers\Backend\ruang_pengurus\OperasionalController::class)->group(function () {
+    //     Route::get('/', 'index')->name('operasional.index');
+    //     Route::get('/list', 'list')->name('operasional.list');
+    //     Route::post('/edit', 'edit')->name('operasional.edit');
+    //     Route::post('/store', 'store')->name('operasional.store');
+    //     Route::post('/delete', 'destroy')->name('operasional.delete');
+    // });
     
 });

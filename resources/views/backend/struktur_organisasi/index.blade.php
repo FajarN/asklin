@@ -449,16 +449,12 @@
                 });
             });
 
-
-
-            // Delete confirmation
             $(document).on('click', '.delete-btn', function() {
                 let id = $(this).data('id');
                 $('#delete_id').val(id);
                 $('#deleteModal').modal('show');
             });
 
-            // Delete action
             $('#btnDelete').click(function() {
                 let id = $('#delete_id').val();
                 $('#btnDelete').text('Menghapus...').attr('disabled', true);

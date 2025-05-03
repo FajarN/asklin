@@ -130,7 +130,7 @@
                     <li class="dropdown @if (Request::url() == route('struktur_organisasi.index')) active @endif"><a class="nav-link"
                             href="{{ route('struktur_organisasi.index') }}"><i class="fas fa-user-md"></i></i> Struktur
                             Organisasi</a></li>
-                    {{-- <li class="dropdown">
+                    <li class="dropdown">
                         <a href="javascript:void(0)" class="nav-link has-dropdown"><i class="fas fa-regular fa-envelope"></i>
                             <span>Surat</span></a>
                         <ul class="dropdown-menu">
@@ -140,13 +140,11 @@
                                     href="{{ route('surat_penomoran.index') }}">Penomoran Surat</a></li>
                             <li class="dropdown @if (Request::url() == route('surat_keluar.index')) active @endif"><a class="nav-link"
                                     href="{{ route('surat_keluar.index') }}">Surat Keluar</a></li>
-                            <li class="dropdown @if (Request::url() == route('surat_tugas.index')) active @endif"><a class="nav-link"
-                                    href="{{ route('surat_tugas.index') }}">Surat Tugas</a></li>
-                            <li class="dropdown @if (Request::url() == route('surat_undangan.index')) active @endif"><a class="nav-link"
-                                    href="{{ route('surat_undangan.index') }}">Surat Undangan</a></li>
+                            {{-- <li class="dropdown @if (Request::url() == route('surat_undangan.index')) active @endif"><a class="nav-link"
+                                    href="{{ route('surat_undangan.index') }}">Surat Undangan</a></li> --}}
                         </ul>
                     </li>
-                    <li class="dropdown">
+                    {{-- <li class="dropdown">
                         <a href="javascript:void(0)" class="nav-link has-dropdown"><i class="fas fa-balance-scale"></i>
                             <span>Operasional</span></a>
                         <ul class="dropdown-menu">
