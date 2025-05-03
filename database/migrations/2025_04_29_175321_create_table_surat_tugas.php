@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('agenda', 255)->nullable();
             $table->string('hari', 20)->nullable();
             $table->date('tgl_agenda')->nullable();
-            $table->time('waktu_agenda')->nullable();
+            $table->string('waktu_agenda', 30)->nullable();
             $table->string('tempat_agenda', 255)->nullable();
             $table->string('created_by', 50);
             $table->string('updated_by', 50);

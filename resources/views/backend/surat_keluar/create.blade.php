@@ -171,8 +171,18 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="waktu_tgl_acara">Waktu dan Tanggal Acara</label>
-                                <input type="text" class="form-control" id="waktu_tgl_acara" name="waktu_tgl_acara">
+                                <label for="hari">Hari</label>
+                                <input type="text" class="form-control" id="hari" name="hari">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tgl_acara">Tanggal Acara</label>
+                                <input type="date" class="form-control" id="tgl_acara" name="tgl_acara">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="waktu_acara">Waktu Acara</label>
+                                <input type="text" class="form-control" id="waktu_acara" name="waktu_acara">
                             </div>
 
                             <div class="form-group">
@@ -186,14 +196,13 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="informasi_tambahan">Informasi Tambahan</label>
-                                <textarea class="form-control" id="informasi_tambahan" name="informasi_tambahan" rows="2"></textarea>
+                                <label for="salam_penutup">Salam Penutup</label>
+                                <input type="text" class="form-control" id="salam_penutup" name="salam_penutup">
                             </div>
 
                             <div class="form-group">
-                                <label for="salam_penutup">Salam Penutup</label>
-                                <input type="text" class="form-control" id="salam_penutup" name="salam_penutup"
-                                    placeholder="Contoh: Hormat Kami,">
+                                <label for="informasi_tambahan">Informasi Tambahan</label>
+                                <textarea class="form-control" id="informasi_tambahan" name="informasi_tambahan" rows="2"></textarea>
                             </div>
                         </div>
                     </div>
@@ -338,7 +347,9 @@ const templates = {
         isi_surat: "Dalam rangka agenda rapat rutin pengurus pusat Asosiasi Klinik Indonesia. Dengan ini Saya mengundang Bapak/Ibu Pengurus Pusat Asklin untuk hadir pada::",
         judul_acara: "Rapat Koordinasi Pengurus Pusat",
         tujuan_acara: "Untuk membahas perkembangan organisasi dan program kerja periode ini.",
-        waktu_tgl_acara: "Hari/tanggal: Sabtu, 15 Juni 2024\nPukul: 09.00 - 12.00 WIB",
+        hari: "",
+        tgl_acara: "",
+        waktu_acara: "",
         lokasi_acara: "Ruang Rapat Klinik Utama Taradita 48 \n Jl. Pinang Ranti II No.1A \n Kec. Makasar Jakarta Timur",
         agenda_acara: "1. Pembukaan\n2. Laporan Ketua Umum\n3. Evaluasi Program\n4. Pembahasan Rencana Kerja\n5. Lain-lain\n6. Penutup",
         informasi_tambahan: "Konfirmasi kehadiran dapat dilakukan melalui sekretariat atau WhatsApp ke nomor +62 838-1191-7367.",
@@ -351,7 +362,9 @@ const templates = {
         isi_surat: "Kami mengundang seluruh anggota organisasi untuk menghadiri rapat global yang akan membahas perkembangan terbaru organisasi kita.",
         judul_acara: "Rapat Global Tahunan Organisasi",
         tujuan_acara: "Menyampaikan laporan tahunan dan membahas rencana strategis organisasi untuk tahun depan.",
-        waktu_tgl_acara: "Hari/tanggal: Minggu, 30 Juni 2024\nPukul: 13.00 - 16.00 WIB",
+        hari: "",
+        tgl_acara: "",
+        waktu_acara: "",
         lokasi_acara: "Aula Utama\nGedung Serbaguna Organisasi\nJl. Contoh No. 123, Jakarta",
         agenda_acara: "1. Pembukaan\n2. Sambutan Ketua Umum\n3. Laporan Tahunan\n4. Diskusi Strategis\n5. Penutup",
         informasi_tambahan: "Diharapkan kehadiran seluruh anggota. Konfirmasi kehadiran paling lambat 3 hari sebelum acara.",

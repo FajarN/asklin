@@ -415,8 +415,20 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('surat_keluar.delete');
     });
 
-      Route::post('surat_keluar/generate-nomor', [App\Http\Controllers\Backend\ruang_pengurus\SuratKeluarController::class, 'generateNomor'])
+    Route::post('surat_keluar/generate-nomor', [App\Http\Controllers\Backend\ruang_pengurus\SuratKeluarController::class, 'generateNomor'])
         ->name('surat_keluar.generate-nomor');
+
+    Route::prefix('surat_tugas')->controller(App\Http\Controllers\Backend\ruang_pengurus\SuratTugasController::class)->group(function () {
+        Route::get('/', 'index')->name('surat_tugas.index');
+        Route::get('/list', 'list')->name('surat_tugas.list');
+        Route::get('/print/{id}', 'print')->name('surat_tugas.print');
+    });
+
+    Route::prefix('surat_undangan')->controller(App\Http\Controllers\Backend\ruang_pengurus\SuratUndanganController::class)->group(function () {
+        Route::get('/', 'index')->name('surat_undangan.index');
+        Route::get('/list', 'list')->name('surat_undangan.list');
+        Route::get('/print/{id}', 'print')->name('surat_undangan.print');
+    });
 
 
     // Route::prefix('kategori_operasional')->controller(App\Http\Controllers\Backend\ruang_pengurus\KategoriOperasionalController::class)->group(function () {

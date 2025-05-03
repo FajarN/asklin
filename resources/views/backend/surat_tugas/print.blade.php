@@ -12,13 +12,6 @@
             font-size:14px;
         }
 
-        .surat_undangan {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            padding-left: 30px;
-            padding-right: 60px;
-        }
-
         .header {
             text-align: center;
             margin-bottom: 20px;
@@ -101,8 +94,9 @@
                 diselenggarakan pada:</p>
             <table width="300" style="margin-left:40px;">
                 <tr>
-                    <th width="50" style="padding: 2px 4px;">Hari</th>
-                    <td style="padding: 2px 4px;">: {{ $suratKeluar->suratTugas->hari }}
+                    <th width="50" style="padding: 2px 4px;">Hari/Tanggal</th>
+                    <td style="padding: 2px 4px;">:
+                        {{ $suratKeluar->suratTugas->hari }}
                     </td>
                 </tr>
                 <tr>
@@ -121,57 +115,6 @@
             <p>Demikian surat ini dibuat agar dapat melaksanakan tugas dengan sebaik-baiknya. Atas perhatian
                 dan Kerjasama kami sampaikan terima kasih.
             </p>
-        </div>
-
-        @elseif(stripos($suratKeluar->jenisSurat->nama_jenis, 'undangan') !== false && $suratKeluar->suratUndangan)
-            <!-- Template Surat Undangan -->
-        <div class="surat_undangan">
-           <table style="border-collapse: collapse; width: 100%; font-size: 14px;">
-            <tr>
-                <td style="padding: 2px 4px;">Nomor</td>
-                <td style="padding: 2px 4px;">:</td>
-                <td style="padding: 2px 4px;">{{ $suratKeluar->no_surat }}</td>
-                <td style="padding: 2px 4px; text-align:right;">{{ $suratKeluar->tgl_surat_formatted }}</td>
-            </tr>
-            <tr>
-                <td style="padding: 2px 4px;">Perihal</td>
-                <td style="padding: 2px 4px;">:</td>
-                <td style="padding: 2px 4px;">{{ $suratKeluar->perihal }}</td>
-                <td style="padding: 2px 4px;"></td>
-            </tr>
-        </table>
-
-            <p style="font-size: 14px; font-weight: normal">
-                Kepada Yth,<br>
-                <strong>{{ $suratKeluar->suratUndangan->nama_penerima }}</strong><br>
-                Di-<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tempat<br><br>
-                {{ $suratKeluar->suratUndangan->salam_pembuka }}
-            </p>
-
-            <p style="font-size: 14px; font-weight: normal">{{ $suratKeluar->suratUndangan->isi_surat}}</p>
-
-           <table style="border-collapse: collapse; width: 100%; font-size: 14px;">
-            <tr>
-                <td style="padding: 2px 4px;">Hari,&nbsp;Tanggal</td>
-                <td style="padding: 2px 4px;">:</td>
-                <td style="padding: 2px 4px;"> {{ $suratKeluar->suratUndangan->hari }},
-                {{ $suratKeluar->suratUndangan->tgl_acara_formatted }}</td>
-            </tr>
-            <tr>
-              <td style="padding: 2px 4px;">Waktu</td>
-              <td style="padding: 2px 4px;">:</td>
-              <td style="padding: 2px 4px;">{{ $suratKeluar->suratUndangan->waktu_acara }},</td>
-            </tr>
-            <tr>
-                <td style="padding: 2px 4px;">Tempat</td>
-                <td style="padding: 2px 4px;">:</td>
-                <td style="padding: 2px 4px;">{{ $suratKeluar->suratUndangan->lokasi_acara}}</td>
-            </tr>
-        </table>
-
-          <p style="font-size: 14px; font-weight: normal">{{ $suratKeluar->suratUndangan->salam_penutup}}</p>
-          <p style="font-size: 14px; font-weight: normal">{{ $suratKeluar->suratUndangan->informasi_tambahan}}</p>
         </div>
 
         @else

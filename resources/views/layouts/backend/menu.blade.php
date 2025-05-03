@@ -135,13 +135,15 @@
                             <span>Surat</span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown @if (Request::url() == route('jenis_surat.index')) active @endif"><a class="nav-link"
-                                    href="{{ route('jenis_surat.index') }}">Jenis Surat</a></li>
+                                href="{{ route('jenis_surat.index') }}">Jenis Surat</a></li>
                             <li class="dropdown @if (Request::url() == route('surat_penomoran.index')) active @endif"><a class="nav-link"
                                     href="{{ route('surat_penomoran.index') }}">Penomoran Surat</a></li>
                             <li class="dropdown @if (Request::url() == route('surat_keluar.index')) active @endif"><a class="nav-link"
-                                    href="{{ route('surat_keluar.index') }}">Surat Keluar</a></li>
-                            {{-- <li class="dropdown @if (Request::url() == route('surat_undangan.index')) active @endif"><a class="nav-link"
-                                    href="{{ route('surat_undangan.index') }}">Surat Undangan</a></li> --}}
+                                href="{{ route('surat_keluar.index') }}">Surat Keluar</a></li>
+                            <li class="dropdown @if (Request::url() == route('surat_tugas.index')) active @endif"><a class="nav-link"
+                                href="{{ route('surat_tugas.index') }}">Surat Tugas</a></li>
+                            <li class="dropdown @if (Request::url() == route('surat_undangan.index')) active @endif"><a class="nav-link"
+                                href="{{ route('surat_undangan.index') }}">Surat Undangan</a></li>
                         </ul>
                     </li>
                     {{-- <li class="dropdown">

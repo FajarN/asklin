@@ -21,7 +21,9 @@ return new class extends Migration
             $table->string('salam_penutup', 100)->nullable();
             $table->string('judul_acara', 255)->nullable();
             $table->text('tujuan_acara')->nullable();
-            $table->string('waktu_tgl_acara', 100)->nullable();
+            $table->string('hari', 20)->nullable();
+            $table->date('tgl_acara')->nullable();
+            $table->string('waktu_acara', 40)->nullable();
             $table->text('lokasi_acara')->nullable();
             $table->text('agenda_acara')->nullable();
             $table->text('informasi_tambahan')->nullable();

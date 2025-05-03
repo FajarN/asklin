@@ -80,6 +80,10 @@ class SuratKeluarController extends Controller
         if ($suratKeluar->suratTugas && $suratKeluar->suratTugas->tgl_agenda) {
             $suratKeluar->suratTugas->tgl_agenda_formatted = $this->formatTanggalBulanTahun($suratKeluar->suratTugas->tgl_agenda);
         }
+
+        if ($suratKeluar->suratUndangan && $suratKeluar->suratUndangan->tgl_acara) {
+            $suratKeluar->suratUndangan->tgl_acara_formatted = $this->formatTanggalBulanTahun($suratKeluar->suratUndangan->tgl_acara);
+        }
         
         $pdf = Pdf::loadView('backend.surat_keluar.print', compact('suratKeluar'));
         return $pdf->stream('surat_keluar_'.$id.'.pdf');
@@ -346,7 +350,9 @@ class SuratKeluarController extends Controller
                     'salam_penutup' => $request->salam_penutup ?? '',
                     'judul_acara' => $request->judul_acara ?? '',
                     'tujuan_acara' => $request->tujuan_acara ?? '',
-                    'waktu_tgl_acara' => $request->waktu_tgl_acara ?? '',
+                    'hari' => $request->hari ?? '',
+                    'tgl_acara' => $request->tgl_acara ?? '',
+                    'waktu_acara' => $request->waktu_acara ?? '',
                     'lokasi_acara' => $request->lokasi_acara ?? '',
                     'agenda_acara' => $request->agenda_acara ?? '',
                     'informasi_tambahan' => $request->informasi_tambahan ?? ''

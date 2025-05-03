@@ -23,7 +23,7 @@
                         <div class="card-body">
                             <div class="form-group">
 
-                              <input type="hidden" id="no_surat" name="no_surat" value="{{ $suratKeluar->no_surat }}">
+                                <input type="hidden" id="no_surat" name="no_surat" value="{{ $suratKeluar->no_surat }}">
 
                                 <div class="form-group">
                                     <label for="id_jenis_surat">Jenis Surat</label>
@@ -194,10 +194,24 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="waktu_tgl_acara">Waktu dan Tanggal Acara</label>
-                                    <input type="text" class="form-control" id="waktu_tgl_acara"
-                                        name="waktu_tgl_acara"
-                                        value="{{ $suratKeluar->suratUndangan->waktu_tgl_acara ?? '' }}">
+                                    <label for="hari">Hari</label>
+                                    <input type="text" class="form-control" id="hari"
+                                        name="hari"
+                                        value="{{ $suratKeluar->suratUndangan->hari ?? '' }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="tgl_acara">Tanggal Acara</label>
+                                    <input type="date" class="form-control" id="tgl_acara"
+                                        name="tgl_acara"
+                                        value="{{ $suratKeluar->suratUndangan->tgl_acara ?? '' }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="waktu_acara">Waktu  Acara</label>
+                                    <input type="text" class="form-control" id="waktu_acara"
+                                        name="waktu_acara"
+                                        value="{{ $suratKeluar->suratUndangan->waktu_acara ?? '' }}">
                                 </div>
 
                                 <div class="form-group">
@@ -234,12 +248,10 @@
 @push('js')
     <script>
         $(document).ready(function() {
-            // Tampilkan form khusus sesuai jenis surat yang dipilih
             $('#id_jenis_surat').change(function() {
                 showSpecificForm($(this).find('option:selected').text());
             });
 
-            // Tambah petugas di surat tugas
             $('#btn_add_petugas').click(function() {
                 var newPetugas = $('.petugas-item').first().clone();
                 newPetugas.find('input').val('');
@@ -249,17 +261,13 @@
                 $('#petugas_container').append(newPetugas);
             });
 
-            // Hapus petugas di surat tugas
             $(document).on('click', '.btn-remove-petugas', function() {
                 $(this).closest('.petugas-item').remove();
             });
 
-            // Fungsi untuk menampilkan form khusus sesuai jenis surat
             function showSpecificForm(jenisSuratText) {
-                // Reset tampilan form khusus
                 $('#form_surat_tugas, #form_surat_undangan').hide();
 
-                // Tampilkan form sesuai jenis surat
                 if (jenisSuratText.toLowerCase().includes('tugas')) {
                     $('#form_surat_tugas').show();
                 } else if (jenisSuratText.toLowerCase().includes('undangan')) {
