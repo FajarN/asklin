@@ -15,10 +15,18 @@ class Berita extends Model
         'id_kategori',
         'judul',
         'path',
+        'tanggal',
         'konten',
+        'lokasi',
+        'thumb',
         'status',
-        'gambar'
+        'kode_qr',
     ];
+
+    public function images()
+    {
+        return $this->hasMany(BeritaImage::class, 'berita_id');
+    }
 
     protected static function booted()
     {

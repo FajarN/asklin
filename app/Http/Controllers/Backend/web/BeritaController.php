@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Backend\web;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\{Berita, BeritaKategori};
+use App\Models\{BeritaKategori, Berita, BeritaImage};
 use DataTables;
 use Illuminate\Support\Str;
 use Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class BeritaController extends Controller
 {
@@ -29,39 +31,25 @@ class BeritaController extends Controller
         if ($request->ajax()) {
             $data = Berita::select('berita.*', 'berita_kategori.nama')
                 ->join('berita_kategori', 'berita_kategori.id', '=', 'berita.id_kategori')
-                ->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
+                ->when(Auth::user()->hasRole('Admin Cabang'), function ($query) {
                     $query->where('berita.id_kota', Auth::user()->kota);
                 })
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
+                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) {
                     $query->where('berita.id_provinsi', Auth::user()->provinsi);
                 })
-                ->latest()->get();
+                ->latest()
+                ->get();
+
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('search'))) {
                         $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            if (Str::contains(Str::lower($data['judul']), Str::lower($request->get('search')))){
-                                return true;
-                            }
-                            return false;
+                            return Str::contains(Str::lower($data['judul']), Str::lower($request->get('search')));
                         });
                     }
                 })
                 ->addIndexColumn()
-                ->addColumn('action', function($data){
-                    $actionBtn = '
-                            <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
-                            
-                               <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 28px, 0px); top: 0px; left: 0px; will-change: transform;">
-                               
-                              <a href="'.route("berita.edit", $data["id"]).'" class="dropdown-item has-icon"><i class="fas fa-edit"></i> Edit</a>
-                                    <div class="dropdown-divider"></div>
-                                    
-                              <a href="javascript:void(0)" onclick="deleteu('.$data["id"].')" class="dropdown-item has-icon text-danger" ><i class="fas fa-trash-alt"></i>Hapus</a>
-                        </div>
-                    ';
-                    return $actionBtn;
-                })
+                ->addColumn('action', 'backend.berita.action')
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -75,84 +63,224 @@ class BeritaController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $rules = [
             'judul' => 'required',
-            'konten' => 'required',
-            'path' => 'required',
             'id_kategori' => 'required',
+            'konten' => 'required',
+            'tanggal' => 'required|date',
             'status' => 'required',
-            'gambar' => 'mimes:jpg,jpeg,png|max:2000'
-        ]);
+            'thumb' => 'required|mimes:jpg,jpeg,png|max:2000',
+            'gambar.*' => 'mimes:jpg,jpeg,png|max:2000',
+        ];
 
-        if($request->hasFile('gambar')) {
-            $destinationPath = 'assets/images/berita/';
-            $img_ext = $request->file('gambar')->getClientOriginalExtension();
+        $messages = [
+            'judul.required' => 'Judul berita tidak boleh kosong',
+            'id_kategori.required' => 'Kategori berita harus dipilih',
+            'konten.required' => 'Konten berita tidak boleh kosong',
+            'tanggal.required' => 'Tanggal berita harus diisi',
+            'tanggal.date' => 'Format tanggal tidak valid',
+            'status.required' => 'Status berita harus dipilih',
+            'thumb.required' => 'Thumbnail berita harus diupload',
+            'thumb.mimes' => 'Thumbnail harus berupa file gambar (jpg, jpeg, png)',
+            'thumb.max' => 'Ukuran thumbnail maksimal 2MB',
+            'gambar.*.mimes' => 'Gambar harus berupa file gambar (jpg, jpeg, png)',
+            'gambar.*.max' => 'Ukuran gambar maksimal 2MB per file',
+        ];
+
+        $this->validate($request, $rules, $messages);
+        
+        try {
+
+            // Handle thumbnail upload
+            $destinationPath = 'assets/images/berita/thumbnails';
+            $img_ext = $request->file('thumb')->getClientOriginalExtension();
             $filename = 'berita-' . time() . '.' . $img_ext;
-            $path = $request->file('gambar')->move($destinationPath, $filename);
-        }else{
-            $filename = NULL;
+            $path = $request->file('thumb')->move($destinationPath, $filename);
+            Log::info('Thumbnail berhasil diunggah', ['filename' => $filename]);
+
+            $kode_qr = $this->generateQR();
+
+            $berita = Berita::create([
+                'id_kategori' => $request->id_kategori,
+                'judul' => $request->judul,
+                'path' => Str::slug($request->judul),
+                'tanggal' => $request->tanggal,
+                'konten' => $request->konten,
+                'lokasi' => $request->lokasi ?? null,
+                'thumb' => $filename,
+                'status' => $request->status,
+                'kode_qr' => $kode_qr,
+                'created_by' => Auth::id(),
+            ]);
+
+            // Handle multiple images upload
+            if ($request->hasFile('gambar')) {
+                foreach ($request->file('gambar') as $file) {
+                    $destinationPath = 'assets/images/berita/';
+                    $filename = 'berita-' . time() . '-' . $file->getClientOriginalName();
+                    $file->move($destinationPath, $filename);
+
+                    BeritaImage::create([
+                        'berita_id' => $berita->id,
+                        'gambar' => $filename,
+                    ]);
+                }
+            }
+
+          return redirect()->route('berita.index')->with('success', 'Berita berhasil disimpan.');
+
+
+        } catch (\Exception $e) {
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
-
-        $data = Berita::create([
-            'id_kategori' => $request->id_kategori,
-            'judul' => $request->judul,
-            'konten' => $request->konten,
-            'path' => $request->path,
-            'status' => $request->status,
-            'gambar' => $filename
-        ]);
-
-        return redirect()->route('berita.edit', $data->id)->with('success','Berita berhasil dibuat');
     }
 
-    public function edit(Request $request)
+    public static function generateQR(): string
     {
-        $data = Berita::find($request->id);
-        $kategori = BeritaKategori::all();
+        $uniqueData = uniqid('', true) . now()->timestamp . rand(1000, 9999); 
+        $hash = hash('sha256', $uniqueData);
 
-        return view('backend.berita.edit', compact('data', 'kategori'));
+        return $hash;
     }
+
+    public function edit($id)
+    {
+        $kategori = BeritaKategori::get();
+        $data = Berita::with('images')->findOrFail($id);
+        return view('backend.berita.edit', compact('data','kategori'));
+    }
+    
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
+        $rules = [
             'judul' => 'required',
-            'konten' => 'required',
-            'path' => 'required',
             'id_kategori' => 'required',
+            'konten' => 'required',
+            'tanggal' => 'required|date',
             'status' => 'required',
-            'gambar' => 'mimes:jpg,jpeg,png|max:2000'
-        ]);
+            'thumb' => 'nullable|mimes:jpg,jpeg,png|max:2000',
+            'gambar.*' => 'mimes:jpg,jpeg,png|max:2000',
+        ];
 
-        if($request->hasFile('gambar')) {
-            $destinationPath = 'assets/images/berita/';
-            $img_ext = $request->file('gambar')->getClientOriginalExtension();
-            $filename = 'berita-' . time() . '.' . $img_ext;
-            $path = $request->file('gambar')->move($destinationPath, $filename);
-        }else{
-            $berita = Berita::find($id);
-            $filename = $berita->gambar;
+        $messages = [
+            'judul.required' => 'Judul berita tidak boleh kosong',
+            'id_kategori.required' => 'Kategori berita harus dipilih',
+            'konten.required' => 'Konten berita tidak boleh kosong',
+            'tanggal.required' => 'Tanggal berita harus diisi',
+            'tanggal.date' => 'Format tanggal tidak valid',
+            'status.required' => 'Status berita harus dipilih',
+            'thumb.mimes' => 'Thumbnail harus berupa file gambar (jpg, jpeg, png)',
+            'thumb.max' => 'Ukuran thumbnail maksimal 2MB',
+            'gambar.*.mimes' => 'Gambar harus berupa file gambar (jpg, jpeg, png)',
+            'gambar.*.max' => 'Ukuran gambar maksimal 2MB per file',
+        ];
+
+        $this->validate($request, $rules, $messages);
+
+        try {
+            $berita = Berita::findOrFail($id);
+
+            // Handle thumbnail update
+            if ($request->hasFile('thumb')) {
+                $fileThumb = $request->file('thumb');
+                $destinationPath = 'assets/images/berita/thumbnails/';
+                $filename = 'thumb-' . time() . '-' . $fileThumb->getClientOriginalName();
+                $fileThumb->move($destinationPath, $filename);
+                
+                // Delete old thumbnail if exists
+                if ($berita->thumb && file_exists(public_path('assets/images/berita/thumbnails/' . $berita->thumb))) {
+                    unlink(public_path('assets/images/berita/thumbnails/' . $berita->thumb));
+                }
+            } else {
+                $filename = $berita->thumb;
+            }
+
+            $berita->update([
+                'id_kategori' => $request->id_kategori,
+                'judul' => $request->judul,
+                'path' => Str::slug($request->judul),
+                'tanggal' => $request->tanggal,
+                'konten' => $request->konten,
+                'lokasi' => $request->lokasi ?? null,
+                'thumb' => $filename,
+                'status' => $request->status,
+                'updated_by' => Auth::id(),
+            ]);
+
+            // Handle new images upload
+            if ($request->hasFile('gambar')) {
+                foreach ($request->file('gambar') as $file) {
+                    $destinationPath = 'assets/images/berita/';
+                    $filename = 'berita-' . time() . '-' . $file->getClientOriginalName();
+                    $file->move($destinationPath, $filename);
+
+                    BeritaImage::create([
+                        'berita_id' => $berita->id,
+                        'gambar' => $filename,
+                    ]);
+                }
+            }
+
+            // Handle images deletion
+            if ($request->has('hapus_gambar')) {
+                foreach ($request->hapus_gambar as $imageId) {
+                    $image = BeritaImage::findOrFail($imageId);
+                    if (file_exists(public_path('assets/images/berita/' . $image->gambar))) {
+                        unlink(public_path('assets/images/berita/' . $image->gambar));
+                    }
+                    $image->delete();
+                }
+            }
+
+             return redirect()->route('berita.index')->with('success', 'Berita berhasil disimpan.');
+
+        } catch (\Exception $e) {
+            Log::error('Terjadi kesalahan saat memperbarui berita', ['error' => $e->getMessage()]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
-
-        $data = Berita::where('id', $id)->update([
-            'id_kategori' => $request->id_kategori,
-            'judul' => $request->judul,
-            'konten' => $request->konten,
-            'path' => $request->path,
-            'status' => $request->status,
-            'gambar' => $filename
-        ]);
-
-        return redirect()->route('berita.edit', $id)->with('success','Berita berhasil dibuat');
     }
 
     public function destroy(Request $request)
     {
-        $data = Berita::where('id', $request->id)->first();
-        if(file_exists(public_path() .  '/assets/images/berita/' . $data->gambar)) {
-            unlink(public_path() .  '/assets/images/berita/' . $data->gambar);
+        try {
+            $berita = Berita::findOrFail($request->id);
+
+            // Delete thumbnail
+            $thumbPath = public_path('assets/images/berita/thumbnails/' . $berita->thumb);
+            if (!empty($berita->thumb) && file_exists($thumbPath)) {
+                unlink($thumbPath);
+            }
+
+            // Delete all related images
+            $images = BeritaImage::where('berita_id', $berita->id)->get();
+            foreach ($images as $image) {
+                $imagePath = public_path('assets/images/berita/' . $image->gambar);
+                if (!empty($image->gambar) && file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+                $image->delete();
+            }
+
+            $berita->delete();
+
+            return redirect()->route('berita.index')->with('success', 'Berita berhasil dihapus.');
+
+        } catch (\Exception $e) {
+            Log::error('Terjadi kesalahan saat menghapus berita', ['error' => $e->getMessage()]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
-        $data->delete();
-        return Response()->json($data);
     }
 }
