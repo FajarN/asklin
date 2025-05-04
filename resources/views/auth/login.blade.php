@@ -9,7 +9,7 @@
 					<div class="vertical-middle">
 						<div class="container-fluid py-5 mx-auto">
 							<div class="center">
-								<a class="d-none d-none d-sm-block" href="{{ route('konas') }}"><img src="{{ asset('images/file/logo_asklin.png') }}" alt="Canvas Logo" width="100"></a>
+								<a class="d-none d-none d-sm-block" href="{{ route('home') }}"><img src="{{ asset('assets/images/logo_asklin.png') }}" alt="Logo" width="100"></a>
 							</div>
 							<br>
 
