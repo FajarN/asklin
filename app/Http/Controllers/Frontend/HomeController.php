@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{Berita, Anggota, Fasilitas, FasilitasKlinik, SDM, KategoriSDM, RumahSakit, Asuransi, FotoKlinik, Pembayaran, PembayaranKategori, Sertifikat, Event, Galery, PendaftaranEvent};
+use App\Models\{Berita, BeritaImage, BeritaVisit, Anggota, Fasilitas, FasilitasKlinik, SDM, KategoriSDM, RumahSakit, Asuransi, FotoKlinik, Pembayaran, PembayaranKategori, Sertifikat, Event, Galery, PendaftaranEvent};
 use Laravolt\Indonesia\Models\Province;
 use Auth;
 use DataTables;
@@ -99,21 +99,36 @@ class HomeController extends Controller
         $title = "Berita";
         $description = "Berita terbaru seputar dunia kesehatan";
 
-        $berita = Berita::select('berita.*', 'berita_kategori.nama')
+        $data = Berita::select('berita.*', 'berita_kategori.nama')
             ->join('berita_kategori', 'berita_kategori.id', '=', 'berita.id_kategori')
             ->where('berita.status', '1')
             ->orderBy('id', 'DESC')->paginate(10);
 
-        return view('frontend.home.berita', compact('title', 'description', 'berita'));
+        return view('frontend.home.berita', compact('title', 'description', 'data'));
     }
 
-    public function beritaDetail($slug)
+    public function beritaDetail($path)
     {
-        $berita = Berita::where('path', $slug)->first();
+        $berita = Berita::where('path', $path)->firstOrFail();
         $title = $berita->judul;
         $desc = $berita->konten;
+        
+        $recentVisit = BeritaVisit::where('berita_id', $berita->id)
+            ->where('ip_address', request()->ip())
+            ->where('created_at', '>', now()->subDay())
+            ->exists();
 
-        return view('frontend.home.beritadetail', compact('title', 'desc', 'berita'));
+        if (!$recentVisit) {
+            BeritaVisit::create([
+                'berita_id' => $berita->id,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+        }
+
+        $images = BeritaImage::where('berita_id', $berita->id)->get();
+        
+        return view('frontend.home.beritadetail', compact('title', 'desc', 'berita', 'images'));
     }
 
     public function event(Request $request)

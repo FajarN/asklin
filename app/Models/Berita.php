@@ -28,6 +28,21 @@ class Berita extends Model
         return $this->hasMany(BeritaImage::class, 'berita_id');
     }
 
+    public function visits()
+    {
+        return $this->hasMany(BeritaVisit::class);
+    }
+
+    public function getTotalVisitsAttribute()
+    {
+        return $this->visits()->count();
+    }
+
+    public function getUniqueVisitsAttribute()
+    {
+        return $this->visits()->distinct('ip_address')->count('ip_address');
+    }
+
     protected static function booted()
     {
         static::creating(function ($model) {

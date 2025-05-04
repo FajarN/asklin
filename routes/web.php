@@ -33,7 +33,7 @@ Route::get('/latar_belakang', [App\Http\Controllers\Frontend\HomeController::cla
 Route::get('/pengurus_pusat', [App\Http\Controllers\Frontend\HomeController::class, 'penguruspusat'])->name('penguruspusat');
 Route::get('/agenda_kegiatan', [App\Http\Controllers\Frontend\HomeController::class, 'agendakegiatan'])->name('agendakegiatan');
 Route::get('/berita', [App\Http\Controllers\Frontend\HomeController::class, 'berita'])->name('berita');
-Route::get('/berita/{slug}', [App\Http\Controllers\Frontend\HomeController::class, 'beritaDetail'])->name('berita.detail');
+Route::get('/berita/{path}', [App\Http\Controllers\Frontend\HomeController::class, 'beritaDetail'])->name('berita.detail');
 Route::get('/event-asklin', [App\Http\Controllers\Frontend\HomeController::class, 'event'])->name('event_asklin');
 Route::get('/event-asklin/{slug}', [App\Http\Controllers\Frontend\HomeController::class, 'eventDetail'])->name('event_asklin.detail');
 Route::get('/galery', [App\Http\Controllers\Frontend\HomeController::class, 'galery'])->name('galery');
