@@ -36,7 +36,7 @@
                                     <div class="post-content">
 
                                         <h3 class="font-weight-semibold text-5 line-height-6 mt-3 mb-2"><a
-                                                href="blog-post.html">{{ $berita->judul }}</a></h3>
+                                                href="">{{ $berita->judul }}</a></h3>
                                         <p>{{ Str::limit(strip_tags($berita->konten), 150) }}</p>
 
                                         <div class="post-meta">

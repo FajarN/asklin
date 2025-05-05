@@ -133,6 +133,15 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
             Route::post('/store', 'store')->name('permissions.store');
             Route::post('/delete', 'destroy')->name('permissions.delete');
         });
+
+        Route::prefix('slider')->controller(App\Http\Controllers\Backend\web\SliderController::class)->group(function () {
+        Route::get('/', 'index')->name('slider.index');
+        Route::get('/list', 'list')->name('slider.list');
+        Route::post('/edit', 'edit')->name('slider.edit');
+        Route::post('/store', 'store')->name('slider.store');
+        Route::post('/delete', 'destroy')->name('slider.delete');
+        });   
+
         Route::prefix('berita_kategori')->controller(App\Http\Controllers\Backend\web\BeritaKategoriController::class)->group(function () {
             Route::get('/', 'index')->name('berita_kategori.index');
             Route::get('/list', 'list')->name('berita_kategori.list');

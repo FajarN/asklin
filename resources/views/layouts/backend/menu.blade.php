@@ -182,6 +182,10 @@
                         class="fas fa-folder-open"></i><span>Website</span></a>
                 <ul class="dropdown-menu">
                     @can('events-list')
+                        <li class="dropdown @if (Request::url() == route('slider.index')) active @endif"><a
+                                href="{{ route('slider.index') }}">Slider</a></li>
+                    @endcan
+                    @can('events-list')
                         <li class="dropdown @if (Request::url() == route('events.index')) active @endif"><a
                                 href="{{ route('events.index') }}">Event</a></li>
                     @endcan
