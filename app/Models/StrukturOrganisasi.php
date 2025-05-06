@@ -17,6 +17,9 @@ class StrukturOrganisasi extends Model
         'nama_struktur',
         'periode',
         'tgl_muscab',
+        'alamat_sekretariat',
+        'email_sekretariat',
+        'telp_sekretariat',
         'status',
     ];
 

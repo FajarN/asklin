@@ -128,6 +128,9 @@ class StrukturOrganisasiController extends Controller
                 'nama_struktur' => $request->nama_struktur,
                 'periode' => $request->periode,
                 'tgl_muscab' => $request->tgl_muscab,
+                'alamat_sekretariat' => $request->alamat_sekretariat,
+                'email_sekretariat' => $request->email_sekretariat,
+                'telp_sekretariat' => $request->telp_sekretariat,
                 'status' => $request->status,
             ];
 

@@ -148,6 +148,32 @@
                                         </div>
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="alamat_sekretariat">Alamat Sekretariat<span class="text-danger">*</span></label>
+                                                <textarea type="text" class="form-control" id="alamat_sekretariat"
+                                                    name="alamat_sekretariat"  required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="email_sekretariat">Email <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="email" class="form-control" id="email_sekretariat"
+                                                    name="email_sekretariat" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="telp_sekretariat">Telp <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="number" class="form-control" id="telp_sekretariat"
+                                                    name="telp_sekretariat" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="form-group">
                                         <label for="status">Status <span class="text-danger">*</span></label>
                                         <select class="form-control" id="status" name="status" required>
@@ -373,12 +399,14 @@
                         $('#nama_struktur').val(response.data.nama_struktur);
                         $('#tingkatan_pengurus').val(response.data.id_tingkatan_pengurus);
                         $('#periode').val(response.data.periode);
-
                         var tglMuscab = new Date(response.data.tgl_muscab);
                         var formattedDate = tglMuscab.getFullYear() + '-' +
                             String(tglMuscab.getMonth() + 1).padStart(2, '0') + '-' +
                             String(tglMuscab.getDate()).padStart(2, '0');
                         $('#tgl_muscab').val(formattedDate);
+                        $('#alamat_sekretariat').val(response.data.alamat_sekretariat);
+                        $('#email_sekretariat').val(response.data.email_sekretariat);
+                        $('#telp_sekretariat').val(response.data.telp_sekretariat);
 
                         $('#status').val(response.data.status);
 
