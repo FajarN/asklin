@@ -197,6 +197,10 @@
                         <li class="dropdown @if (Request::url() == route('galery.index')) active @endif"><a
                                 href="{{ route('galery.index') }}">Gallery</a></li>
                     @endcan
+                    @can('galery')
+                        <li class="dropdown @if (Request::url() == route('kontak.index')) active @endif"><a
+                                href="{{ route('kontak.index') }}">Kontak</a></li>
+                    @endcan
                 </ul>
             </li>
 

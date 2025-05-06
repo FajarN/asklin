@@ -38,7 +38,7 @@ Route::get('/event-asklin', [App\Http\Controllers\Frontend\HomeController::class
 Route::get('/event-asklin/{slug}', [App\Http\Controllers\Frontend\HomeController::class, 'eventDetail'])->name('event_asklin.detail');
 Route::get('/galery', [App\Http\Controllers\Frontend\HomeController::class, 'galery'])->name('galery');
 Route::get('/kontak', [App\Http\Controllers\Frontend\HomeController::class, 'kontak'])->name('kontak');
-
+Route::post('/kontak/store', [App\Http\Controllers\Frontend\HomeController::class, 'storeKontak'])->name('storeKontak')->middleware('limit.contact');
 // khusus konas
 Route::get('/konas', [App\Http\Controllers\Frontend\KonasController::class, 'index'])->name('konas');
 Route::get('/konas/profil_acara', [App\Http\Controllers\Frontend\KonasController::class, 'profil'])->name('konas.profil');
@@ -439,6 +439,12 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/', 'index')->name('surat_undangan.index');
         Route::get('/list', 'list')->name('surat_undangan.list');
         Route::get('/print/{id}', 'print')->name('surat_undangan.print');
+    });
+
+    Route::prefix('kontak')->controller(App\Http\Controllers\Backend\web\KontakController::class)->group(function () {
+        Route::get('/', 'index')->name('kontak.index');
+        Route::get('/list', 'list')->name('kontak.list');
+        Route::post('/delete', 'destroy')->name('kontak.delete');
     });
 
 

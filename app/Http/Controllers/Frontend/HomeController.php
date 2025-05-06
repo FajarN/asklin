@@ -10,6 +10,7 @@ use App\Models\StrukturOrganisasi;
 use App\Models\StrukturKelompokPengurus;
 use App\Models\StrukturPengurus;
 use App\Models\TingkatanPengurus;
+use App\Models\Kontak;
 use Laravolt\Indonesia\Models\Province;
 use Laravolt\Indonesia\Models\City;
 use Auth;
@@ -252,6 +253,39 @@ class HomeController extends Controller
 
         return view('frontend.home.kontak', compact('title', 'description'));
     }
+
+     public function storeKontak(Request $request)
+    {
+        $request->validate([
+            'nama'  => 'required|string|max:255',
+            'email' => 'required|email',
+            'pesan' => 'required|string|max:1000', 
+        ]);
+
+        $today = now()->startOfDay();
+        $jumlahPesan = Kontak::where('email', $request->email)
+            ->where('created_at', '>=', $today)
+            ->count();
+
+        if ($jumlahPesan >= 2) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mohon maaf anda sudah mengirim terlalu banyak pesan hari ini'
+            ], 429); 
+        }
+
+        Kontak::create([
+            'nama'  => $request->nama,
+            'email' => $request->email,
+            'pesan' => $request->pesan,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pesan kamu berhasil dikirim.'
+        ]);
+    }
+
 
     public function UserProfile()
     {

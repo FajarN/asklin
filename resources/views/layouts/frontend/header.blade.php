@@ -116,9 +116,6 @@
                                         <div>Pendahuluan</div>
                                     </a>
                                 </li>
-                                {{-- <li class="menu-item">
-                                    <a class="menu-link" href="{{ route('konas.sambutan_gubernur_aceh') }}"><div>Sambutan Gubernur Aceh</div></a>
-                                </li> --}}
                                 <li class="menu-item">
                                     <a class="menu-link" href="{{ route('konas.sambutan_ketum') }}">
                                         <div>Sambutan Ketua Umum</div>

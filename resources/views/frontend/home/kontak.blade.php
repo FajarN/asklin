@@ -1,7 +1,9 @@
 @extends('layouts.frontend.layout')
 
+
 @section('content')
     <section id="content">
+
         <div class="content-wrap">
 
             <div class="container clearfix">
@@ -61,8 +63,8 @@
 
                             <div class="form-result"></div>
 
-                            <form class="mb-0" id="template-contactform" name="template-contactform"
-                                action="include/form.php" method="post">
+                            <form class="mb-0" id="formKontak">
+                                @csrf
 
                                 <div class="form-process">
                                     <div class="css3-spinner">
@@ -72,26 +74,23 @@
 
                                 <div class="row">
                                     <div class="col-12 form-group mb-4">
-                                        <label class="nott ls0" for="template-contactform-name">Nama Lengkap
+                                        <label class="nott ls0" for="nama">Nama Lengkap
                                             <small>*</small></label>
-                                        <input type="text" id="template-contactform-name"
-                                            name="template-contactform-name" value=""
+                                        <input type="text" id="nama" name="nama" value=""
                                             class="rounded-pill form-control required" />
                                     </div>
 
                                     <div class="col-12 form-group mb-4">
-                                        <label class="nott ls0" for="template-contactform-email">Email
+                                        <label class="nott ls0" for="email">Email
                                             <small>*</small></label>
-                                        <input type="email" id="template-contactform-email"
-                                            name="template-contactform-email" value=""
+                                        <input type="email" id="email" name="email" value=""
                                             class="required email rounded-pill form-control" />
                                     </div>
 
                                     <div class="col-12 form-group mb-4">
-                                        <label class="nott ls0" for="template-contactform-message">Pesan
+                                        <label class="nott ls0" for="pesan">Pesan
                                             <small>*</small></label>
-                                        <textarea class="required rounded-5 form-control" id="template-contactform-message" name="template-contactform-message"
-                                            rows="6" cols="30"></textarea>
+                                        <textarea class="required rounded-5 form-control" id="pesan" name="pesan" rows="6" cols="30"></textarea>
                                     </div>
 
                                     <div class="col-12 form-group mb-4 d-none">
@@ -103,8 +102,7 @@
                                     <div class="col-12 form-group mb-4">
                                         <button
                                             class="button button-large rounded-pill bg-color px-4 py-2 h-op-09 op-ts m-0"
-                                            type="submit" id="template-contactform-submit"
-                                            name="template-contactform-submit" value="submit">Kirim Pesan</button>
+                                            type="submit" value="submit">Kirim Pesan</button>
                                     </div>
                                 </div>
 
@@ -143,4 +141,49 @@
             </div>
 
         </div>
-</section @endsection
+    </section @endsection @push('css') @endpush @push('js') <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById('formKontak');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+
+                fetch("{{ route('storeKontak') }}", {
+                        method: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: data.message
+                            });
+                            form.reset();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: data.message || 'Terjadi kesalahan.'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: 'Terjadi kesalahan saat mengirim data.'
+                        });
+                    });
+            });
+        });
+    </script>
+@endpush
