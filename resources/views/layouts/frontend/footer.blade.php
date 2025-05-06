@@ -1,4 +1,4 @@
-a<footer id="footer" class="border-0 bg-white">
+<footer id="footer" class="border-0 bg-white">
     <div class="container">
         <div class="footer-widgets-wrap pb-5 clearfix">
 

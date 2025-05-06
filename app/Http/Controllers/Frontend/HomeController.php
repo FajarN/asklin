@@ -4,8 +4,14 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{Berita, BeritaImage, BeritaVisit, Anggota, Fasilitas, FasilitasKlinik, SDM, KategoriSDM, RumahSakit, Asuransi, FotoKlinik, Pembayaran, PembayaranKategori, Sertifikat, Event, Galery, PendaftaranEvent};
+use Illuminate\Support\Facades\DB;
+use App\Models\{Berita, BeritaImage, Slider, BeritaVisit, Anggota, Fasilitas, FasilitasKlinik, SDM, KategoriSDM, RumahSakit, Asuransi, FotoKlinik, Pembayaran, PembayaranKategori, Sertifikat, Event, Galery, PendaftaranEvent};
+use App\Models\StrukturOrganisasi;
+use App\Models\StrukturKelompokPengurus;
+use App\Models\StrukturPengurus;
+use App\Models\TingkatanPengurus;
 use Laravolt\Indonesia\Models\Province;
+use Laravolt\Indonesia\Models\City;
 use Auth;
 use DataTables;
 use Spipu\Html2Pdf\Html2Pdf;
@@ -13,15 +19,62 @@ use Spipu\Html2Pdf\Exception\Html2PdfException;
 use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 use Carbon\Carbon;
 
+
 class HomeController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
         $title = "Asosiasi Klinik Indonesia";
         $description = "Asklin adalah asosiasi klinik seluruh indonesia.";
 
-        return view('frontend.home.index', compact('title', 'description'));
+        $sliders = Slider::all();
+        $data = Berita::latest()->limit(3)->get();
+        $galery = Galery::select('galery.*', 'a.name')
+            ->join('users as a', 'a.id', '=', 'galery.created_by')
+            ->where('galery.status', '1')
+            ->latest()->get();
+
+        $tingkatan = TingkatanPengurus::all();
+        $provinsi = DB::table('indonesia_provinces')->pluck('name', 'code');
+        $kota = DB::table('indonesia_cities')->pluck('name', 'code');
+
+        $query = DB::table('struktur_organisasi as a')
+            ->select(
+                'a.*',
+                'd.name as kota',
+                'e.name as provinsi'
+            )
+            ->leftJoin('indonesia_cities as d', 'd.code', '=', 'a.id_kota')
+            ->leftJoin('indonesia_provinces as e', 'e.code', '=', 'a.id_provinsi');
+
+        if ($request->filled('tingkatan')) {
+            $query->where('a.id_tingkatan_pengurus', $request->tingkatan);
+        }
+
+        if ($request->filled('provinsi')) {
+            $query->where('a.id_provinsi', $request->provinsi);
+        }
+
+        if ($request->filled('kota')) {
+            $query->where('a.id_kota', $request->kota);
+        }
+
+        $struktur = $query->get();
+
+        return view('frontend.home.index', compact(
+            'title', 
+            'description', 
+            'sliders',
+            'data',
+            'galery',
+            'tingkatan',
+            'provinsi',
+            'kota',
+            'struktur'
+        ));
     }
+
 
     public function pendaftaran_event()
     {
@@ -83,7 +136,33 @@ class HomeController extends Controller
         $title = "Pengurus Pusat";
         $description = "Pengurus pusat asklin.";
 
-        return view('frontend.home.penguruspusat', compact('title', 'description'));
+        // Dapatkan ID tingkatan pengurus pusat terlebih dahulu
+        $tingkatanPengurusPusat = TingkatanPengurus::where('nama_tingkatan', 'Pengurus Pusat')->first();
+
+        if (!$tingkatanPengurusPusat) {
+            abort(404, 'Tingkatan Pengurus Pusat tidak ditemukan');
+        }
+
+        $struktur = StrukturOrganisasi::query()
+                ->select(
+                    'a.*',
+                    'd.name as kota_nama',
+                    'e.name as provinsi_nama'
+                )
+                ->from('struktur_organisasi as a')
+                ->leftJoin('tingkatan_pengurus as b', 'b.id', '=', 'a.id_tingkatan_pengurus')
+                ->leftJoin('indonesia_cities as d', 'd.code', '=', 'a.id_kota')
+                ->leftJoin('indonesia_provinces as e', 'e.code', '=', 'a.id_provinsi')
+                ->where('a.id_tingkatan_pengurus', $tingkatanPengurusPusat->id)
+                ->orderBy('a.created_at', 'desc')
+                ->firstOrFail();
+
+        $pengurus = StrukturPengurus::where('id_struktur_organisasi', $struktur->id)
+                ->whereNull('parent_id')
+                ->orderBy('urutan', 'asc')
+                ->get();
+
+        return view('frontend.home.penguruspusat', compact('title', 'description', 'struktur', 'pengurus'));
     }
 
     public function agendakegiatan()

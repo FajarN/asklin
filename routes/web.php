@@ -38,6 +38,8 @@ Route::get('/event-asklin', [App\Http\Controllers\Frontend\HomeController::class
 Route::get('/event-asklin/{slug}', [App\Http\Controllers\Frontend\HomeController::class, 'eventDetail'])->name('event_asklin.detail');
 Route::get('/galery', [App\Http\Controllers\Frontend\HomeController::class, 'galery'])->name('galery');
 Route::get('/kontak', [App\Http\Controllers\Frontend\HomeController::class, 'kontak'])->name('kontak');
+
+// khusus konas
 Route::get('/konas', [App\Http\Controllers\Frontend\KonasController::class, 'index'])->name('konas');
 Route::get('/konas/profil_acara', [App\Http\Controllers\Frontend\KonasController::class, 'profil'])->name('konas.profil');
 Route::get('/konas/pendahuluan', [App\Http\Controllers\Frontend\KonasController::class, 'pendahuluan'])->name('konas.pendahuluan');
@@ -54,6 +56,7 @@ Route::post('/konas/callback', [App\Http\Controllers\Frontend\KonasController::c
 Route::get('/rakernas', [App\Http\Controllers\Frontend\RakernasController::class, 'index'])->name('rakernas');
 
 Route::group(['middleware' => ['auth']], function () {
+    // khusus konas
     Route::get('/konas/akun', [App\Http\Controllers\Frontend\KonasController::class, 'akun'])->name('konas.akun');
     Route::get('/konas/bayar', [App\Http\Controllers\Frontend\KonasController::class, 'bayar'])->name('konas.bayar');
     Route::get('/konas/cetak_kartu/{id}', [App\Http\Controllers\Frontend\KonasController::class, 'cetakKartu'])->name('cetak_kartu');
@@ -62,6 +65,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/konas/akun/tipe_kamar', [App\Http\Controllers\Frontend\KonasController::class, 'getTipeHotel'])->name('konas.getTipeHotel');
     Route::post('/konas/akun/store', [App\Http\Controllers\Frontend\KonasController::class, 'storeHotel'])->name('konas.booking_hotel');
     Route::post('/konas/akun/storepenerbangan', [App\Http\Controllers\Frontend\KonasController::class, 'storePenerbangan'])->name('penerbanganku');
+    // anggota
     Route::get('/user-profile', [App\Http\Controllers\Frontend\HomeController::class, 'UserProfile'])->name('user.profile');
     Route::post('/daftar-anggota', [App\Http\Controllers\Frontend\HomeController::class, 'CreateAnggota'])->name('create.anggota');
     Route::get('/syarat-ketentuan', [App\Http\Controllers\Frontend\HomeController::class, 'SyaratKetentuan'])->name('syarat.ketentuan');
@@ -135,11 +139,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         });
 
         Route::prefix('slider')->controller(App\Http\Controllers\Backend\web\SliderController::class)->group(function () {
-        Route::get('/', 'index')->name('slider.index');
-        Route::get('/list', 'list')->name('slider.list');
-        Route::post('/edit', 'edit')->name('slider.edit');
-        Route::post('/store', 'store')->name('slider.store');
-        Route::post('/delete', 'destroy')->name('slider.delete');
+            Route::get('/', 'index')->name('slider.index');
+            Route::get('/list', 'list')->name('slider.list');
+            Route::post('/edit', 'edit')->name('slider.edit');
+            Route::post('/store', 'store')->name('slider.store');
+            Route::post('/delete', 'destroy')->name('slider.delete');
         });   
 
         Route::prefix('berita_kategori')->controller(App\Http\Controllers\Backend\web\BeritaKategoriController::class)->group(function () {
