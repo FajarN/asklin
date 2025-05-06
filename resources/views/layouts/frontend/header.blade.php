@@ -106,11 +106,6 @@
                                 <div>Galery</div>
                             </a>
                         </li>
-                          <li class="menu-item">
-                            <a class="menu-link" href="{{ route('rakernas') }}">
-                                <div>Rakernas</div>
-                            </a>
-                        </li>
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('konas') }}">
                                 <div>Konas</div>

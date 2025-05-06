@@ -53,8 +53,6 @@ Route::get('/konas/registrasi', [App\Http\Controllers\Frontend\KonasController::
 Route::post('/konas/registrasi/store', [App\Http\Controllers\Frontend\KonasController::class, 'store'])->name('konas.storepeserta');
 Route::post('/konas/callback', [App\Http\Controllers\Frontend\KonasController::class, 'callback'])->name('konas.callback');
 
-Route::get('/rakernas', [App\Http\Controllers\Frontend\RakernasController::class, 'index'])->name('rakernas');
-
 Route::group(['middleware' => ['auth']], function () {
     // khusus konas
     Route::get('/konas/akun', [App\Http\Controllers\Frontend\KonasController::class, 'akun'])->name('konas.akun');
