@@ -20,6 +20,7 @@ Route::post('getKota', [App\Http\Controllers\WilayahController::class, 'getKota'
 Route::post('getKecamatan', [App\Http\Controllers\WilayahController::class, 'getKecamatan'])->name('getKecamatan');
 Route::post('getKelurahan', [App\Http\Controllers\WilayahController::class, 'getKelurahan'])->name('getKelurahan');
 
+
 Route::get('/cekqrcode/{id}', [App\Http\Controllers\CekQRCodeController::class, 'cekqrcode'])->name('cekqrcode');
 Route::get('/cekqrsertifikat/{id}', [App\Http\Controllers\CekQRSertifikatController::class, 'cekqrsertifikat'])->name('cekqrsertifikat');
 
@@ -107,6 +108,9 @@ Route::group(['middleware' => ['auth']], function () {
 Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     // Backend
     Route::get('/dashboard', [App\Http\Controllers\Backend\DashboardController::class, 'index'])->name('dashboard.index');
+    Route::post('/getStatistikWilayah', [App\Http\Controllers\Backend\DashboardController::class, 'getStatistikWilayah'])->name('getStatistikWilayah');
+    Route::get('/getStatistikJenisKlinik', [App\Http\Controllers\Backend\DashboardController::class, 'getStatistikJenisKlinik'])->name('getStatistikJenisKlinik');
+    Route::get('/getStatistikBadanHukum', [App\Http\Controllers\Backend\DashboardController::class, 'getStatistikBadanHukum'])->name('getStatistikBadanHukum');
     Route::get('/profile', [App\Http\Controllers\Backend\ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile/update/{id}', [App\Http\Controllers\Backend\ProfileController::class, 'update'])->name('profile.update');
     Route::group(['middleware' => ['role:Superadmin'], 'prefix' => 'secret'], function () {
