@@ -11,9 +11,12 @@ use Auth;
 
 class PembayaranPusatController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:pembayaran-pusat', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:pembayaran-pusat-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:pembayaran-pusat-create', ['only' => ['store']]);
+        $this->middleware('permission:pembayaran-pusat-edit', ['only' => ['edit']]);
+        $this->middleware('permission:pembayaran-pusat-delete', ['only' => ['destroy']]);
     }
 
     public function index()

@@ -11,10 +11,11 @@ use Illuminate\Support\Str;
 
 class SuratPenomoranController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:penomoran-list', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
-    // }
+   public function __construct()
+    {
+        $this->middleware('permission:penomoran-surat', ['only' => ['index', 'list']]);
+        $this->middleware('permission:penomoran-surat-edit', ['only' => ['edit']]);
+    }
 
     public function index()
     {

@@ -28,9 +28,9 @@ class LaporanCabangController extends Controller
                     \DB::raw('GROUP_CONCAT(DISTINCT fasilitas_klinik.nama SEPARATOR ", ") as kriteria'))
                 ->leftjoin("fasilitas_klinik",\DB::raw("FIND_IN_SET(fasilitas_klinik.id, anggota.fasilitas_klinik)"),">",\DB::raw("'0'"))
                 ->leftjoin("indonesia_cities", 'indonesia_cities.code', '=', 'anggota.id_kota')
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
-                    $query->where('id_provinsi', Auth::user()->provinsi);
-                })
+                 ->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
+                    $query->where('anggota.id_kota', Auth::user()->kota);
+                    })
                 ->groupBy('anggota.id')
                 ->get();
             return Datatables::of($data)

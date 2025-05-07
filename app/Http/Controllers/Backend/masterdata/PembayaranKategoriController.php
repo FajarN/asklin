@@ -10,9 +10,12 @@ use Illuminate\Support\Str;
 
 class PembayaranKategoriController extends Controller
 {
-    function __construct()
+     public function __construct()
     {
-        $this->middleware('permission:kategori-pembayaran', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:kategori-pembayaran-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:kategori-pembayaran-create', ['only' => ['store']]);
+        $this->middleware('permission:kategori-pembayaran-edit', ['only' => ['edit']]);
+        $this->middleware('permission:kategori-pembayaran-delete', ['only' => ['destroy']]);
     }
 
     public function index()

@@ -10,6 +10,14 @@ use Illuminate\Support\Str;
 
 class KonasPartnerController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:konas-partner-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:konas-partner-create', ['only' => ['store']]);
+        $this->middleware('permission:konas-partner-edit', ['only' => ['edit']]);
+        $this->middleware('permission:konas-partner-delete', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         return view('backend.partner.index');

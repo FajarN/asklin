@@ -14,7 +14,7 @@ class ExpiredSertifikatController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:sertifikat', ['only' => ['index', 'store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:expired-sertifikat', ['only' => ['index', 'list']]);
     }
 
     public function index(Request $request)

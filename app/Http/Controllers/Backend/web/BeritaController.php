@@ -13,11 +13,11 @@ use Illuminate\Support\Facades\Log;
 
 class BeritaController extends Controller
 {
-    function __construct()
+     public function __construct()
     {
-        $this->middleware('permission:berita-list|berita-create|berita-edit|berita-delete', ['only' => ['index','show']]);
-        $this->middleware('permission:berita-create', ['only' => ['create','store']]);
-        $this->middleware('permission:berita-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:berita-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:berita-create', ['only' => ['store']]);
+        $this->middleware('permission:berita-edit', ['only' => ['edit']]);
         $this->middleware('permission:berita-delete', ['only' => ['destroy']]);
     }
 

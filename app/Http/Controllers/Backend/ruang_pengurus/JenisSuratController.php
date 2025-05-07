@@ -10,10 +10,13 @@ use Illuminate\Support\Str;
 
 class JenisSuratController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:jenis', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
-    // }
+   public function __construct()
+    {
+        $this->middleware('permission:jenis-surat-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:jenis-surat-create', ['only' => ['store']]);
+        $this->middleware('permission:jenis-surat-edit', ['only' => ['edit']]);
+        $this->middleware('permission:jenis-surat-delete', ['only' => ['destroy']]);
+    }
 
     public function index()
     {

@@ -10,9 +10,12 @@ use Illuminate\Support\Str;
 
 class EventKategoriController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:kategori-event', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:kategori-event-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:kategori-event-create', ['only' => ['store']]);
+        $this->middleware('permission:kategori-event-edit', ['only' => ['edit']]);
+        $this->middleware('permission:kategori-event-delete', ['only' => ['destroy']]);
     }
 
     public function index()

@@ -10,10 +10,11 @@ use Illuminate\Support\Str;
 
 class KontakController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:kontak', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
-    // }
+     function __construct()
+    {
+       $this->middleware('permission:kontak', ['only' => ['index', 'list']]);
+    }
+
 
     public function index()
     {

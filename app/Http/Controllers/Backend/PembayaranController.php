@@ -11,10 +11,14 @@ use Auth;
 
 class PembayaranController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:pembayaran', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:pembayaran-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:pembayaran-create', ['only' => ['store']]);
+        $this->middleware('permission:pembayaran-edit', ['only' => ['edit']]);
+        $this->middleware('permission:pembayaran-delete', ['only' => ['destroy']]);
     }
+
 
     public function index(Request $request)
     {

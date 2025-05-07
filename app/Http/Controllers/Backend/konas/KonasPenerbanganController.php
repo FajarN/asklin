@@ -10,6 +10,14 @@ use Illuminate\Support\Str;
 
 class KonasPenerbanganController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:konas-data-penerbangan-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:konas-data-penerbangan-create', ['only' => ['store']]);
+        $this->middleware('permission:konas-data-penerbangan-edit', ['only' => ['edit']]);
+        $this->middleware('permission:konas-data-penerbangan-delete', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         return view('backend.konas.penerbangan');

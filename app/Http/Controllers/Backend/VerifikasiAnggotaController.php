@@ -13,7 +13,7 @@ class VerifikasiAnggotaController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:verifikasi-anggota', ['only' => ['index']]);
+       $this->middleware('permission:verifikasi-anggota', ['only' => ['index', 'list']]);
     }
 
     public function index()

@@ -10,9 +10,12 @@ use Illuminate\Support\Str;
 
 class FasilitasKlinikController extends Controller
 {
-    function __construct()
+     public function __construct()
     {
-        $this->middleware('permission:fasilitas-klinik', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:fasilitas-klinik-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:fasilitas-klinik-create', ['only' => ['store']]);
+        $this->middleware('permission:fasilitas-klinik-edit', ['only' => ['edit']]);
+        $this->middleware('permission:fasilitas-klinik-delete', ['only' => ['destroy']]);
     }
 
     public function index()

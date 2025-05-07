@@ -21,6 +21,14 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class SuratKeluarController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:surat-keluar-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:surat-keluar-create', ['only' => ['store']]);
+        $this->middleware('permission:surat-keluar-edit', ['only' => ['edit']]);
+        $this->middleware('permission:surat-keluar-delete', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         $jenisSurat = JenisSurat::where('status', '1')->get();

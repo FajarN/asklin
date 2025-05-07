@@ -9,9 +9,12 @@ use Yajra\DataTables\DataTables;
 
 class SliderController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:slider', ['only' => ['index', 'store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:slider-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:slider-create', ['only' => ['store']]);
+        $this->middleware('permission:slider-edit', ['only' => ['edit']]);
+        $this->middleware('permission:slider-delete', ['only' => ['destroy']]);
     }
 
     public function index()

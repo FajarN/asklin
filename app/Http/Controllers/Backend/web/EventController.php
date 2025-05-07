@@ -12,12 +12,12 @@ use Auth;
 
 class EventController extends Controller
 {
-    function __construct()
+   public function __construct()
     {
-        $this->middleware('permission:events-list|events-create|events-edit|events-delete', ['only' => ['index','show']]);
-        $this->middleware('permission:events-create', ['only' => ['create','store']]);
-        $this->middleware('permission:events-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:events-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:event-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:event-create', ['only' => ['store']]);
+        $this->middleware('permission:event-edit', ['only' => ['edit']]);
+        $this->middleware('permission:event-delete', ['only' => ['destroy']]);
     }
 
     public function index()

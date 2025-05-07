@@ -12,6 +12,12 @@ use Carbon\Carbon;
 
 class SuratUndanganController extends Controller
 {
+
+    function __construct()
+    {
+       $this->middleware('permission:surat-undangan', ['only' => ['index', 'list']]);
+    }
+
     public function index(Request $request)
     {
         $startDate = $request->input('start_date');

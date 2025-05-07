@@ -10,11 +10,11 @@ use Illuminate\Support\Str;
 
 class AgendaController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:agenda-list|agenda-create|agenda-edit|agenda-delete', ['only' => ['index','show']]);
-        $this->middleware('permission:agenda-create', ['only' => ['create','store']]);
-        $this->middleware('permission:agenda-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:agenda-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:agenda-create', ['only' => ['store']]);
+        $this->middleware('permission:agenda-edit', ['only' => ['edit']]);
         $this->middleware('permission:agenda-delete', ['only' => ['destroy']]);
     }
 

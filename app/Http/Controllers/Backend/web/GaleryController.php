@@ -12,9 +12,12 @@ use Auth;
 
 class GaleryController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:galery', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:gallery-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:gallery-create', ['only' => ['store']]);
+        $this->middleware('permission:gallery-edit', ['only' => ['edit']]);
+        $this->middleware('permission:gallery-delete', ['only' => ['destroy']]);
     }
 
     public function index()

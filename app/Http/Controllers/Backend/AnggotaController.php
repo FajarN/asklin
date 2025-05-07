@@ -17,7 +17,7 @@ class AnggotaController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:verifikasi', ['only' => ['index']]);
+        $this->middleware('permission:data-anggota', ['only' => ['index', 'list']]);
     }
 
     public function index()

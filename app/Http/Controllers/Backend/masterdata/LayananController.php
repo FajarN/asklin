@@ -10,9 +10,12 @@ use Illuminate\Support\Str;
 
 class LayananController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:layanan', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:layanan-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:layanan-create', ['only' => ['store']]);
+        $this->middleware('permission:layanan-edit', ['only' => ['edit']]);
+        $this->middleware('permission:layanan-delete', ['only' => ['destroy']]);
     }
 
     public function index()

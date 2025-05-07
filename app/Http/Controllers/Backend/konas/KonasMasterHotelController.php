@@ -10,9 +10,12 @@ use Illuminate\Support\Str;
 
 class KonasMasterHotelController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:konas-master-hotel', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:konas-master-hotel-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:konas-master-hotel-create', ['only' => ['store']]);
+        $this->middleware('permission:konas-master-hotel-edit', ['only' => ['edit']]);
+        $this->middleware('permission:konas-master-hotel-delete', ['only' => ['destroy']]);
     }
 
     public function index()

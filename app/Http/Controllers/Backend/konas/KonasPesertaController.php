@@ -16,9 +16,12 @@ use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 
 class KonasPesertaController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:konas-peserta', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:konas-peserta-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:konas-peserta-create', ['only' => ['store']]);
+        $this->middleware('permission:konas-peserta-edit', ['only' => ['edit']]);
+        $this->middleware('permission:konas-peserta-delete', ['only' => ['destroy']]);
     }
 
 

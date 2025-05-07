@@ -11,9 +11,12 @@ use Auth;
 
 class SertifikatController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:sertifikat', ['only' => ['index', 'store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:sertifikat-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:sertifikat-create', ['only' => ['store']]);
+        $this->middleware('permission:sertifikat-edit', ['only' => ['edit']]);
+        $this->middleware('permission:sertifikat-delete', ['only' => ['destroy']]);
     }
 
     public function index(Request $request)

@@ -10,9 +10,12 @@ use Illuminate\Support\Str;
 
 class BeritaKategoriController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:kategori-berita', ['only' => ['index','store', 'create', 'edit', 'destroy']]);
+        $this->middleware('permission:kategori-berita-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:kategori-berita-create', ['only' => ['store']]);
+        $this->middleware('permission:kategori-berita-edit', ['only' => ['edit']]);
+        $this->middleware('permission:kategori-berita-delete', ['only' => ['destroy']]);
     }
 
     public function index()

@@ -7,12 +7,13 @@ use App\Http\Controllers\Controller;
 use App\Models\{Anggota};
 use DataTables;
 use Illuminate\Support\Str;
+use Auth;
 
 class KerjasamaAsuransiController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:kerjasama-asuransi', ['only' => ['index']]);
+        $this->middleware('permission:kerjasama-asuransi', ['only' => ['index', 'list']]);
     }
 
     public function index()
@@ -25,8 +26,16 @@ class KerjasamaAsuransiController extends Controller
         if ($request->ajax()) {
             $data = Anggota::select('anggota.nama_klinik', 'sdm_asuransi.created_at', \DB::raw('GROUP_CONCAT(sdm_asuransi.nama SEPARATOR ", ") as asuransi'))
                 ->leftjoin("sdm_asuransi", 'sdm_asuransi.id_klinik', '=', 'anggota.id')
+                ->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
+                    $query->where('anggota.id_kota', Auth::user()->kota);
+                })
+                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
+                    $query->where('anggota.id_provinsi', Auth::user()->provinsi);
+                })
+                ->whereNotIn('anggota.status', ['waiting', 'create-dokter'])
                 ->groupBy('anggota.id')
-                ->whereNotIn('anggota.status', ['waiting', 'create-dokter'])->get();
+                ->get();
+
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('search'))) {
@@ -42,4 +51,5 @@ class KerjasamaAsuransiController extends Controller
                 ->make(true);
         }
     }
+
 }

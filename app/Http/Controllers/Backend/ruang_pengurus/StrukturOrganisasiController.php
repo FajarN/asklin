@@ -17,6 +17,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StrukturOrganisasiController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:struktur-organisasi-list', ['only' => ['index', 'list']]);
+        $this->middleware('permission:struktur-organisasi-create', ['only' => ['store']]);
+        $this->middleware('permission:struktur-organisasi-edit', ['only' => ['edit']]);
+        $this->middleware('permission:struktur-organisasi-delete', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
