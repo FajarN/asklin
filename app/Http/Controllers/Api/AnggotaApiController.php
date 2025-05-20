@@ -141,18 +141,18 @@ class AnggotaApiController extends Controller
      * @param string $apiKey
      * @return bool
      */
-    private function validateApiKey($apiKey)
-    {
-        // Query the database for valid API keys
-        // You'll need to implement this based on where you store API keys
-        $validApiKeys = \DB::table('api_keys')->pluck('key')->toArray();
-        
-        return in_array($apiKey, $validApiKeys);
-    }
-    
     // private function validateApiKey($apiKey)
     // {
-    //     // Untuk testing lokal, gunakan hardcoded key
-    //     return $apiKey === 'testing-api-key-123';
+    //     // Query the database for valid API keys
+    //     // You'll need to implement this based on where you store API keys
+    //     $validApiKeys = \DB::table('api_keys')->pluck('key')->toArray();
+        
+    //     return in_array($apiKey, $validApiKeys);
     // }
+    
+    private function validateApiKey($apiKey)
+    {
+        // Untuk testing lokal, gunakan hardcoded key
+        return $apiKey === 'testing-api-key-123';
+    }
 }
