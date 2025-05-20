@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AnggotaApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+
+Route::prefix('anggota')->group(function () {
+    Route::get('/location', [AnggotaApiController::class, 'getAnggotaByLocation']);
+    
+    Route::get('/updates/latest', [AnggotaApiController::class, 'getLastUpdatedAnggota']);
+    
+    Route::get('/{id}', [AnggotaApiController::class, 'getAnggotaById']);
 });

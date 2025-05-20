@@ -7,37 +7,37 @@ use Laravolt\Indonesia\Models\{City, District, Village};
     
 class WilayahController extends Controller
 {
-    public function getKota(request $request)
+    public function getKota(Request $request)
     {
         $id_provinsi = $request->id_provinsi;
 
         $kota = City::where('province_code', $id_provinsi)->get();
 
-        echo "<option>==Pilih Kota/Kabupaten==</option>";
+        echo "<option value=''>==Pilih Kota/Kabupaten==</option>";
         foreach ($kota as $k){
             echo "<option value='$k->code'>$k->name</option>";
         }
     }
 
-    public function getKecamatan(request $request)
+    public function getKecamatan(Request $request)
     {
         $id_kota = $request->id_kota;
 
         $kecamatan = District::where('city_code', $id_kota)->get();
 
-        echo "<option>==Pilih Kecamatan==</option>";
+        echo "<option value=''>==Pilih Kecamatan==</option>";
         foreach ($kecamatan as $k){
             echo "<option value='$k->code'>$k->name</option>";
         }
     }
 
-    public function getKelurahan(request $request)
+    public function getKelurahan(Request $request)
     {
         $id_kecamatan = $request->id_kecamatan;
 
         $kelurahan = Village::where('district_code', $id_kecamatan)->get();
 
-        echo "<option>==Pilih Kelurahan/Desa==</option>";
+        echo "<option value=''>==Pilih Kelurahan/Desa==</option>";
         foreach ($kelurahan as $k){
             echo "<option value='$k->code'>$k->name</option>";
         }

@@ -327,18 +327,22 @@ $(function(e) {
         }
     });
 
-    $("#provinsi").select2().val({{ $anggota->id_provinsi }}).trigger("change");
+    $("#provinsi").select2().val({{ $anggota->id_provinsi ?: 'null' }}).trigger("change");
 
     $('#provinsi').on('change', function(){
         let id_provinsi = $('#provinsi').val();
+        if(!id_provinsi) return; // Don't make request if empty value
         $.ajax({
             type: 'POST',
             url: '{{ route('getKota') }}',
             data: {id_provinsi:id_provinsi},
             cache: false,
             success: function(data){
-                $('#kota').html(data);
-                $("#kota").select2().val({{ $anggota->id_kota }}).trigger("change");
+                 $('#kota').html(data);
+                // Only set value if anggota has a valid kota
+                if({{ $anggota->id_kota ?: 'null' }}) {
+                    $("#kota").select2().val({{ $anggota->id_kota ?: 'null' }}).trigger("change");
+                }
                 $('#kecamatan').html();
                 $('#kelurahan').html();
             }
@@ -347,6 +351,7 @@ $(function(e) {
 
     $('#kota').on('change', function(){
         let id_kota = $('#kota').val();
+        if(!id_kota) return; 
         $.ajax({
             type: 'POST',
             url: '{{ route('getKecamatan') }}',
@@ -354,7 +359,10 @@ $(function(e) {
             cache: false,
             success: function(data){
                 $('#kecamatan').html(data);
-                $("#kecamatan").select2().val({{ $anggota->id_kecamatan }}).trigger("change");
+                // Only set value if anggota has a valid kecamatan
+                if({{ $anggota->id_kecamatan ?: 'null' }}) {
+                    $("#kecamatan").select2().val({{ $anggota->id_kecamatan ?: 'null' }}).trigger("change");
+                }
                 $('#kelurahan').html();
             }
         })
@@ -362,6 +370,7 @@ $(function(e) {
 
     $('#kecamatan').on('change', function(){
         let id_kecamatan = $('#kecamatan').val();
+        if(!id_kecamatan) return; 
         $.ajax({
             type: 'POST',
             url: '{{ route('getKelurahan') }}',
@@ -369,7 +378,9 @@ $(function(e) {
             cache: false,
             success: function(data){
                 $('#kelurahan').html(data);
-                $("#kelurahan").select2().val({{ $anggota->id_kelurahan }}).trigger("change");
+                if({{ $anggota->id_kelurahan ?: 'null' }}) {
+                    $("#kelurahan").select2().val({{ $anggota->id_kelurahan ?: 'null' }}).trigger("change");
+                }
             }
         })
     }).change();
