@@ -86,7 +86,7 @@
                     extend: 'excel',
                     text: 'Export To Excel'
                 }],
-                pageLength: 200,
+                pageLength: 3000,
                 processing: true,
                 serverSide: true,
                 searching: false,
