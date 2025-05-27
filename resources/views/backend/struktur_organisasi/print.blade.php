@@ -248,29 +248,29 @@
                     $sekretaris_jendral = $p;
                 } elseif ($jabatan === 'sekretaris') {
                     $sekretaris = $p;
-                } elseif ($jabatan === 'sekretaris 1') {
+                } elseif ($jabatan === 'sekretaris I') {
                     $sekretaris1 = $p;
-                } elseif ($jabatan === 'sekretaris 2') {
+                } elseif ($jabatan === 'sekretaris II') {
                     $sekretaris2 = $p;
-                } elseif ($jabatan === 'sekretaris 3') {
+                } elseif ($jabatan === 'sekretaris III') {
                     $sekretaris3 = $p;
-                } elseif ($jabatan === 'wakil sekretaris 1') {
+                } elseif ($jabatan === 'wakil sekretaris I') {
                     $wakil_sekretaris1 = $p;
-                } elseif ($jabatan === 'wakil sekretaris 2') {
+                } elseif ($jabatan === 'wakil sekretaris II') {
                     $wakil_sekretaris2 = $p;
                 } elseif ($jabatan === 'bendahara') {
                     $bendahara = $p;
-                } elseif ($jabatan === 'bendahara 1') {
+                } elseif ($jabatan === 'bendahara I') {
                     $bendahara1 = $p;
-                } elseif ($jabatan === 'bendahara 2') {
+                } elseif ($jabatan === 'bendahara II') {
                     $bendahara2 = $p;
-                } elseif ($jabatan === 'bendahara 3') {
+                } elseif ($jabatan === 'bendahara III') {
                     $bendahara3 = $p;
-                } elseif ($jabatan === 'wakil bendahara 1') {
+                } elseif ($jabatan === 'wakil bendahara I') {
                     $wakil_bendahara1 = $p;
-                } elseif ($jabatan === 'wakil bendahara 2') {
+                } elseif ($jabatan === 'wakil bendahara II') {
                     $wakil_bendahara2 = $p;
-                } elseif ($jabatan === 'wakil bendahara 3') {
+                } elseif ($jabatan === 'wakil bendahara III') {
                     $wakil_bendahara3 = $p;
                 } elseif (strpos($jabatan, 'koordinator daerah') !== false) {
                     $wilayah = $p->keterangan ?? '';
