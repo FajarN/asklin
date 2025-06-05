@@ -22,3 +22,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+.user.ini
+public/.user.ini
