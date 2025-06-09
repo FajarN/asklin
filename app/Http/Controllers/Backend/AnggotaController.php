@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\{Anggota, SDM, RumahSakit, Asuransi, FotoKlinik, Sertifikat};
-use DataTables;
-use Illuminate\Support\Str;
-use Auth;
-use Spipu\Html2Pdf\Html2Pdf;
-use Spipu\Html2Pdf\Exception\Html2PdfException;
-use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Spipu\Html2Pdf\Exception\ExceptionFormatter;
+use Spipu\Html2Pdf\Exception\Html2PdfException;
+use Spipu\Html2Pdf\Html2Pdf;
+use Auth;
+use DataTables;
 
 class AnggotaController extends Controller
 {
@@ -27,20 +27,36 @@ class AnggotaController extends Controller
 
     public function list(Request $request)
     {
-            if ($request->ajax()) {
+        if ($request->ajax()) {
             $data = Anggota::select(
                 'anggota.*',
                 'indonesia_cities.name',
                 'indonesia_villages.name as kelurahan',
                 'indonesia_districts.name as kecamatan',
                 'indonesia_provinces.name as provinsi',
-                \DB::raw('GROUP_CONCAT(DISTINCT fasilitas_klinik.nama SEPARATOR ", ") as kriteria')
-                )
-                ->leftjoin("fasilitas_klinik", \DB::raw("FIND_IN_SET(fasilitas_klinik.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
-                ->leftjoin("indonesia_cities", 'indonesia_cities.code', '=', 'anggota.id_kota')
-                ->leftjoin("indonesia_villages", 'indonesia_villages.code', '=', 'anggota.id_kelurahan')
-                ->leftjoin("indonesia_districts", 'indonesia_districts.code', '=', 'anggota.id_kecamatan')
-                ->leftjoin("indonesia_provinces", 'indonesia_provinces.code', '=', 'anggota.id_provinsi')
+                \DB::raw('GROUP_CONCAT(DISTINCT fasilitas_klinik.nama SEPARATOR ", ") as kriteria'),
+                \DB::raw('
+                CASE 
+                    WHEN anggota.verifikasi_pusat IS NULL OR anggota.verifikasi_pusat = "0000-00-00 00:00:00" THEN 
+                        FROM_UNIXTIME(anggota.created_on)
+                    ELSE 
+                        anggota.verifikasi_pusat 
+                END as tanggal_approve
+            '),
+                \DB::raw('
+                CASE 
+                    WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                        FROM_UNIXTIME(anggota.created_on)
+                    ELSE 
+                        anggota.created_at 
+                END as tanggal_daftar
+            ')
+            )
+                ->leftjoin('fasilitas_klinik', \DB::raw('FIND_IN_SET(fasilitas_klinik.id, anggota.fasilitas_klinik)'), '>', \DB::raw("'0'"))
+                ->leftjoin('indonesia_cities', 'indonesia_cities.code', '=', 'anggota.id_kota')
+                ->leftjoin('indonesia_villages', 'indonesia_villages.code', '=', 'anggota.id_kelurahan')
+                ->leftjoin('indonesia_districts', 'indonesia_districts.code', '=', 'anggota.id_kecamatan')
+                ->leftjoin('indonesia_provinces', 'indonesia_provinces.code', '=', 'anggota.id_provinsi')
                 ->groupBy('anggota.id')
                 ->where('anggota.status', 'approved')
                 ->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
@@ -58,44 +74,112 @@ class AnggotaController extends Controller
                 ->when(Auth::user()->hasRole('Bendahara'), function ($query) use ($request) {
                     $query->where('anggota.status', 'Verifikasi Bendahara');
                 })
+                ->when($request->get('filter_tahun_approve'), function ($query) use ($request) {
+                    $tahunFilter = $request->get('filter_tahun_approve');
+                    $query->whereRaw('YEAR(CASE 
+                    WHEN anggota.verifikasi_pusat IS NULL OR anggota.verifikasi_pusat = "0000-00-00 00:00:00" THEN 
+                        FROM_UNIXTIME(anggota.created_on)
+                    ELSE 
+                        anggota.verifikasi_pusat 
+                END) = ?', [$tahunFilter]);
+                })
+                ->when($request->get('filter_bulan_approve'), function ($query) use ($request) {
+                    $bulanFilter = $request->get('filter_bulan_approve');
+                    $query->whereRaw('MONTH(CASE 
+                    WHEN anggota.verifikasi_pusat IS NULL OR anggota.verifikasi_pusat = "0000-00-00 00:00:00" THEN 
+                        FROM_UNIXTIME(anggota.created_on)
+                    ELSE 
+                        anggota.verifikasi_pusat 
+                END) = ?', [$bulanFilter]);
+                })
+                ->when($request->get('filter_jenis'), function ($query) use ($request) {
+                    $query->where('anggota.jenis_klinik', $request->get('filter_jenis'));
+                })
                 ->get();
-                return Datatables::of($data)
-                    ->filter(function ($instance) use ($request) {
-                        if (!empty($request->get('search'))) {
-                            $searchQuery = Str::lower($request->get('search'));
-                            $instance->collection = $instance->collection->filter(function ($data) use ($searchQuery) {
-                                if (Str::contains(Str::lower($data['nama_klinik']), $searchQuery)) {
-                                    return true;
-                                }
-                                if (Str::contains(
-                                    Str::lower($data['no_anggota']),
-                                    $searchQuery
-                                )) {
-                                    return true;
-                                }
-                                if (Str::contains(Str::lower($data['name']), $searchQuery)) {
-                                    return true;
-                                }
-                                return false;
-                            });
+
+            return Datatables::of($data)
+                ->filter(function ($instance) use ($request) {
+                    if (!empty($request->get('search'))) {
+                        $searchQuery = Str::lower($request->get('search'));
+                        $instance->collection = $instance->collection->filter(function ($data) use ($searchQuery) {
+                            if (Str::contains(Str::lower($data['nama_klinik']), $searchQuery)) {
+                                return true;
+                            }
+                            if (Str::contains(Str::lower($data['no_anggota']), $searchQuery)) {
+                                return true;
+                            }
+                            if (Str::contains(Str::lower($data['name']), $searchQuery)) {
+                                return true;
+                            }
+                            return false;
+                        });
+                    }
+                })
+                ->addIndexColumn()
+                // Format tanggal daftar
+                ->addColumn('tanggal_daftar_formatted', function ($row) {
+                    if ($row->tanggal_daftar && $row->tanggal_daftar != '0000-00-00 00:00:00') {
+                        $tanggal = \Carbon\Carbon::parse($row->tanggal_daftar);
+                        return '<span style="color: #666; font-size: 12px;">' . $tanggal->format('d-m-Y') . '</span>';
+                    }
+                    return '<span style="color: #999;">-</span>';
+                })
+                ->addColumn('tanggal_approve_formatted', function ($row) {
+                    if ($row->tanggal_approve && $row->tanggal_approve != '0000-00-00 00:00:00') {
+                        $tanggal = \Carbon\Carbon::parse($row->tanggal_approve);
+                        $formatTanggal = $tanggal->format('d-m-Y');
+
+                        $isDataLama = ($row->verifikasi_pusat == '0000-00-00 00:00:00' || $row->verifikasi_pusat == null);
+
+                        if ($isDataLama) {
+                            return '<span class="badge badge-info" style="font-size: 11px;">' . $formatTanggal . '</span><br>
+                                <small style="color: #17a2b8;">Data Migrasi</small>';
+                        } else {
+                            return '<span class="badge badge-success" style="font-size: 11px;">' . $formatTanggal . '</span><br>
+                                <small style="color: #28a745;">Verifikasi Resmi</small>';
                         }
-                    })
-                    ->addIndexColumn()
-                    ->addColumn('action', 'backend.anggota.action')
-                    ->rawColumns(['action'])
-                    ->make(true);
-            }
+                    }
+                    return '<span style="color: #999;">-</span>';
+                })
+                ->addColumn('durasi_verifikasi', function ($row) {
+                    if ($row->tanggal_daftar &&
+                            $row->tanggal_approve &&
+                            $row->tanggal_daftar != '0000-00-00 00:00:00' &&
+                            $row->tanggal_approve != '0000-00-00 00:00:00') {
+                        $daftar = \Carbon\Carbon::parse($row->tanggal_daftar);
+                        $approve = \Carbon\Carbon::parse($row->tanggal_approve);
+
+                        $durasi = $daftar->diffInDays($approve);
+
+                        // Warna berdasarkan kecepatan verifikasi
+                        $warna = '#28a745';  // Hijau untuk cepat
+                        if ($durasi > 365) {
+                            $warna = '#dc3545';  // Merah untuk sangat lama
+                        } elseif ($durasi > 180) {
+                            $warna = '#fd7e14';  // Orange untuk lama
+                        } elseif ($durasi > 90) {
+                            $warna = '#ffc107';  // Kuning untuk agak lama
+                        }
+
+                        return '<span style="color: ' . $warna . '; font-weight: bold; font-size: 12px;">' . $durasi . ' hari</span>';
+                    }
+                    return '<span style="color: #999;">-</span>';
+                })
+                ->addColumn('action', 'backend.anggota.action')
+                ->rawColumns(['action', 'tanggal_daftar_formatted', 'tanggal_approve_formatted', 'durasi_verifikasi'])
+                ->make(true);
+        }
     }
+
     public function detail_anggota($id)
     {
         $anggota = Anggota::select('anggota.*', 'indonesia_cities.name as kota', 'indonesia_districts.name as kecamatan', 'indonesia_villages.name as kelurahan', 'indonesia_provinces.name as provinsi')
-            ->leftjoin("indonesia_cities", 'indonesia_cities.code', '=', 'anggota.id_kota')
-            ->leftjoin("indonesia_districts", 'indonesia_districts.code', '=', 'anggota.id_kecamatan')
-            ->leftjoin("indonesia_villages", 'indonesia_villages.code', '=', 'anggota.id_kelurahan')
-            ->leftjoin("indonesia_provinces", 'indonesia_provinces.code', '=', 'anggota.id_provinsi')
+            ->leftjoin('indonesia_cities', 'indonesia_cities.code', '=', 'anggota.id_kota')
+            ->leftjoin('indonesia_districts', 'indonesia_districts.code', '=', 'anggota.id_kecamatan')
+            ->leftjoin('indonesia_villages', 'indonesia_villages.code', '=', 'anggota.id_kelurahan')
+            ->leftjoin('indonesia_provinces', 'indonesia_provinces.code', '=', 'anggota.id_provinsi')
             ->where('anggota.id', $id)
             ->first();
-
 
         return view('backend.anggota.detail_anggota', compact('anggota'));
     }
@@ -197,11 +281,8 @@ class AnggotaController extends Controller
         }
     }
 
-    
     public function print($id)
     {
-
-
         $anggota = Sertifikat::select(
             'sertifikat.*',
             'a.nama_klinik',
@@ -226,7 +307,6 @@ class AnggotaController extends Controller
             ->where('sertifikat.id', $id)
             ->first();
 
-
         $id = $anggota->id;
 
         try {
@@ -247,7 +327,6 @@ class AnggotaController extends Controller
         exit();
     }
 
-
     public function printsk($id)
     {
         $anggota = Anggota::select(
@@ -256,7 +335,7 @@ class AnggotaController extends Controller
             'b.name as kota',
             'c.name as provinsi'
         )
-            ->leftJoin('fasilitas_klinik as a', \DB::raw("FIND_IN_SET(a.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
+            ->leftJoin('fasilitas_klinik as a', \DB::raw('FIND_IN_SET(a.id, anggota.fasilitas_klinik)'), '>', \DB::raw("'0'"))
             ->leftJoin('indonesia_cities as b', 'b.code', '=', 'anggota.id_kota')
             ->leftJoin('indonesia_provinces as c', 'c.code', '=', 'anggota.id_provinsi')
             ->groupBy('anggota.id')
@@ -284,6 +363,4 @@ class AnggotaController extends Controller
         }
         exit();
     }
-
-
 }
