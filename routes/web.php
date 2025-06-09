@@ -123,7 +123,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
             Route::post('/delete', 'destroy')->name('users.delete');
         });
 
-        Route::prefix('roles')->controller(App\Http\Controllers\Backend\Secret\RoleController::class)->group(function () {
+        Route::prefix('roles')->controller(App\Http\Controllers\Backend\secret\RoleController::class)->group(function () {
             Route::get('/', 'index')->name('roles.index');
             Route::get('/list', 'list')->name('roles.list');
             Route::get('/edit/{id}', 'edit')->name('roles.edit');

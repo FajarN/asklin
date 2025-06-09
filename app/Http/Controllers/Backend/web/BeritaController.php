@@ -254,6 +254,9 @@ class BeritaController extends Controller
         try {
             $berita = Berita::findOrFail($request->id);
 
+            // Delete all related visits first (untuk menghindari foreign key constraint)
+            $berita->visits()->delete();
+
             // Delete thumbnail
             $thumbPath = public_path('assets/images/berita/thumbnails/' . $berita->thumb);
             if (!empty($berita->thumb) && file_exists($thumbPath)) {
@@ -270,6 +273,7 @@ class BeritaController extends Controller
                 $image->delete();
             }
 
+            // Now safely delete the berita
             $berita->delete();
 
             return redirect()->route('berita.index')->with('success', 'Berita berhasil dihapus.');
