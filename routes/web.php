@@ -392,9 +392,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroyPengurus')->name('pengurus.delete');
     });
 
-    Route::prefix('expired_sio')->controller(App\Http\Controllers\Backend\ExpiredSIOController::class)->group(function () {
-        Route::get('/', 'index')->name('expired_sio.index');
-        Route::get('/list', 'list')->name('expired_sio.list');
+    Route::group(['prefix' => 'expired-sio', 'as' => 'expired_sio.'], function () {
+    Route::get('/', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'index'])->name('index');
+    Route::get('/list', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'list'])->name('list');
+    Route::get('/export/excel', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'exportExcel'])->name('export.excel');
+    Route::get('/export/pdf', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'exportPdf'])->name('export.pdf');
     });
 
     Route::prefix('expired_serfitikat')->controller(App\Http\Controllers\Backend\ExpiredSertifikatController::class)->group(function () {
