@@ -199,8 +199,8 @@
                         <span>Laporan Anggota</span></a>
                     <ul class="dropdown-menu">
                         @can('laporan-pusat')
-                            <li class="dropdown @if (Request::url() == route('laporan_pusat')) active @endif"><a class="nav-link"
-                                    href="{{ route('laporan_pusat') }}">Laporan pusat</a></li>
+                            <li class="dropdown @if (Request::url() == route('laporan_pusat.index')) active @endif"><a class="nav-link"
+                                    href="{{ route('laporan_pusat.index') }}">Laporan pusat</a></li>
                         @endcan
                         @can('laporan-daerah')
                             <li class="dropdown @if (Request::url() == route('laporan_daerah')) active @endif"><a class="nav-link"

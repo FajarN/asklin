@@ -3,15 +3,15 @@
 use Illuminate\Support\Facades\Route;
 
 /*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+ * |--------------------------------------------------------------------------
+ * | Web Routes
+ * |--------------------------------------------------------------------------
+ * |
+ * | Here is where you can register web routes for your application. These
+ * | routes are loaded by the RouteServiceProvider within a group which
+ * | contains the "web" middleware group. Now create something great!
+ * |
+ */
 
 Auth::routes();
 
@@ -19,7 +19,6 @@ Auth::routes();
 Route::post('getKota', [App\Http\Controllers\WilayahController::class, 'getKota'])->name('getKota');
 Route::post('getKecamatan', [App\Http\Controllers\WilayahController::class, 'getKecamatan'])->name('getKecamatan');
 Route::post('getKelurahan', [App\Http\Controllers\WilayahController::class, 'getKelurahan'])->name('getKelurahan');
-
 
 Route::get('/cekqrcode/{id}', [App\Http\Controllers\CekQRCodeController::class, 'cekqrcode'])->name('cekqrcode');
 Route::get('/cekqrsertifikat/{id}', [App\Http\Controllers\CekQRSertifikatController::class, 'cekqrsertifikat'])->name('cekqrsertifikat');
@@ -123,7 +122,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
             Route::put('/update/{id}', 'update')->name('users.update');
             Route::post('/delete', 'destroy')->name('users.delete');
         });
-        
+
         Route::prefix('roles')->controller(App\Http\Controllers\Backend\Secret\RoleController::class)->group(function () {
             Route::get('/', 'index')->name('roles.index');
             Route::get('/list', 'list')->name('roles.list');
@@ -146,7 +145,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
             Route::post('/edit', 'edit')->name('slider.edit');
             Route::post('/store', 'store')->name('slider.store');
             Route::post('/delete', 'destroy')->name('slider.delete');
-        });   
+        });
 
         Route::prefix('berita_kategori')->controller(App\Http\Controllers\Backend\web\BeritaKategoriController::class)->group(function () {
             Route::get('/', 'index')->name('berita_kategori.index');
@@ -307,9 +306,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('pembayaran_pusat.delete');
     });
 
-    Route::prefix('laporan')->controller(App\Http\Controllers\Backend\laporan\LaporanPusatController::class)->group(function () {
-        Route::get('/pusat', 'index')->name('laporan_pusat');
-        Route::get('/pusat/list', 'list')->name('laporan_pusat.list');
+    Route::group(['prefix' => 'laporan-pusat', 'as' => 'laporan_pusat.'], function () {
+        Route::get('/', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'index'])->name('index');
+        Route::get('/list', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'list'])->name('list');
+        Route::get('/export/excel', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'exportExcel'])->name('export.excel');
+        Route::get('/export/pdf', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'exportPdf'])->name('export.pdf');
     });
 
     Route::prefix('laporan')->controller(App\Http\Controllers\Backend\laporan\LaporanDaerahController::class)->group(function () {
@@ -376,7 +377,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('partner.delete');
     });
 
-    Route::prefix('struktur_organisasi')->controller(App\Http\Controllers\Backend\ruang_pengurus\StrukturOrganisasiController::class)->group(function () { 
+    Route::prefix('struktur_organisasi')->controller(App\Http\Controllers\Backend\ruang_pengurus\StrukturOrganisasiController::class)->group(function () {
         Route::get('/', 'index')->name('struktur_organisasi.index');
         Route::get('/list', 'list')->name('struktur_organisasi.list');
         Route::get('/edit/{id}', 'edit')->name('struktur_organisasi.edit');
@@ -385,25 +386,25 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/detail/{id}', 'detail')->name('struktur_organisasi.detail');
         Route::get('/print/{id}', 'printDetail')->name('struktur_organisasi.print');
     });
-    
-    Route::prefix('pengurus')->controller(App\Http\Controllers\Backend\ruang_pengurus\StrukturOrganisasiController::class)->group(function () { 
+
+    Route::prefix('pengurus')->controller(App\Http\Controllers\Backend\ruang_pengurus\StrukturOrganisasiController::class)->group(function () {
         Route::post('/store', 'storePengurus')->name('pengurus.store');
         Route::post('/edit', 'editPengurus')->name('pengurus.edit');
         Route::post('/delete', 'destroyPengurus')->name('pengurus.delete');
     });
 
     Route::group(['prefix' => 'expired-sio', 'as' => 'expired_sio.'], function () {
-    Route::get('/', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'index'])->name('index');
-    Route::get('/list', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'list'])->name('list');
-    Route::get('/export/excel', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'exportExcel'])->name('export.excel');
-    Route::get('/export/pdf', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'exportPdf'])->name('export.pdf');
+        Route::get('/', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'index'])->name('index');
+        Route::get('/list', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'list'])->name('list');
+        Route::get('/export/excel', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'exportExcel'])->name('export.excel');
+        Route::get('/export/pdf', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'exportPdf'])->name('export.pdf');
     });
 
     Route::group(['prefix' => 'expired-sertifikat', 'as' => 'expired_sertifikat.'], function () {
-    Route::get('/', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'index'])->name('index');
-    Route::get('/list', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'list'])->name('list');
-    Route::get('/export/excel', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'exportExcel'])->name('export.excel');
-    Route::get('/export/pdf', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'exportPdf'])->name('export.pdf');
+        Route::get('/', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'index'])->name('index');
+        Route::get('/list', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'list'])->name('list');
+        Route::get('/export/excel', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'exportExcel'])->name('export.excel');
+        Route::get('/export/pdf', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'exportPdf'])->name('export.pdf');
     });
 
     Route::prefix('jenis_surat')->controller(App\Http\Controllers\Backend\ruang_pengurus\JenisSuratController::class)->group(function () {
@@ -421,7 +422,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/store', 'store')->name('surat_penomoran.store');
         Route::post('/delete', 'destroy')->name('surat_penomoran.delete');
     });
-    
+
     Route::prefix('surat_keluar')->controller(App\Http\Controllers\Backend\ruang_pengurus\SuratKeluarController::class)->group(function () {
         Route::get('/', 'index')->name('surat_keluar.index');
         Route::get('/list', 'list')->name('surat_keluar.list');
@@ -455,7 +456,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('kontak.delete');
     });
 
-
     // Route::prefix('kategori_operasional')->controller(App\Http\Controllers\Backend\ruang_pengurus\KategoriOperasionalController::class)->group(function () {
     //     Route::get('/', 'index')->name('kategori_operasional.index');
     //     Route::get('/list', 'list')->name('kategori_operasional.list');
@@ -463,7 +463,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     //     Route::post('/store', 'store')->name('kategori_operasional.store');
     //     Route::post('/delete', 'destroy')->name('kategori_operasional.delete');
     // });
-    
+
     // Route::prefix('operasional')->controller(App\Http\Controllers\Backend\ruang_pengurus\OperasionalController::class)->group(function () {
     //     Route::get('/', 'index')->name('operasional.index');
     //     Route::get('/list', 'list')->name('operasional.list');
@@ -471,5 +471,4 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     //     Route::post('/store', 'store')->name('operasional.store');
     //     Route::post('/delete', 'destroy')->name('operasional.delete');
     // });
-    
 });
