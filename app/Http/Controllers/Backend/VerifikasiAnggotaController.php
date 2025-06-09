@@ -30,7 +30,16 @@ class VerifikasiAnggotaController extends Controller
                 'indonesia_villages.name as kelurahan',
                 'indonesia_districts.name as kecamatan',
                 'indonesia_provinces.name as provinsi',
-                \DB::raw('GROUP_CONCAT(DISTINCT fasilitas_klinik.nama SEPARATOR ", ") as kriteria')
+                \DB::raw('GROUP_CONCAT(DISTINCT fasilitas_klinik.nama SEPARATOR ", ") as kriteria'),
+                // Tambahkan logika untuk menampilkan tanggal pendaftaran
+                \DB::raw('
+                    CASE 
+                        WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                            FROM_UNIXTIME(anggota.created_on)
+                        ELSE 
+                            anggota.created_at 
+                    END as tanggal_daftar
+                ')
             )
                 ->leftjoin("fasilitas_klinik", \DB::raw("FIND_IN_SET(fasilitas_klinik.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
                 ->leftjoin("indonesia_cities", 'indonesia_cities.code', '=', 'anggota.id_kota')
@@ -54,18 +63,64 @@ class VerifikasiAnggotaController extends Controller
                 ->when(Auth::user()->hasRole('Bendahara'), function ($query) use ($request) {
                     $query->where('anggota.status', 'Verifikasi Bendahara');
                 })
+                // Filter berdasarkan usia data
+                ->when($request->get('filter_usia'), function ($query) use ($request) {
+                    $filterUsia = $request->get('filter_usia');
+                    $tahunSekarang = date('Y');
+                    
+                    switch ($filterUsia) {
+                        case 'tahun_ini':
+                            $query->whereRaw('YEAR(CASE 
+                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                                    FROM_UNIXTIME(anggota.created_on)
+                                ELSE 
+                                    anggota.created_at 
+                            END) = ?', [$tahunSekarang]);
+                            break;
+                        case '1_tahun':
+                            $query->whereRaw('YEAR(CASE 
+                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                                    FROM_UNIXTIME(anggota.created_on)
+                                ELSE 
+                                    anggota.created_at 
+                            END) = ?', [$tahunSekarang - 1]);
+                            break;
+                        case '2_tahun':
+                            $query->whereRaw('YEAR(CASE 
+                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                                    FROM_UNIXTIME(anggota.created_on)
+                                ELSE 
+                                    anggota.created_at 
+                            END) = ?', [$tahunSekarang - 2]);
+                            break;
+                        case '3_tahun':
+                            $query->whereRaw('YEAR(CASE 
+                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                                    FROM_UNIXTIME(anggota.created_on)
+                                ELSE 
+                                    anggota.created_at 
+                            END) = ?', [$tahunSekarang - 3]);
+                            break;
+                        case '4_tahun_lebih':
+                            $query->whereRaw('YEAR(CASE 
+                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                                    FROM_UNIXTIME(anggota.created_on)
+                                ELSE 
+                                    anggota.created_at 
+                            END) <= ?', [$tahunSekarang - 4]);
+                            break;
+                    }
+                })
+                // Filter berdasarkan status
+                ->when($request->get('filter_status'), function ($query) use ($request) {
+                    $query->where('anggota.status', $request->get('filter_status'));
+                })
+                // Filter berdasarkan jenis klinik
+                ->when($request->get('filter_jenis'), function ($query) use ($request) {
+                    $query->where('anggota.jenis_klinik', $request->get('filter_jenis'));
+                })
                 ->get();
-            // return Datatables::of($data)
-            //     ->filter(function ($instance) use ($request) {
-            //         if (!empty($request->get('search'))) {
-            //             $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-            //                 if (Str::contains(Str::lower($data['nama_klinik']), Str::lower($request->get('search')))){
-            //                     return true;
-            //                 }
-            //                 return false;
-            //             });
-            //         }
-            //     })
+
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('search'))) {
@@ -85,8 +140,36 @@ class VerifikasiAnggotaController extends Controller
                     }
                 })
                 ->addIndexColumn()
+                // Format tanggal untuk tampilan dengan warna berdasarkan usia data
+                ->addColumn('tanggal_daftar_formatted', function($row) {
+                    if ($row->tanggal_daftar && $row->tanggal_daftar != '0000-00-00 00:00:00') {
+                        $tanggal = \Carbon\Carbon::parse($row->tanggal_daftar);
+                        $formatTanggal = $tanggal->format('d-m-Y');
+                        
+                        // Hitung selisih tahun dari sekarang
+                        $tahunSekarang = \Carbon\Carbon::now()->year;
+                        $tahunData = $tanggal->year;
+                        $selisihTahun = $tahunSekarang - $tahunData;
+                        
+                        // Tentukan warna berdasarkan usia data
+                        $warna = '#32CD32'; // Default: masih tahun ini (hijau)
+                        
+                        if ($selisihTahun >= 4) {
+                            $warna = '#8B0000'; // Lebih dari 4 tahun (merah tua)
+                        } elseif ($selisihTahun >= 3) {
+                            $warna = '#FF0000'; // Lebih dari 3 tahun (merah)
+                        } elseif ($selisihTahun >= 2) {
+                            $warna = '#FF4500'; // Lebih dari 2 tahun (orange merah)
+                        } elseif ($selisihTahun >= 1) {
+                            $warna = '#FFA500'; // Lebih dari 1 tahun (orange)
+                        }
+                        
+                        return '<span style="color: ' . $warna . '; font-weight: bold;">' . $formatTanggal . '</span>';
+                    }
+                    return '<span style="color: #999;">-</span>';
+                })
                 ->addColumn('action', 'backend.verifikasi_anggota.action')
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'tanggal_daftar_formatted'])
                 ->make(true);
         }
     }

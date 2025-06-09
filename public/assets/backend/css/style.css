@@ -3948,3 +3948,96 @@ body:not(.sidebar-mini)
 .sidebar-menu li.active a {
     color: #f5fffa; /* warna teks link saat aktif */
 }
+
+
+
+/* CSS untuk memperbaiki jarak icon dan text sidebar */
+
+/* Memperbesar font-size dan memperbaiki spacing */
+.main-sidebar {
+    font-size: 16px; /* Ukuran font dasar sidebar diperbesar */
+}
+
+.main-sidebar .sidebar-menu li a {
+    font-size: 16px !important; /* Font menu utama diperbesar */
+    font-weight: 500;
+    padding: 0 20px; /* Padding kiri kanan tetap */
+    display: flex;
+    align-items: center;
+    height: 50px;
+}
+
+/* Memperbaiki jarak icon ke text - ini yang paling penting */
+.main-sidebar .sidebar-menu li a i {
+    width: 20px !important; /* Kurangi dari 28px ke 20px */
+    margin-right: 12px !important; /* Kurangi dari 20px ke 12px */
+    text-align: center;
+    font-size: 14px; /* Ukuran icon sedikit diperbesar */
+}
+
+.main-sidebar .sidebar-menu li a span {
+    font-size: 16px; /* Pastikan span text mengikuti ukuran font */
+    margin-top: 0; /* Hapus margin top jika ada */
+    flex: 1; /* Agar text mengambil sisa ruang */
+}
+
+/* Font submenu */
+.main-sidebar .sidebar-menu li ul.dropdown-menu li a {
+    font-size: 15px !important;
+    font-weight: 400;
+    padding-left: 52px !important; /* Sesuaikan padding left submenu */
+}
+
+.main-sidebar .sidebar-menu li ul.dropdown-menu li a i {
+    width: 16px !important;
+    margin-right: 10px !important;
+    font-size: 13px;
+}
+
+/* Font header menu */
+.main-sidebar .sidebar-menu li.menu-header {
+    font-size: 12px !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 15px; /* Sesuaikan padding header */
+}
+
+/* Untuk mode sidebar mini */
+body.sidebar-mini .main-sidebar .sidebar-menu > li > a i {
+    width: 20px !important;
+    margin: 0 !important;
+    font-size: 18px;
+}
+
+body.sidebar-mini .main-sidebar .sidebar-menu > li ul.dropdown-menu li a {
+    font-size: 15px !important;
+}
+
+/* Styling tambahan untuk konsistensi */
+.main-sidebar .sidebar-menu li a:hover {
+    background-color: #f9ccab;
+    transition: background-color 0.3s ease;
+}
+
+.main-sidebar .sidebar-menu li.active a {
+    color: #f11313;
+    font-weight: 600;
+    background-color: #fcfcfd;
+}
+
+/* Jika masih terlalu rapat, gunakan nilai ini */
+/*
+.main-sidebar .sidebar-menu li a i {
+    width: 18px !important;
+    margin-right: 10px !important;
+}
+*/
+
+/* Jika masih terlalu jauh, gunakan nilai ini */
+/*
+.main-sidebar .sidebar-menu li a i {
+    width: 22px !important;
+    margin-right: 15px !important;
+}
+*/

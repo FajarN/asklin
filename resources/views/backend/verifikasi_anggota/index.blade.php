@@ -20,6 +20,66 @@
                             <input type="text" class="form-control" placeholder="Search" id="search">
                         </div>
                     </div>
+                    
+                    <!-- Filter Section -->
+                    <div class="card-body pt-3 pb-2">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Usia Data:</label>
+                                <select class="form-control" id="filter_usia">
+                                    <option value="">Semua Usia</option>
+                                    <option value="tahun_ini">Tahun Ini (2025)</option>
+                                    <option value="1_tahun">1 Tahun Lalu (2024)</option>
+                                    <option value="2_tahun">2 Tahun Lalu (2023)</option>
+                                    <option value="3_tahun">3 Tahun Lalu (2022)</option>
+                                    <option value="4_tahun_lebih">4+ Tahun Lalu (≤2021)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Status:</label>
+                                <select class="form-control" id="filter_status">
+                                    <option value="">Semua Status</option>
+                                    <option value="waiting">Waiting</option>
+                                    <option value="Perlu Perbaikan">Perlu Perbaikan</option>
+                                    <option value="create_dokter">Create Dokter</option>
+                                    <option value="Verifikasi Sekjen">Verifikasi Sekjen</option>
+                                    <option value="Verifikasi Bendahara">Verifikasi Bendahara</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Jenis Klinik:</label>
+                                <select class="form-control" id="filter_jenis">
+                                    <option value="">Semua Jenis</option>
+                                    <option value="Pratama">Pratama</option>
+                                    <option value="Utama">Utama</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <div>
+                                    <button type="button" class="btn btn-primary" id="btn_filter">
+                                        <i class="fas fa-filter"></i> Filter
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="btn_reset">
+                                        <i class="fas fa-undo"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Keterangan Warna -->
+                    <div class="card-body pt-0 pb-2">
+                        <div class="alert alert-secondary mb-2">
+                            <strong>Keterangan Warna Tanggal:</strong>
+                            <span style="color: #32CD32; font-weight: bold;">■ Tahun ini</span> | 
+                            <span style="color: #FFA500; font-weight: bold;">■ > 1 tahun</span> | 
+                            <span style="color: #FF4500; font-weight: bold;">■ > 2 tahun</span> | 
+                            <span style="color: #FF0000; font-weight: bold;">■ > 3 tahun</span> | 
+                            <span style="color: #8B0000; font-weight: bold;">■ > 4 tahun</span>
+                        </div>
+                    </div>
+                    
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-striped" id="table">
@@ -32,6 +92,7 @@
                                         <th>Jenis Klinik</th>
                                         <th>Kriteria Klinik</th>
                                         <th>Status Verifikasi</th>
+                                        <th>Tanggal Daftar</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -70,7 +131,10 @@
                 ajax: {
                     url: "{{ route('verifikasi_anggota.list') }}",
                     data: function(d) {
-                        d.search = $('#search').val()
+                        d.search = $('#search').val();
+                        d.filter_usia = $('#filter_usia').val();
+                        d.filter_status = $('#filter_status').val();
+                        d.filter_jenis = $('#filter_jenis').val();
                     }
                 },
                 columns: [{
@@ -103,15 +167,12 @@
                         data: 'status',
                         name: 'status'
                     },
-                    // {data: 'status_pembayaran', 
-                    //     "render": function (  data, type, row, meta ) {
-                    //         if(row.status == "0"){
-                    //             return "Belum Lunas";
-                    //         }else{
-                    //             return "Lunas";
-                    //         }
-                    //     }
-                    // },
+                    {
+                        data: 'tanggal_daftar_formatted',
+                        name: 'tanggal_daftar',
+                        orderable: true,
+                        searchable: false
+                    },
                     {
                         data: 'action',
                         name: 'action',
@@ -147,6 +208,25 @@
             });
 
             $("#search").keyup(function() {
+                table.draw();
+            });
+
+            // Event handler untuk filter
+            $("#btn_filter").click(function() {
+                table.draw();
+            });
+
+            // Event handler untuk reset filter
+            $("#btn_reset").click(function() {
+                $('#filter_usia').val('');
+                $('#filter_status').val('');
+                $('#filter_jenis').val('');
+                $('#search').val('');
+                table.draw();
+            });
+
+            // Filter otomatis saat dropdown berubah
+            $('#filter_usia, #filter_status, #filter_jenis').change(function() {
                 table.draw();
             });
         });
