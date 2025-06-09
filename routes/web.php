@@ -399,12 +399,14 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     Route::get('/export/pdf', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'exportPdf'])->name('export.pdf');
     });
 
-    Route::prefix('expired_serfitikat')->controller(App\Http\Controllers\Backend\ExpiredSertifikatController::class)->group(function () {
-        Route::get('/', 'index')->name('expired_serfitikat.index');
-        Route::get('/list', 'list')->name('expired_serfitikat.list');
+    Route::group(['prefix' => 'expired-sertifikat', 'as' => 'expired_sertifikat.'], function () {
+    Route::get('/', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'index'])->name('index');
+    Route::get('/list', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'list'])->name('list');
+    Route::get('/export/excel', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'exportExcel'])->name('export.excel');
+    Route::get('/export/pdf', [App\Http\Controllers\Backend\ExpiredSertifikatController::class, 'exportPdf'])->name('export.pdf');
     });
 
-     Route::prefix('jenis_surat')->controller(App\Http\Controllers\Backend\ruang_pengurus\JenisSuratController::class)->group(function () {
+    Route::prefix('jenis_surat')->controller(App\Http\Controllers\Backend\ruang_pengurus\JenisSuratController::class)->group(function () {
         Route::get('/', 'index')->name('jenis_surat.index');
         Route::get('/list', 'list')->name('jenis_surat.list');
         Route::post('/edit', 'edit')->name('jenis_surat.edit');

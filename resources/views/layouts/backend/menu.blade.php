@@ -126,8 +126,8 @@
             @endcan
 
             @can('expired-sertifikat')
-                <li class="dropdown @if (Request::url() == route('expired_serfitikat.index')) active @endif"><a class="nav-link"
-                        href="{{ route('expired_serfitikat.index') }}"><i class="fas fa-calendar-times"></i>Expired
+                <li class="dropdown @if (Request::url() == route('expired_sertifikat.index')) active @endif"><a class="nav-link"
+                        href="{{ route('expired_sertifikat.index') }}"><i class="fas fa-calendar-times"></i>Expired
                         Sertifikat</a></li>
             @endcan
 
