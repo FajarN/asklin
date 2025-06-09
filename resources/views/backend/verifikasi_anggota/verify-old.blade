@@ -26,7 +26,7 @@
                                 <h3>{{ $anggota->nama_klinik }}</h3>
                             </div>
                         </div>
-                        <form action="{{ route('verifikasi_anggota.update_anggota', $anggota->id) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('verifikasi_anggota.update_anggota', $anggota->id) }}" method="POST">
                             @csrf
                             @method('PUT')
                             <table class="table">
@@ -103,29 +103,6 @@
                                     </tr>
                                 </tbody>
                             </table>
-
-                            <!-- Upload SIO Section -->
-                            {{-- <div class="form-group">
-                                <label>Upload Surat Izin Operasional (SIO)</label>
-                                <div class="input-group">
-                                    <input type="file" class="form-control" name="sio" accept=".pdf,.jpg,.jpeg,.png" id="sio_upload">
-                                    <div class="input-group-append">
-                                        @if($anggota->sio)
-                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#sioModal">
-                                                <i class="fas fa-eye"></i> Preview
-                                            </button>
-                                        @endif
-                                    </div>
-                                </div>
-                                @if($anggota->sio)
-                                    <small class="text-success">
-                                        <i class="fas fa-check-circle"></i> File SIO sudah terupload: {{ $anggota->sio }}
-                                    </small>
-                                @else
-                                    <small class="text-muted">Format: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
-                                @endif
-                            </div> --}}
-
                             <div class="form-group">
                                 <label>Pilih <code>.dropdown ini untuk mengubah status verifikasi</code></label>
                                 @role('Superadmin')
@@ -216,7 +193,7 @@
                             </div>
                             <div class="form-group">
                                 <input type="text" class="form-control form-control-md" name="keterangan"
-                                    value="{{ $anggota->keterangan }}" placeholder="Keterangan verifikasi...">
+                                    value="{{ $anggota->keterangan }}">
                             </div>
                             <button type="submit" class="btn btn-danger">Update Status</button>
                     </div>
@@ -266,23 +243,7 @@
                                     <th>Berlaku S/d</th>
                                     <td>{{ $anggota->tgl_akhir_ijin ?? 'Belum Diisi' }}</td>
                                 </tr>
-                                <tr>
-                                    <th>Status SIO</th>
-                                    <td>
-                                        @if($anggota->sio)
-                                            <span class="badge badge-success">
-                                                <i class="fas fa-check-circle"></i> Sudah Upload
-                                            </span>
-                                            <button type="button" class="btn btn-sm btn-info ml-2" data-toggle="modal" data-target="#sioModal">
-                                                <i class="fas fa-eye"></i> Lihat SIO
-                                            </button>
-                                        @else
-                                            <span class="badge badge-warning">
-                                                <i class="fas fa-exclamation-triangle"></i> Belum Upload
-                                            </span>
-                                        @endif
-                                    </td>
-                                </tr>
+
                                 <tr>
                                     <th>Telepon</th>
                                     <td>{{ $anggota->tlf_klinik ?? 'Belum Diisi' }}</td>
@@ -499,93 +460,13 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal untuk Preview SIO -->
-    @if($anggota->sio)
-    <div class="modal fade" id="sioModal" tabindex="-1" role="dialog" aria-labelledby="sioModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="sioModalLabel">
-                        <i class="fas fa-file-alt"></i> Surat Izin Operasional (SIO) - {{ $anggota->nama_klinik }}
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body text-center">
-                    @php
-                        $fileExtension = pathinfo($anggota->sio, PATHINFO_EXTENSION);
-                        $filePath = asset('images/file/' . $anggota->sio);
-                    @endphp
-                    
-                    @if(in_array(strtolower($fileExtension), ['jpg', 'jpeg', 'png', 'gif']))
-                        <!-- Preview untuk file gambar -->
-                        <img src="{{ $filePath }}" alt="SIO {{ $anggota->nama_klinik }}" class="img-fluid" style="max-height: 80vh;">
-                    @elseif(strtolower($fileExtension) == 'pdf')
-                        <!-- Preview untuk file PDF -->
-                        <iframe src="{{ $filePath }}" style="width: 100%; height: 80vh;" frameborder="0">
-                            <p>Browser Anda tidak mendukung preview PDF. 
-                                <a href="{{ $filePath }}" target="_blank">Klik di sini untuk membuka file</a>
-                            </p>
-                        </iframe>
-                    @else
-                        <!-- Untuk file lainnya -->
-                        <div class="alert alert-info">
-                            <i class="fas fa-download"></i>
-                            <h5>File tidak dapat di-preview</h5>
-                            <p>File: {{ $anggota->sio }}</p>
-                            <a href="{{ $filePath }}" target="_blank" class="btn btn-primary">
-                                <i class="fas fa-download"></i> Download File
-                            </a>
-                        </div>
-                    @endif
-                </div>
-                <div class="modal-footer">
-                    <div class="mr-auto">
-                        <small class="text-muted">
-                            <i class="fas fa-info-circle"></i> 
-                            File: {{ $anggota->sio }} | 
-                            Ukuran: {{ file_exists(public_path('images/file/' . $anggota->sio)) ? number_format(filesize(public_path('images/file/' . $anggota->sio)) / 1024, 2) . ' KB' : 'Unknown' }}
-                        </small>
-                    </div>
-                    <a href="{{ $filePath }}" target="_blank" class="btn btn-info">
-                        <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
-                    </a>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        <i class="fas fa-times"></i> Tutup
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
-    @endif
 @endsection
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/backend/modules/datatables/datatables.min.css') }}">
     <link rel="stylesheet"
         href="{{ asset('assets/backend/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
-    <style>
-        .file-preview {
-            border: 2px dashed #ddd;
-            border-radius: 5px;
-            padding: 20px;
-            text-align: center;
-            margin-top: 10px;
-        }
-        .file-preview.has-file {
-            border-color: #28a745;
-            background-color: #f8fff9;
-        }
-        .modal-xl {
-            max-width: 95%;
-        }
-        .sio-status-badge {
-            font-size: 12px;
-            padding: 5px 10px;
-        }
-    </style>
 @endpush
 
 @push('js')
@@ -598,47 +479,6 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-
-        // Preview file upload SIO
-        $('#sio_upload').change(function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const fileSize = (file.size / 1024 / 1024).toFixed(2);
-                const fileName = file.name;
-                const fileExtension = fileName.split('.').pop().toLowerCase();
-                
-                // Validasi ukuran file (max 5MB)
-                if (fileSize > 5) {
-                    alert('Ukuran file terlalu besar! Maksimal 5MB');
-                    $(this).val('');
-                    return;
-                }
-                
-                // Validasi format file
-                const allowedFormats = ['pdf', 'jpg', 'jpeg', 'png'];
-                if (!allowedFormats.includes(fileExtension)) {
-                    alert('Format file tidak didukung! Gunakan: PDF, JPG, JPEG, PNG');
-                    $(this).val('');
-                    return;
-                }
-                
-                // Tampilkan info file yang dipilih
-                let previewHtml = `
-                    <div class="file-preview has-file">
-                        <i class="fas fa-file-${fileExtension === 'pdf' ? 'pdf' : 'image'} fa-2x text-success"></i>
-                        <p class="mt-2 mb-1"><strong>${fileName}</strong></p>
-                        <small class="text-muted">Ukuran: ${fileSize} MB</small>
-                    </div>
-                `;
-                
-                // Hapus preview lama jika ada
-                $('.file-preview').remove();
-                
-                // Tambah preview baru
-                $(this).parent().after(previewHtml);
-            }
-        });
-
         // PJ
         $(function() {
             var table1 = $('#table1').DataTable({
