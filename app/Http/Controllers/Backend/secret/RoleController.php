@@ -49,17 +49,18 @@ class RoleController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function($data) {
+                    // PERBAIKAN: Gunakan $data->id bukan ${row.id}
                     return '
                           <div class="btn-group">
                             <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
                                 Action
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="edit(${row.id})">
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="edit('.$data->id.')">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="deleteu(${row.id})">
+                                <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="deleteu('.$data->id.')">
                                     <i class="fas fa-trash-alt"></i> Hapus
                                 </a>
                             </div>
@@ -90,16 +91,61 @@ class RoleController extends Controller
         }
 
         try {
+            // PERBAIKAN: Tambah validasi permission yang ada di database
+            if ($request->has('permission') && !empty($request->permission)) {
+                $validPermissions = Permission::whereIn('id', $request->permission)->pluck('id')->toArray();
+                $invalidPermissions = array_diff($request->permission, $validPermissions);
+                
+                if (!empty($invalidPermissions)) {
+                    Log::warning('Invalid permission IDs detected', [
+                        'invalid_permissions' => $invalidPermissions,
+                        'requested_permissions' => $request->permission
+                    ]);
+                    
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Permission dengan ID ' . implode(', ', $invalidPermissions) . ' tidak ditemukan di tabel permissions.',
+                    ], 400);
+                }
+            }
+
+            // Log untuk debugging
+            Log::info('Creating/updating role', [
+                'name' => $request->name,
+                'permissions' => $request->permission ?? []
+            ]);
+
             $role = Role::updateOrCreate(
                 ['name' => $request->name, 'guard_name' => 'web'],
                 ['name' => $request->name]
             );
 
-            if ($request->has('permission')) {
+            // PERBAIKAN: Sync permissions dengan validasi tambahan
+            if ($request->has('permission') && !empty($request->permission)) {
+                // Double check permissions masih valid sebelum sync
                 $permissionNames = Permission::whereIn('id', $request->permission)
                     ->pluck('name')
                     ->toArray();
+                
+                if (count($permissionNames) !== count($request->permission)) {
+                    Log::warning('Permission count mismatch', [
+                        'requested_count' => count($request->permission),
+                        'found_count' => count($permissionNames),
+                        'requested_ids' => $request->permission,
+                        'found_names' => $permissionNames
+                    ]);
+                }
+                
+                Log::info('Syncing permissions', [
+                    'role_id' => $role->id,
+                    'permission_names' => $permissionNames
+                ]);
+
                 $role->syncPermissions($permissionNames);
+            } else {
+                // Jika tidak ada permission, hapus semua permission dari role
+                $role->syncPermissions([]);
+                Log::info('Cleared all permissions for role', ['role_id' => $role->id]);
             }
 
             return response()->json([
@@ -107,10 +153,15 @@ class RoleController extends Controller
                 'message' => 'Data berhasil disimpan.',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error storing role: '.$e->getMessage());
+            Log::error('Error storing role', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan data.',
+                'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -119,10 +170,9 @@ class RoleController extends Controller
     {
         try {
             $role = Role::findOrFail($id);
-            $rolePermissions = DB::table('role_has_permissions')
-                ->where('role_id', $id)
-                ->pluck('permission_id')
-                ->toArray();
+            
+            // PERBAIKAN: Gunakan relasi Laravel untuk lebih aman
+            $rolePermissions = $role->permissions()->pluck('permissions.id')->toArray();
 
             return response()->json([
                 'success' => true,
@@ -130,7 +180,11 @@ class RoleController extends Controller
                 'permissions' => $rolePermissions,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error editing role: '.$e->getMessage());
+            Log::error('Error editing role', [
+                'role_id' => $id,
+                'message' => $e->getMessage()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Role tidak ditemukan.',
@@ -150,18 +204,30 @@ class RoleController extends Controller
                 ], 404);
             }
 
-            $role->permissions()->detach();
-            $role->delete();
+            Log::info('Deleting role', [
+                'role_id' => $role->id,
+                'role_name' => $role->name
+            ]);
+
+            // PERBAIKAN: Gunakan transaction untuk keamanan
+            DB::transaction(function () use ($role) {
+                $role->permissions()->detach();
+                $role->delete();
+            });
 
             return response()->json([
                 'success' => true,
                 'message' => 'Role berhasil dihapus.',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error deleting role: '.$e->getMessage());
+            Log::error('Error deleting role', [
+                'role_id' => $request->id,
+                'message' => $e->getMessage()
+            ]);
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus role.',
+                'message' => 'Terjadi kesalahan saat menghapus role: ' . $e->getMessage(),
             ], 500);
         }
     }
