@@ -321,6 +321,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     Route::prefix('laporan')->controller(App\Http\Controllers\Backend\laporan\LaporanCabangController::class)->group(function () {
         Route::get('/cabang', 'index')->name('laporan_cabang');
         Route::get('/cabang/list', 'list')->name('laporan_cabang.list');
+        Route::get('/cabang/export', 'export')->name('laporan_cabang.export');
     });
 
     Route::prefix('konas-master-hotel')->controller(App\Http\Controllers\Backend\konas\KonasMasterHotelController::class)->group(function () {

@@ -16,7 +16,10 @@
             <div class="card">
                 <div class="card-header">
                     <h4></h4>
-                    <div class="card-header-form">
+                    <div class="card-header-form d-flex align-items-center">
+                        <button type="button" class="btn btn-success mr-2" id="exportBtn">
+                            <i class="fas fa-download"></i> Export Excel
+                        </button>
                         <input type="text" class="form-control" placeholder="Search" id="search">
                     </div>
                 </div>
@@ -27,13 +30,17 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>No. Anggota</th>
-                                    <th>Kab/Kota</th>
-                                    <th>Nama Klinik</th>
                                     <th>Jenis Klinik</th>
-                                    <th>Kriteria Klinik</th>
-                                    <th>Status Verifikasi</th>
-                                    <th>Status Pembayaran</th>
+                                    <th>No. Anggota</th>
+                                    <th>Nama Klinik</th>
+                                    <th>Nama Pemilik</th>
+                                    <th>Email</th>
+                                    <th>Telepon</th>
+                                    <th>Alamat</th>
+                                    <th>Provinsi</th>
+                                    <th>Kab/Kota</th>
+                                    <th>Kecamatan</th>
+                                    <th>Kelurahan</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -62,11 +69,13 @@ $.ajaxSetup({
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
+
 $(function () {  
     var table = $('#table').DataTable({
         processing: true,
         serverSide: true,
         searching: false,
+        scrollX: true, // Enable horizontal scroll untuk banyak kolom
         ajax: { 
             url: "{{ route('laporan_cabang.list') }}",
             data: function (d) {
@@ -75,26 +84,46 @@ $(function () {
         },
         columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-            {data: 'no_anggota', name: 'no_anggota'},
-            {data: 'name', name: 'name'},
-            {data: 'nama_klinik', name: 'nama_klinik'},
             {data: 'jenis_klinik', name: 'jenis_klinik'},
-            {data: 'kriteria', name: 'kriteria'},
-            {data: 'status', name: 'status'},
-            {data: 'status_pembayaran', 
-                "render": function (  data, type, row, meta ) {
-                    if(row.status == "0"){
-                        return "Belum Lunas";
-                    }else{
-                        return "Lunas";
-                    }
-                }
-            }
+            {data: 'no_anggota', name: 'no_anggota'},
+            {data: 'nama_klinik', name: 'nama_klinik'},
+            {data: 'nama_pemilik_klinik', name: 'nama_pemilik_klinik'},
+            {data: 'email', name: 'email'},
+            {data: 'tlf', name: 'tlf'},
+            {data: 'alamat_klinik', name: 'alamat_klinik'},
+            {data: 'provinsi_name', name: 'provinsi_name'},
+            {data: 'kota_name', name: 'kota_name'},
+            {data: 'kecamatan_name', name: 'kecamatan_name'},
+            {data: 'kelurahan_name', name: 'kelurahan_name'}
         ]
     });
 
     $("#search").keyup(function(){
         table.draw();
+    });
+
+    // Export Excel functionality
+    $("#exportBtn").click(function(){
+        var searchValue = $('#search').val();
+        var exportUrl = "{{ route('laporan_cabang.export') }}";
+        
+        if(searchValue) {
+            exportUrl += '?search=' + encodeURIComponent(searchValue);
+        }
+        
+        console.log('Export URL:', exportUrl); // Debug
+        
+        // Show loading state
+        var $btn = $(this);
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Exporting...');
+        
+        // Use window.location for download
+        window.location.href = exportUrl;
+        
+        // Reset button after a short delay
+        setTimeout(() => {
+            $btn.prop('disabled', false).html('<i class="fas fa-download"></i> Export Excel');
+        }, 3000);
     });
 });
 </script>
