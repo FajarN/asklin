@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('event_kategori', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
+            $table->string('deskripsi');
+            $table->integer('status');
             $table->integer('created_by')->unsigned()->nullable();
             $table->integer('updated_by')->unsigned()->nullable();
             $table->timestamps();

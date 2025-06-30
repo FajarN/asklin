@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\{Berita, BeritaImage, Slider, BeritaVisit, Anggota, Fasilitas, FasilitasKlinik, SDM, KategoriSDM, RumahSakit, Asuransi, FotoKlinik, Pembayaran, PembayaranKategori, Sertifikat, Event, Galery, PendaftaranEvent};
+use App\Models\{Berita, BeritaImage, Slider, BeritaVisit, Anggota, Fasilitas, FasilitasKlinik, SDM, KategoriSDM, RumahSakit, Asuransi, FotoKlinik, Pembayaran, PembayaranKategori, Sertifikat, Galery, PendaftaranEvent};
 use App\Models\StrukturOrganisasi;
 use App\Models\StrukturKelompokPengurus;
 use App\Models\StrukturPengurus;
 use App\Models\TingkatanPengurus;
 use App\Models\Kontak;
+use App\Models\Event;
+use App\Models\EventKategori;
 use Laravolt\Indonesia\Models\Province;
 use Laravolt\Indonesia\Models\City;
 use Auth;
@@ -19,6 +21,7 @@ use Spipu\Html2Pdf\Html2Pdf;
 use Spipu\Html2Pdf\Exception\Html2PdfException;
 use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 
 class HomeController extends Controller
@@ -64,8 +67,8 @@ class HomeController extends Controller
         $struktur = $query->get();
 
         return view('frontend.home.index', compact(
-            'title', 
-            'description', 
+            'title',
+            'description',
             'sliders',
             'data',
             'galery',
@@ -145,23 +148,23 @@ class HomeController extends Controller
         }
 
         $struktur = StrukturOrganisasi::query()
-                ->select(
-                    'a.*',
-                    'd.name as kota_nama',
-                    'e.name as provinsi_nama'
-                )
-                ->from('struktur_organisasi as a')
-                ->leftJoin('tingkatan_pengurus as b', 'b.id', '=', 'a.id_tingkatan_pengurus')
-                ->leftJoin('indonesia_cities as d', 'd.code', '=', 'a.id_kota')
-                ->leftJoin('indonesia_provinces as e', 'e.code', '=', 'a.id_provinsi')
-                ->where('a.id_tingkatan_pengurus', $tingkatanPengurusPusat->id)
-                ->orderBy('a.created_at', 'desc')
-                ->firstOrFail();
+            ->select(
+                'a.*',
+                'd.name as kota_nama',
+                'e.name as provinsi_nama'
+            )
+            ->from('struktur_organisasi as a')
+            ->leftJoin('tingkatan_pengurus as b', 'b.id', '=', 'a.id_tingkatan_pengurus')
+            ->leftJoin('indonesia_cities as d', 'd.code', '=', 'a.id_kota')
+            ->leftJoin('indonesia_provinces as e', 'e.code', '=', 'a.id_provinsi')
+            ->where('a.id_tingkatan_pengurus', $tingkatanPengurusPusat->id)
+            ->orderBy('a.created_at', 'desc')
+            ->firstOrFail();
 
         $pengurus = StrukturPengurus::where('id_struktur_organisasi', $struktur->id)
-                ->whereNull('parent_id')
-                ->orderBy('urutan', 'asc')
-                ->get();
+            ->whereNull('parent_id')
+            ->orderBy('urutan', 'asc')
+            ->get();
 
         return view('frontend.home.penguruspusat', compact('title', 'description', 'struktur', 'pengurus'));
     }
@@ -192,7 +195,7 @@ class HomeController extends Controller
         $berita = Berita::where('path', $path)->firstOrFail();
         $title = $berita->judul;
         $desc = $berita->konten;
-        
+
         $recentVisit = BeritaVisit::where('berita_id', $berita->id)
             ->where('ip_address', request()->ip())
             ->where('created_at', '>', now()->subDay())
@@ -207,30 +210,195 @@ class HomeController extends Controller
         }
 
         $images = BeritaImage::where('berita_id', $berita->id)->get();
-        
+
         return view('frontend.home.beritadetail', compact('title', 'desc', 'berita', 'images'));
     }
 
+
+
     public function event(Request $request)
     {
-        $title = "Berita";
-        $description = "Event terbaru asklin";
+        $title = "Event ASKLIN";
+        $description = "Event terbaru dari ASKLIN";
 
-        $event = Event::select('events.*', 'event_kategori.nama')
-            ->join('event_kategori', 'event_kategori.id', '=', 'events.id_kategori')
-            ->where('events.status', '1')
-            ->orderBy('id', 'DESC')->paginate(5);
+        // Query dengan relationship
+        $query = Event::with(['kategori'])
+            ->where('status', '1');
 
-        return view('frontend.home.event', compact('title', 'description', 'event'))->with('i', ($request->input('page', 1) - 1) * 5);
+        // Filter pencarian
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'LIKE', "%{$search}%")
+                    ->orWhere('konten', 'LIKE', "%{$search}%");
+            });
+        }
+
+        // Filter kategori
+        if ($request->filled('kategori')) {
+            $kategoriId = $request->get('kategori');
+            $query->where('id_kategori', $kategoriId);
+        }
+
+        // Filter status berdasarkan waktu
+        if ($request->filled('status')) {
+            $status = $request->get('status');
+            $now = now();
+
+            switch ($status) {
+                case 'upcoming':
+                    $query->where('mulai', '>', $now);
+                    break;
+                case 'ongoing':
+                    $query->where('mulai', '<=', $now)
+                        ->where('selesai', '>=', $now);
+                    break;
+                case 'finished':
+                    $query->where('selesai', '<', $now);
+                    break;
+            }
+        }
+
+        // Paginate results
+        $event = $query->orderBy('created_at', 'DESC')->paginate(9);
+
+        // Format konten untuk preview
+        $event->getCollection()->transform(function ($item) {
+            // Clean HTML untuk excerpt
+            $cleanContent = strip_tags($item->konten);
+            $cleanContent = html_entity_decode($cleanContent);
+            $cleanContent = preg_replace('/\s+/', ' ', $cleanContent); // Remove extra spaces
+            $item->clean_excerpt = Str::limit($cleanContent, 150);
+
+            return $item;
+        });
+
+        // Ambil semua kategori untuk dropdown
+        $categories = EventKategori::where('status', 1)->get();
+
+        return view('frontend.home.event', compact('title', 'description', 'event', 'categories'));
     }
 
     public function eventDetail($slug)
     {
-        $event = Event::where('path', $slug)->first();
-        $title = $event->judul;
-        $desc = $event->konten;
+        // Ambil event berdasarkan slug dengan relationship
+        $event = Event::with(['kategori', 'creator'])
+            ->where('path', $slug)
+            ->where('status', '1')
+            ->firstOrFail();
 
-        return view('frontend.home.eventdetail', compact('title', 'desc', 'event'));
+        $title = $event->judul;
+
+        // Clean description untuk meta
+        $cleanContent = strip_tags($event->konten);
+        $cleanContent = html_entity_decode($cleanContent);
+        $description = Str::limit($cleanContent, 160);
+
+        // Format konten untuk display yang lebih baik
+        $formattedContent = $this->formatEventContent($event->konten);
+        $event->formatted_content = $formattedContent;
+
+        // Ambil event terkait
+        $relatedEvents = Event::where('id', '!=', $event->id)
+            ->where('id_kategori', $event->id_kategori)
+            ->where('status', '1')
+            ->orderBy('created_at', 'DESC')
+            ->limit(3)
+            ->get();
+
+        return view('frontend.home.eventdetail', compact('title', 'description', 'event', 'relatedEvents'));
+    }
+
+    /**
+     * Format event content untuk display yang lebih baik
+     */
+    private function formatEventContent($content)
+    {
+        // Remove website mention di awal jika ada
+        $content = preg_replace('/^<p>Website\s+[\w\.]+<br><br>/', '<p>', $content);
+
+        // Replace emoji codes dengan emoji yang proper
+        $emojiMap = [
+            '⏰' => '🕐',
+            '👩‍⚕️' => '👩‍⚕️',
+            '💵' => '💰',
+            '🌐' => '🌐',
+            '☎️' => '📞',
+            '😊' => '😊'
+        ];
+
+        foreach ($emojiMap as $old => $new) {
+            $content = str_replace($old, $new, $content);
+        }
+
+        // Format struktur konten
+        $content = $this->formatContentStructure($content);
+
+        return $content;
+    }
+
+    /**
+     * Format struktur konten untuk lebih readable
+     */
+    private function formatContentStructure($content)
+    {
+        // Convert to array untuk processing
+        $content = strip_tags($content, '<br><p>');
+
+        // Split by <br> dan <p> tags
+        $lines = preg_split('/<br\s*\/?>\s*<br\s*\/?>/i', $content);
+
+        $formattedSections = [];
+
+        foreach ($lines as $line) {
+            $line = trim(strip_tags($line));
+            if (empty($line)) continue;
+
+            // Detect different sections
+            if (strpos($line, 'Undangan') !== false) {
+                $formattedSections[] = [
+                    'type' => 'header',
+                    'content' => $line
+                ];
+            } elseif (strpos($line, 'Tema:') !== false || strpos($line, 'Webminar') !== false) {
+                $formattedSections[] = [
+                    'type' => 'title',
+                    'content' => $line
+                ];
+            } elseif (strpos($line, 'Waktu Pelaksanaan') !== false || strpos($line, 'Tgl :') !== false) {
+                $formattedSections[] = [
+                    'type' => 'schedule',
+                    'content' => $line
+                ];
+            } elseif (strpos($line, 'TARGET PESERTA') !== false) {
+                $formattedSections[] = [
+                    'type' => 'target',
+                    'content' => $line
+                ];
+            } elseif (strpos($line, 'FREE') !== false) {
+                $formattedSections[] = [
+                    'type' => 'price',
+                    'content' => $line
+                ];
+            } elseif (strpos($line, 'LINK PENDAFTARAN') !== false || strpos($line, 'Link:') !== false) {
+                $formattedSections[] = [
+                    'type' => 'registration',
+                    'content' => $line
+                ];
+            } elseif (strpos($line, 'KONTAK PERSON') !== false || strpos($line, 'Ellen') !== false || strpos($line, 'Hasyim') !== false) {
+                $formattedSections[] = [
+                    'type' => 'contact',
+                    'content' => $line
+                ];
+            } else {
+                $formattedSections[] = [
+                    'type' => 'text',
+                    'content' => $line
+                ];
+            }
+        }
+
+        return $formattedSections;
     }
 
     public function galery(Request $request)
@@ -254,12 +422,12 @@ class HomeController extends Controller
         return view('frontend.home.kontak', compact('title', 'description'));
     }
 
-     public function storeKontak(Request $request)
+    public function storeKontak(Request $request)
     {
         $request->validate([
             'nama'  => 'required|string|max:255',
             'email' => 'required|email',
-            'pesan' => 'required|string|max:1000', 
+            'pesan' => 'required|string|max:1000',
         ]);
 
         $today = now()->startOfDay();
@@ -271,7 +439,7 @@ class HomeController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Mohon maaf anda sudah mengirim terlalu banyak pesan hari ini'
-            ], 429); 
+            ], 429);
         }
 
         Kontak::create([
@@ -951,13 +1119,13 @@ class HomeController extends Controller
     }
 
     public function downloadSK($id)
-        {
-            $anggota = Anggota::select(
-                'anggota.*',
-                \DB::raw('GROUP_CONCAT(DISTINCT a.nama SEPARATOR ", ") as nama_fasilitas_klinik'),
-                'b.name as kota',
-                'c.name as provinsi'
-            )
+    {
+        $anggota = Anggota::select(
+            'anggota.*',
+            \DB::raw('GROUP_CONCAT(DISTINCT a.nama SEPARATOR ", ") as nama_fasilitas_klinik'),
+            'b.name as kota',
+            'c.name as provinsi'
+        )
             ->leftJoin('fasilitas_klinik as a', \DB::raw("FIND_IN_SET(a.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
             ->leftJoin('indonesia_cities as b', 'b.code', '=', 'anggota.id_kota')
             ->leftJoin('indonesia_provinces as c', 'c.code', '=', 'anggota.id_provinsi')
@@ -965,32 +1133,32 @@ class HomeController extends Controller
             ->where('anggota.id', $id)
             ->first();
 
-            $id = $anggota->id;
+        $id = $anggota->id;
 
-            // Periksa apakah created_on kosong, jika ya, gunakan created_at atau verifikasi_pusat
-            $created_on = !empty($anggota->created_on) 
-                ? Carbon::createFromTimestamp($anggota->created_on)->format('d-m-Y H:i:s')
-                : ($anggota->created_at 
-                    ? Carbon::parse($anggota->created_at)->format('d-m-Y H:i:s') 
-                    : Carbon::parse($anggota->verifikasi_pusat)->format('d-m-Y H:i:s'));
+        // Periksa apakah created_on kosong, jika ya, gunakan created_at atau verifikasi_pusat
+        $created_on = !empty($anggota->created_on)
+            ? Carbon::createFromTimestamp($anggota->created_on)->format('d-m-Y H:i:s')
+            : ($anggota->created_at
+                ? Carbon::parse($anggota->created_at)->format('d-m-Y H:i:s')
+                : Carbon::parse($anggota->verifikasi_pusat)->format('d-m-Y H:i:s'));
 
-            try {
-                ob_start();
-                $content = view('backend.verifikasi.printsk', compact('anggota', 'created_on'));
+        try {
+            ob_start();
+            $content = view('backend.verifikasi.printsk', compact('anggota', 'created_on'));
 
-                $html2pdf = new Html2Pdf('P', 'F4', 'fr', true, 'UTF-8', 1);
-                $html2pdf->pdf->SetDisplayMode('fullpage');
-                $html2pdf->pdf->SetTitle('SK Anggota ASKLIN');
-                $html2pdf->writeHTML($content);
-                $html2pdf->output('sk_anggota.pdf');
-            } catch (Html2PdfException $e) {
-                $html2pdf->clean();
+            $html2pdf = new Html2Pdf('P', 'F4', 'fr', true, 'UTF-8', 1);
+            $html2pdf->pdf->SetDisplayMode('fullpage');
+            $html2pdf->pdf->SetTitle('SK Anggota ASKLIN');
+            $html2pdf->writeHTML($content);
+            $html2pdf->output('sk_anggota.pdf');
+        } catch (Html2PdfException $e) {
+            $html2pdf->clean();
 
-                $formatter = new ExceptionFormatter($e);
-                echo $formatter->getHtmlMessage();
-            }
-            exit();
+            $formatter = new ExceptionFormatter($e);
+            echo $formatter->getHtmlMessage();
         }
+        exit();
+    }
 
 
     public function cetakSertifikat($id)
