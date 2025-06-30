@@ -2,18 +2,20 @@
 
 @section('content')
 
-<!-- Breadcrumb -->
-<div class="section bg-light py-3">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('event_asklin') }}">Event</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ Str::limit($event->judul, 50) }}</li>
-            </ol>
-        </nav>
-    </div>
-</div>
+<section id="page-title">
+
+		<div class="container clearfix">
+			<h1>Event Asklin</h1>
+			<span>{{ Str::limit($event->judul, 50) }}</span>
+			<ol class="breadcrumb">
+			  <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('event_asklin') }}">Event</a></li>
+           
+			</ol>
+		</div>
+
+	</section><!-- #page-title end -->
+
 
 <!-- Event Detail -->
 <div class="section py-5">
@@ -80,10 +82,10 @@
 
                 <!-- Event Image -->
                 @if($event->gambar)
-                <div class="event-image mb-4">
+               	<div class="portfolio-single-image masonry-thumbs grid-container" data-big="1" data-lightbox="gallery">
                     <img src="{{ asset('assets/images/events/'.$event->gambar) }}" 
                          class="img-fluid rounded shadow" alt="{{ $event->judul }}"
-                         style="width: 100%; max-height: 400px; object-fit: cover;">
+                        >
                 </div>
                 @endif
 

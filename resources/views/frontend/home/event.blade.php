@@ -154,7 +154,7 @@
                 <div class="col-lg-4 col-md-6 event-item">
                     <div class="event-card h-100">
                         <!-- Card Image -->
-                        <div class="event-image position-relative">
+                      	<div class="portfolio-single-image masonry-thumbs grid-container grid-4" data-big="3" data-lightbox="gallery">
                             @if($item->gambar)
                                 <img src="{{ asset('assets/images/events/' . $item->gambar) }}" 
                                      class="card-img-top" alt="{{ $item->judul }}">
