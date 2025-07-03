@@ -279,26 +279,21 @@ class HomeController extends Controller
         return view('frontend.home.event', compact('title', 'description', 'event', 'categories'));
     }
 
+    // Controller - Adaptive approach
     public function eventDetail($slug)
     {
-        // Ambil event berdasarkan slug dengan relationship
         $event = Event::with(['kategori', 'creator'])
             ->where('path', $slug)
             ->where('status', '1')
             ->firstOrFail();
 
         $title = $event->judul;
-
-        // Clean description untuk meta
         $cleanContent = strip_tags($event->konten);
-        $cleanContent = html_entity_decode($cleanContent);
         $description = Str::limit($cleanContent, 160);
 
-        // Format konten untuk display yang lebih baik
-        $formattedContent = $this->formatEventContent($event->konten);
-        $event->formatted_content = $formattedContent;
+        // Process content dengan adaptive approach
+        $event->processed_content = $this->adaptiveContentProcessor($event->konten);
 
-        // Ambil event terkait
         $relatedEvents = Event::where('id', '!=', $event->id)
             ->where('id_kategori', $event->id_kategori)
             ->where('status', '1')
@@ -310,96 +305,99 @@ class HomeController extends Controller
     }
 
     /**
-     * Format event content untuk display yang lebih baik
+     * Adaptive Content Processor - Fleksibel untuk semua format input
      */
-    private function formatEventContent($content)
+    private function adaptiveContentProcessor($content)
     {
-        // Remove website mention di awal jika ada
-        $content = preg_replace('/^<p>Website\s+[\w\.]+<br><br>/', '<p>', $content);
+        // 1. Decode HTML entities
+        $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
 
-        // Replace emoji codes dengan emoji yang proper
-        $emojiMap = [
-            '⏰' => '🕐',
-            '👩‍⚕️' => '👩‍⚕️',
-            '💵' => '💰',
-            '🌐' => '🌐',
-            '☎️' => '📞',
-            '😊' => '😊'
-        ];
+        // 2. Remove website mention
+        $content = preg_replace('/^<p>Website\s+[\w\.]+<\/p>/', '', $content);
 
-        foreach ($emojiMap as $old => $new) {
-            $content = str_replace($old, $new, $content);
-        }
+        // 3. Clean up inline styles tapi preserve structure
+        $content = preg_replace('/<span[^>]*style="font-size:[^"]*"[^>]*>(.*?)<\/span>/i', '$1', $content);
+        $content = preg_replace('/<span[^>]*>(.*?)<\/span>/i', '$1', $content);
 
-        // Format struktur konten
-        $content = $this->formatContentStructure($content);
+        // 4. Apply smart formatting based on patterns
+        $content = $this->applySmartFormatting($content);
+
+        // 5. Enhance readability
+        $content = $this->enhanceReadability($content);
 
         return $content;
     }
 
     /**
-     * Format struktur konten untuk lebih readable
+     * Apply smart formatting berdasarkan pattern detection
      */
-    private function formatContentStructure($content)
+    private function applySmartFormatting($content)
     {
-        // Convert to array untuk processing
-        $content = strip_tags($content, '<br><p>');
+        // Format sections with emoji/keywords - wrap in cards
+        $patterns = [
+            // Schedule patterns
+            '/(<p[^>]*>.*?)(⏰|🗓️|Tanggal|Waktu|jadwal)(.*?<\/p>)/is' =>
+            '<div class="event-card schedule-card"><div class="card-icon">🗓️</div><div class="card-content">$1$2$3</div></div>',
 
-        // Split by <br> dan <p> tags
-        $lines = preg_split('/<br\s*\/?>\s*<br\s*\/?>/i', $content);
+            // Target patterns  
+            '/(<p[^>]*>.*?)(👩‍⚕️|👥|TARGET|PESERTA|target peserta)(.*?<\/p>)/is' =>
+            '<div class="event-card target-card"><div class="card-icon">👥</div><div class="card-content">$1$2$3</div></div>',
 
-        $formattedSections = [];
+            // Price patterns
+            '/(<p[^>]*>.*?)(💵|💰|FREE|GRATIS|Biaya|biaya)(.*?<\/p>)/is' =>
+            '<div class="event-card price-card"><div class="card-icon">💰</div><div class="card-content">$1$2$3</div></div>',
 
-        foreach ($lines as $line) {
-            $line = trim(strip_tags($line));
-            if (empty($line)) continue;
+            // Contact patterns
+            '/(<p[^>]*>.*?)(☎️|📞|KONTAK|kontak|hubungi|CP|\d{10,})(.*?<\/p>)/is' =>
+            '<div class="event-card contact-card"><div class="card-icon">📞</div><div class="card-content">$1$2$3</div></div>',
 
-            // Detect different sections
-            if (strpos($line, 'Undangan') !== false) {
-                $formattedSections[] = [
-                    'type' => 'header',
-                    'content' => $line
-                ];
-            } elseif (strpos($line, 'Tema:') !== false || strpos($line, 'Webminar') !== false) {
-                $formattedSections[] = [
-                    'type' => 'title',
-                    'content' => $line
-                ];
-            } elseif (strpos($line, 'Waktu Pelaksanaan') !== false || strpos($line, 'Tgl :') !== false) {
-                $formattedSections[] = [
-                    'type' => 'schedule',
-                    'content' => $line
-                ];
-            } elseif (strpos($line, 'TARGET PESERTA') !== false) {
-                $formattedSections[] = [
-                    'type' => 'target',
-                    'content' => $line
-                ];
-            } elseif (strpos($line, 'FREE') !== false) {
-                $formattedSections[] = [
-                    'type' => 'price',
-                    'content' => $line
-                ];
-            } elseif (strpos($line, 'LINK PENDAFTARAN') !== false || strpos($line, 'Link:') !== false) {
-                $formattedSections[] = [
-                    'type' => 'registration',
-                    'content' => $line
-                ];
-            } elseif (strpos($line, 'KONTAK PERSON') !== false || strpos($line, 'Ellen') !== false || strpos($line, 'Hasyim') !== false) {
-                $formattedSections[] = [
-                    'type' => 'contact',
-                    'content' => $line
-                ];
-            } else {
-                $formattedSections[] = [
-                    'type' => 'text',
-                    'content' => $line
-                ];
-            }
+            // Location patterns
+            '/(<p[^>]*>.*?)(📍|Tempat|TEMPAT|Hotel|hotel|Alamat)(.*?<\/p>)/is' =>
+            '<div class="event-card location-card"><div class="card-icon">📍</div><div class="card-content">$1$2$3</div></div>',
+        ];
+
+        foreach ($patterns as $pattern => $replacement) {
+            $content = preg_replace($pattern, $replacement, $content);
         }
 
-        return $formattedSections;
+        return $content;
     }
+
+    /**
+     * Enhance readability - make content more readable
+     */
+    private function enhanceReadability($content)
+    {
+        // Make phone numbers clickable
+        $content = preg_replace(
+            '/(\b0\d{2,3}[\s\-]?\d{4}[\s\-]?\d{4,6}\b)/',
+            '<a href="tel:+62$1" class="phone-link">$1</a>',
+            $content
+        );
+
+        // Make URLs into nice buttons
+        $content = preg_replace(
+            '/(https?:\/\/[^\s<>"\']+)/',
+            '<a href="$1" target="_blank" class="url-button"><i class="fas fa-external-link-alt"></i> Buka Link</a>',
+            $content
+        );
+
+        // Format hashtags
+        $content = preg_replace('/(#\w+)/', '<span class="hashtag">$1</span>', $content);
+
+        // Format speaker names (Dr., Prof., etc.)
+        $content = preg_replace(
+            '/(\b(?:Dr\.|Prof\.|dr\.|Ir\.)\s+[^<\n]+)/i',
+            '<span class="speaker-name">$1</span>',
+            $content
+        );
+
+        // Clean up extra spaces and line breaks
+        $content = preg_replace('/(<br>\s*){3,}/', '<br><br>', $content);
+
+        return $content;
+    }
+
 
     public function galery(Request $request)
     {

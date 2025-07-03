@@ -8,6 +8,7 @@
 /public/images/file
 /public/images/konas
 /public/images/partner
+/storage/
 /storage/*.key
 /vendor
 .env
