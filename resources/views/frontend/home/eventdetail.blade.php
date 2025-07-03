@@ -172,9 +172,6 @@
                                     <h6 class="card-title">Tertarik mengikuti event ini?</h6>
                                     <p class="text-muted small">Hubungi panitia untuk informasi pendaftaran</p>
                                     <div class="d-grid gap-2">
-                                        <a href="mailto:info@asklin.org" class="btn btn-primary">
-                                            <i class="icon-mail me-2"></i>Email Panitia
-                                        </a>
                                         <a href="https://wa.me/6281219486667" target="_blank"
                                             class="btn btn-outline-success">
                                             <i class="icon-whatsapp me-2"></i>WhatsApp Bu Ellen
