@@ -261,6 +261,18 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/printsk/{id}', 'printsk')->name('anggota.printsk');
     });
 
+    Route::get('/anggota/{id}/confirm-delete', [App\Http\Controllers\Backend\AnggotaController::class, 'confirmDelete'])
+        ->name('anggota.confirm_delete');
+
+    Route::delete('/anggota/{id}', [App\Http\Controllers\Backend\AnggotaController::class, 'destroy'])
+        ->name('anggota.destroy');
+
+    Route::get('/verifikasi-anggota/{id}/confirm-delete', [App\Http\Controllers\Backend\VerifikasiAnggotaController::class, 'confirmDelete'])
+        ->name('verifikasi_anggota.confirm_delete');
+
+    Route::delete('/verifikasi-anggota/{id}', [App\Http\Controllers\Backend\VerifikasiAnggotaController::class, 'destroy'])
+        ->name('verifikasi_anggota.destroy');
+
     Route::prefix('kerjasama_asuransi')->controller(App\Http\Controllers\Backend\KerjasamaAsuransiController::class)->group(function () {
         Route::get('/', 'index')->name('kerjasama_asuransi.index');
         Route::get('/list', 'list')->name('kerjasama_asuransi.list');

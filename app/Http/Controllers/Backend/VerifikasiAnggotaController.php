@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\{Anggota, SDM, RumahSakit, Asuransi, FotoKlinik};
+use App\Models\{Anggota, SDM, RumahSakit, Asuransi, FotoKlinik, Sertifikat, Pembayaran};
+use Illuminate\Support\Facades\DB;
 use DataTables;
 use Illuminate\Support\Str;
 use Auth;
@@ -13,7 +14,7 @@ class VerifikasiAnggotaController extends Controller
 {
     function __construct()
     {
-       $this->middleware('permission:verifikasi-anggota', ['only' => ['index', 'list']]);
+        $this->middleware('permission:verifikasi-anggota', ['only' => ['index', 'list']]);
     }
 
     public function index()
@@ -33,11 +34,11 @@ class VerifikasiAnggotaController extends Controller
                 \DB::raw('GROUP_CONCAT(DISTINCT fasilitas_klinik.nama SEPARATOR ", ") as kriteria'),
                 // Tambahkan logika untuk menampilkan tanggal pendaftaran
                 \DB::raw('
-                    CASE 
-                        WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                    CASE
+                        WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN
                             FROM_UNIXTIME(anggota.created_on)
-                        ELSE 
-                            anggota.created_at 
+                        ELSE
+                            anggota.created_at
                     END as tanggal_daftar
                 ')
             )
@@ -67,46 +68,46 @@ class VerifikasiAnggotaController extends Controller
                 ->when($request->get('filter_usia'), function ($query) use ($request) {
                     $filterUsia = $request->get('filter_usia');
                     $tahunSekarang = date('Y');
-                    
+
                     switch ($filterUsia) {
                         case 'tahun_ini':
-                            $query->whereRaw('YEAR(CASE 
-                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                            $query->whereRaw('YEAR(CASE
+                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN
                                     FROM_UNIXTIME(anggota.created_on)
-                                ELSE 
-                                    anggota.created_at 
+                                ELSE
+                                    anggota.created_at
                             END) = ?', [$tahunSekarang]);
                             break;
                         case '1_tahun':
-                            $query->whereRaw('YEAR(CASE 
-                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                            $query->whereRaw('YEAR(CASE
+                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN
                                     FROM_UNIXTIME(anggota.created_on)
-                                ELSE 
-                                    anggota.created_at 
+                                ELSE
+                                    anggota.created_at
                             END) = ?', [$tahunSekarang - 1]);
                             break;
                         case '2_tahun':
-                            $query->whereRaw('YEAR(CASE 
-                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                            $query->whereRaw('YEAR(CASE
+                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN
                                     FROM_UNIXTIME(anggota.created_on)
-                                ELSE 
-                                    anggota.created_at 
+                                ELSE
+                                    anggota.created_at
                             END) = ?', [$tahunSekarang - 2]);
                             break;
                         case '3_tahun':
-                            $query->whereRaw('YEAR(CASE 
-                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                            $query->whereRaw('YEAR(CASE
+                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN
                                     FROM_UNIXTIME(anggota.created_on)
-                                ELSE 
-                                    anggota.created_at 
+                                ELSE
+                                    anggota.created_at
                             END) = ?', [$tahunSekarang - 3]);
                             break;
                         case '4_tahun_lebih':
-                            $query->whereRaw('YEAR(CASE 
-                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                            $query->whereRaw('YEAR(CASE
+                                WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN
                                     FROM_UNIXTIME(anggota.created_on)
-                                ELSE 
-                                    anggota.created_at 
+                                ELSE
+                                    anggota.created_at
                             END) <= ?', [$tahunSekarang - 4]);
                             break;
                     }
@@ -141,19 +142,19 @@ class VerifikasiAnggotaController extends Controller
                 })
                 ->addIndexColumn()
                 // Format tanggal untuk tampilan dengan warna berdasarkan usia data
-                ->addColumn('tanggal_daftar_formatted', function($row) {
+                ->addColumn('tanggal_daftar_formatted', function ($row) {
                     if ($row->tanggal_daftar && $row->tanggal_daftar != '0000-00-00 00:00:00') {
                         $tanggal = \Carbon\Carbon::parse($row->tanggal_daftar);
                         $formatTanggal = $tanggal->format('d-m-Y');
-                        
+
                         // Hitung selisih tahun dari sekarang
                         $tahunSekarang = \Carbon\Carbon::now()->year;
                         $tahunData = $tanggal->year;
                         $selisihTahun = $tahunSekarang - $tahunData;
-                        
+
                         // Tentukan warna berdasarkan usia data
                         $warna = '#32CD32'; // Default: masih tahun ini (hijau)
-                        
+
                         if ($selisihTahun >= 4) {
                             $warna = '#8B0000'; // Lebih dari 4 tahun (merah tua)
                         } elseif ($selisihTahun >= 3) {
@@ -163,7 +164,7 @@ class VerifikasiAnggotaController extends Controller
                         } elseif ($selisihTahun >= 1) {
                             $warna = '#FFA500'; // Lebih dari 1 tahun (orange)
                         }
-                        
+
                         return '<span style="color: ' . $warna . '; font-weight: bold;">' . $formatTanggal . '</span>';
                     }
                     return '<span style="color: #999;">-</span>';
@@ -344,6 +345,164 @@ class VerifikasiAnggotaController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->make(true);
+        }
+    }
+
+
+    /**
+     * Delete anggota yang belum approved dan semua data terkait
+     */
+    public function destroy($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $anggota = Anggota::findOrFail($id);
+
+            // Pastikan hanya anggota yang belum approved yang bisa dihapus
+            if ($anggota->status === 'approved') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data anggota yang sudah approved tidak dapat dihapus.'
+                ], 400);
+            }
+
+            // 1. Hapus semua SDM yang terkait dengan klinik ini
+            $sdmList = SDM::where('id_klinik', $anggota->id)->get();
+            foreach ($sdmList as $sdm) {
+                // Hapus file STR jika ada
+                if ($sdm->file_str && file_exists(public_path('images/file/' . $sdm->file_str))) {
+                    unlink(public_path('images/file/' . $sdm->file_str));
+                }
+                // Hapus file SIP jika ada
+                if ($sdm->file_sip && file_exists(public_path('images/file/' . $sdm->file_sip))) {
+                    unlink(public_path('images/file/' . $sdm->file_sip));
+                }
+                $sdm->delete();
+            }
+
+            // 2. Hapus semua data Rumah Sakit terkait
+            RumahSakit::where('id_klinik', $anggota->id)->delete();
+
+            // 3. Hapus semua data Asuransi terkait beserta file bukti
+            $asuransiList = Asuransi::where('id_klinik', $anggota->id)->get();
+            foreach ($asuransiList as $asuransi) {
+                if ($asuransi->bukti && file_exists(public_path('images/file/' . $asuransi->bukti))) {
+                    unlink(public_path('images/file/' . $asuransi->bukti));
+                }
+                $asuransi->delete();
+            }
+
+            // 4. Hapus semua foto klinik beserta file foto
+            $fotoList = FotoKlinik::where('id_klinik', $anggota->id)->get();
+            foreach ($fotoList as $foto) {
+                if ($foto->foto && file_exists(public_path('images/file/' . $foto->foto))) {
+                    unlink(public_path('images/file/' . $foto->foto));
+                }
+                $foto->delete();
+            }
+
+            // 5. Hapus semua pembayaran terkait beserta bukti pembayaran (jika ada)
+            if (class_exists('App\Models\Pembayaran')) {
+                $pembayaranList = Pembayaran::where('id_anggota', $anggota->id)->get();
+                foreach ($pembayaranList as $pembayaran) {
+                    if ($pembayaran->bukti && file_exists(public_path('images/file/' . $pembayaran->bukti))) {
+                        unlink(public_path('images/file/' . $pembayaran->bukti));
+                    }
+                    $pembayaran->delete();
+                }
+            }
+
+            // 6. Hapus semua sertifikat terkait (jika ada)
+            if (class_exists('App\Models\Sertifikat')) {
+                Sertifikat::where('id_anggota', $anggota->id)->delete();
+            }
+
+            // 7. Hapus file logo anggota jika ada
+            if ($anggota->logo && file_exists(public_path('images/file/' . $anggota->logo))) {
+                unlink(public_path('images/file/' . $anggota->logo));
+            }
+
+            // 8. Hapus file SIO anggota jika ada
+            if ($anggota->sio && file_exists(public_path('images/file/' . $anggota->sio))) {
+                unlink(public_path('images/file/' . $anggota->sio));
+            }
+
+            // 9. Terakhir hapus data anggota
+            $anggota->delete();
+
+            DB::commit();
+
+            \Log::info('Data anggota berhasil dihapus', ['id' => $id, 'nama_klinik' => $anggota->nama_klinik]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data anggota dan semua data terkait berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            \Log::error('Error saat menghapus data anggota: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Konfirmasi delete dengan menampilkan detail yang akan dihapus
+     */
+    public function confirmDelete($id)
+    {
+        try {
+            $anggota = Anggota::findOrFail($id);
+
+            // Pastikan hanya anggota yang belum approved yang bisa dihapus
+            if ($anggota->status === 'approved') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data anggota yang sudah approved tidak dapat dihapus.'
+                ], 400);
+            }
+
+            // Hitung jumlah data terkait yang akan ikut terhapus
+            $sdmCount = SDM::where('id_klinik', $anggota->id)->count();
+            $rsCount = RumahSakit::where('id_klinik', $anggota->id)->count();
+            $asuransiCount = Asuransi::where('id_klinik', $anggota->id)->count();
+            $fotoCount = FotoKlinik::where('id_klinik', $anggota->id)->count();
+
+            $pembayaranCount = 0;
+            $sertifikatCount = 0;
+
+            if (class_exists('App\Models\Pembayaran')) {
+                $pembayaranCount = Pembayaran::where('id_anggota', $anggota->id)->count();
+            }
+
+            if (class_exists('App\Models\Sertifikat')) {
+                $sertifikatCount = Sertifikat::where('id_anggota', $anggota->id)->count();
+            }
+
+            return response()->json([
+                'anggota' => $anggota,
+                'related_data' => [
+                    'sdm' => $sdmCount,
+                    'rumah_sakit' => $rsCount,
+                    'asuransi' => $asuransiCount,
+                    'foto_klinik' => $fotoCount,
+                    'pembayaran' => $pembayaranCount,
+                    'sertifikat' => $sertifikatCount
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error saat konfirmasi delete: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan'
+            ], 404);
         }
     }
 }

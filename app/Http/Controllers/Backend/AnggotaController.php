@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Anggota, SDM, RumahSakit, Asuransi, FotoKlinik, Sertifikat};
+use App\Models\{Anggota, SDM, RumahSakit, Asuransi, FotoKlinik, Sertifikat, Pembayaran};
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -36,19 +37,19 @@ class AnggotaController extends Controller
                 'indonesia_provinces.name as provinsi',
                 \DB::raw('GROUP_CONCAT(DISTINCT fasilitas_klinik.nama SEPARATOR ", ") as kriteria'),
                 \DB::raw('
-                CASE 
-                    WHEN anggota.verifikasi_pusat IS NULL OR anggota.verifikasi_pusat = "0000-00-00 00:00:00" THEN 
+                CASE
+                    WHEN anggota.verifikasi_pusat IS NULL OR anggota.verifikasi_pusat = "0000-00-00 00:00:00" THEN
                         FROM_UNIXTIME(anggota.created_on)
-                    ELSE 
-                        anggota.verifikasi_pusat 
+                    ELSE
+                        anggota.verifikasi_pusat
                 END as tanggal_approve
             '),
                 \DB::raw('
-                CASE 
-                    WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN 
+                CASE
+                    WHEN anggota.created_at IS NULL OR anggota.created_at = "0000-00-00 00:00:00" THEN
                         FROM_UNIXTIME(anggota.created_on)
-                    ELSE 
-                        anggota.created_at 
+                    ELSE
+                        anggota.created_at
                 END as tanggal_daftar
             ')
             )
@@ -76,20 +77,20 @@ class AnggotaController extends Controller
                 })
                 ->when($request->get('filter_tahun_approve'), function ($query) use ($request) {
                     $tahunFilter = $request->get('filter_tahun_approve');
-                    $query->whereRaw('YEAR(CASE 
-                    WHEN anggota.verifikasi_pusat IS NULL OR anggota.verifikasi_pusat = "0000-00-00 00:00:00" THEN 
+                    $query->whereRaw('YEAR(CASE
+                    WHEN anggota.verifikasi_pusat IS NULL OR anggota.verifikasi_pusat = "0000-00-00 00:00:00" THEN
                         FROM_UNIXTIME(anggota.created_on)
-                    ELSE 
-                        anggota.verifikasi_pusat 
+                    ELSE
+                        anggota.verifikasi_pusat
                 END) = ?', [$tahunFilter]);
                 })
                 ->when($request->get('filter_bulan_approve'), function ($query) use ($request) {
                     $bulanFilter = $request->get('filter_bulan_approve');
-                    $query->whereRaw('MONTH(CASE 
-                    WHEN anggota.verifikasi_pusat IS NULL OR anggota.verifikasi_pusat = "0000-00-00 00:00:00" THEN 
+                    $query->whereRaw('MONTH(CASE
+                    WHEN anggota.verifikasi_pusat IS NULL OR anggota.verifikasi_pusat = "0000-00-00 00:00:00" THEN
                         FROM_UNIXTIME(anggota.created_on)
-                    ELSE 
-                        anggota.verifikasi_pusat 
+                    ELSE
+                        anggota.verifikasi_pusat
                 END) = ?', [$bulanFilter]);
                 })
                 ->when($request->get('filter_jenis'), function ($query) use ($request) {
@@ -142,10 +143,12 @@ class AnggotaController extends Controller
                     return '<span style="color: #999;">-</span>';
                 })
                 ->addColumn('durasi_verifikasi', function ($row) {
-                    if ($row->tanggal_daftar &&
-                            $row->tanggal_approve &&
-                            $row->tanggal_daftar != '0000-00-00 00:00:00' &&
-                            $row->tanggal_approve != '0000-00-00 00:00:00') {
+                    if (
+                        $row->tanggal_daftar &&
+                        $row->tanggal_approve &&
+                        $row->tanggal_daftar != '0000-00-00 00:00:00' &&
+                        $row->tanggal_approve != '0000-00-00 00:00:00'
+                    ) {
                         $daftar = \Carbon\Carbon::parse($row->tanggal_daftar);
                         $approve = \Carbon\Carbon::parse($row->tanggal_approve);
 
@@ -280,6 +283,134 @@ class AnggotaController extends Controller
                 ->make(true);
         }
     }
+
+
+    /**
+     * Delete anggota dan semua data terkait
+     */
+    public function destroy($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $anggota = Anggota::findOrFail($id);
+
+            // 1. Hapus semua SDM yang terkait dengan klinik ini
+            $sdmList = SDM::where('id_klinik', $anggota->id)->get();
+            foreach ($sdmList as $sdm) {
+                // Hapus file STR jika ada
+                if ($sdm->file_str && file_exists(public_path('images/file/' . $sdm->file_str))) {
+                    unlink(public_path('images/file/' . $sdm->file_str));
+                }
+                // Hapus file SIP jika ada
+                if ($sdm->file_sip && file_exists(public_path('images/file/' . $sdm->file_sip))) {
+                    unlink(public_path('images/file/' . $sdm->file_sip));
+                }
+                $sdm->delete();
+            }
+
+            // 2. Hapus semua data Rumah Sakit terkait
+            RumahSakit::where('id_klinik', $anggota->id)->delete();
+
+            // 3. Hapus semua data Asuransi terkait beserta file bukti
+            $asuransiList = Asuransi::where('id_klinik', $anggota->id)->get();
+            foreach ($asuransiList as $asuransi) {
+                if ($asuransi->bukti && file_exists(public_path('images/file/' . $asuransi->bukti))) {
+                    unlink(public_path('images/file/' . $asuransi->bukti));
+                }
+                $asuransi->delete();
+            }
+
+            // 4. Hapus semua foto klinik beserta file foto
+            $fotoList = FotoKlinik::where('id_klinik', $anggota->id)->get();
+            foreach ($fotoList as $foto) {
+                if ($foto->foto && file_exists(public_path('images/file/' . $foto->foto))) {
+                    unlink(public_path('images/file/' . $foto->foto));
+                }
+                $foto->delete();
+            }
+
+            // 5. Hapus semua pembayaran terkait beserta bukti pembayaran
+            $pembayaranList = Pembayaran::where('id_anggota', $anggota->id)->get();
+            foreach ($pembayaranList as $pembayaran) {
+                if ($pembayaran->bukti && file_exists(public_path('images/file/' . $pembayaran->bukti))) {
+                    unlink(public_path('images/file/' . $pembayaran->bukti));
+                }
+                $pembayaran->delete();
+            }
+
+            // 6. Hapus semua sertifikat terkait
+            Sertifikat::where('id_anggota', $anggota->id)->delete();
+
+            // 7. Hapus file logo anggota jika ada
+            if ($anggota->logo && file_exists(public_path('images/file/' . $anggota->logo))) {
+                unlink(public_path('images/file/' . $anggota->logo));
+            }
+
+            // 8. Hapus file SIO anggota jika ada
+            if ($anggota->sio && file_exists(public_path('images/file/' . $anggota->sio))) {
+                unlink(public_path('images/file/' . $anggota->sio));
+            }
+
+            // 9. Terakhir hapus data anggota
+            $anggota->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data anggota dan semua data terkait berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            \Log::error('Error saat menghapus anggota: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Konfirmasi delete dengan menampilkan detail yang akan dihapus
+     */
+    public function confirmDelete($id)
+    {
+        try {
+            $anggota = Anggota::findOrFail($id);
+
+            $sdmCount = SDM::where('id_klinik', $anggota->id)->count();
+            $rsCount = RumahSakit::where('id_klinik', $anggota->id)->count();
+            $asuransiCount = Asuransi::where('id_klinik', $anggota->id)->count();
+            $fotoCount = FotoKlinik::where('id_klinik', $anggota->id)->count();
+            $pembayaranCount = Pembayaran::where('id_anggota', $anggota->id)->count();
+            $sertifikatCount = Sertifikat::where('id_anggota', $anggota->id)->count();
+
+            return response()->json([
+                'anggota' => $anggota,
+                'related_data' => [
+                    'sdm' => $sdmCount,
+                    'rumah_sakit' => $rsCount,
+                    'asuransi' => $asuransiCount,
+                    'foto_klinik' => $fotoCount,
+                    'pembayaran' => $pembayaranCount,
+                    'sertifikat' => $sertifikatCount
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error saat konfirmasi delete: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+    }
+
+
 
     public function print($id)
     {

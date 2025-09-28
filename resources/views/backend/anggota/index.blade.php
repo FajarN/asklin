@@ -98,6 +98,55 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Konfirmasi Delete -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="fas fa-exclamation-triangle"></i> Konfirmasi Hapus Data Anggota
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-warning"></i>
+                        <strong>PERINGATAN:</strong> Tindakan ini akan menghapus SEMUA data terkait dengan anggota ini dan
+                        tidak dapat dibatalkan!
+                    </div>
+
+                    <div id="deleteDetails">
+                        <!-- Detail akan dimuat via AJAX -->
+                    </div>
+
+                    <div class="mt-3">
+                        <h6><strong>Data yang akan ikut terhapus:</strong></h6>
+                        <ul id="relatedDataList" class="list-unstyled">
+                            <!-- List akan dimuat via AJAX -->
+                        </ul>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <label for="confirmText">Ketik <strong>"HAPUS"</strong> untuk konfirmasi:</label>
+                        <input type="text" class="form-control" id="confirmText" placeholder="Ketik HAPUS disini">
+                        <small class="text-muted">Case sensitive - harus huruf kapital semua</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Batal
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn" disabled>
+                        <i class="fas fa-trash"></i> Hapus Permanen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('css')
@@ -200,6 +249,135 @@
 
             $('#filter_tahun_approve, #filter_bulan_approve, #filter_jenis').change(function() {
                 table.draw();
+            });
+        });
+
+
+        let currentDeleteId = null;
+
+        function confirmDeleteAnggota(id, namaKlinik) {
+            currentDeleteId = id;
+
+            // Reset form
+            $('#confirmText').val('');
+            $('#confirmDeleteBtn').prop('disabled', true);
+
+            // Load data yang akan dihapus
+            $.get(`/backend/anggota/${id}/confirm-delete`, function(response) {
+                let anggota = response.anggota;
+                let relatedData = response.related_data;
+
+                // Update detail anggota
+                $('#deleteDetails').html(`
+                    <div class="card border-danger">
+                        <div class="card-body">
+                            <h6><strong>Data Anggota yang akan dihapus:</strong></h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td width="150"><strong>No. Anggota:</strong></td>
+                                    <td>${anggota.no_anggota || 'Belum ada'}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nama Klinik:</strong></td>
+                                    <td>${anggota.nama_klinik || 'Tidak tersedia'}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nama Kontak:</strong></td>
+                                    <td>${anggota.nama_kontak || 'Tidak tersedia'}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Status:</strong></td>
+                                    <td><span class="badge badge-info">${anggota.status || 'Tidak tersedia'}</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    `);
+
+                // Update related data list
+                let relatedHtml = '';
+                if (relatedData.sdm > 0) {
+                    relatedHtml += `<li><i class="fas fa-user-md text-primary"></i> <strong>${relatedData.sdm}</strong> data SDM (Dokter,
+        Perawat, dll)</li>`;
+                }
+                if (relatedData.rumah_sakit > 0) {
+                    relatedHtml += `<li><i class="fas fa-hospital text-success"></i> <strong>${relatedData.rumah_sakit}</strong> data Rumah
+        Sakit Terdekat</li>`;
+                }
+                if (relatedData.asuransi > 0) {
+                    relatedHtml += `<li><i class="fas fa-shield-alt text-info"></i> <strong>${relatedData.asuransi}</strong> data Provider
+        Asuransi</li>`;
+                }
+                if (relatedData.foto_klinik > 0) {
+                    relatedHtml += `<li><i class="fas fa-camera text-warning"></i> <strong>${relatedData.foto_klinik}</strong> foto klinik
+    </li>`;
+                }
+                if (relatedData.pembayaran > 0) {
+                    relatedHtml += `<li><i class="fas fa-money-bill text-success"></i> <strong>${relatedData.pembayaran}</strong> data
+        pembayaran</li>`;
+                }
+                if (relatedData.sertifikat > 0) {
+                    relatedHtml += `<li><i class="fas fa-certificate text-primary"></i> <strong>${relatedData.sertifikat}</strong>
+        sertifikat</li>`;
+                }
+
+                if (relatedHtml === '') {
+                    relatedHtml =
+                        '<li class="text-muted"><i class="fas fa-info-circle"></i> Tidak ada data terkait lainnya</li>';
+                }
+
+                $('#relatedDataList').html(relatedHtml);
+            }).fail(function() {
+                alert('Gagal memuat data. Silakan coba lagi.');
+            });
+
+            $('#deleteModal').modal('show');
+        }
+
+        // Validasi konfirmasi text
+        $('#confirmText').on('input', function() {
+            let text = $(this).val();
+            if (text === 'HAPUS') {
+                $('#confirmDeleteBtn').prop('disabled', false);
+            } else {
+                $('#confirmDeleteBtn').prop('disabled', true);
+            }
+        });
+
+        // Handle delete confirmation
+        $('#confirmDeleteBtn').click(function() {
+            if (!currentDeleteId) return;
+
+            let button = $(this);
+            let originalText = button.html();
+
+            // Show loading
+            button.html('<i class="fas fa-spinner fa-spin"></i> Menghapus...');
+            button.prop('disabled', true);
+
+            $.ajax({
+                url: `/backend/anggota/${currentDeleteId}`,
+                type: 'DELETE',
+                success: function(response) {
+                    if (response.success) {
+                        $('#deleteModal').modal('hide');
+
+                        // Show success message
+                        alert('Data anggota dan semua data terkait berhasil dihapus!');
+
+                        // Reload table
+                        table.draw();
+                    } else {
+                        alert('Gagal menghapus data: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    let message = 'Terjadi kesalahan saat menghapus data.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    alert(message);
+                }
             });
         });
     </script>
