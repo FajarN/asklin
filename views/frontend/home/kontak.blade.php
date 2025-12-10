@@ -40,7 +40,7 @@
                             </div>
                             <div class="fbox-content">Whatsapp :
                                 <h3 class="nott text-larger fw-normal mb-2"><a
-                                        href="https://api.whatsapp.com/send?phone=082210201552">
+                                        href="https://api.whatsapp.com/send?phone=6282310981637">
                                     </a></h3>
                             </div>
                         </div>
@@ -133,7 +133,7 @@
 
                             <div class="col-md-4">
                                 <h3 class="mb-1 color">Live chat with Us</h3>
-                                <a href="https://api.whatsapp.com/send?phone=082210201552" class="text-dark"><u>Click
+                                <a href="https://api.whatsapp.com/send?phone=6282310981637" class="text-dark"><u>Click
                                         here</u><i class="icon-line-arrow-right"></i></a>
                             </div>
                         </div>
