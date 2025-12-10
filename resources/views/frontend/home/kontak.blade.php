@@ -42,8 +42,8 @@
                             </div>
                             <div class="fbox-content">Whatsapp :
                                 <h3 class="nott text-larger fw-normal mb-2"><a
-                                        href="https://api.whatsapp.com/send?phone=082210201552">
-                                    </a></h3>
+                                        href="https://api.whatsapp.com/send?phone=6282310981637">
+                                    </a>082310981637</h3>
                             </div>
                         </div>
                         <div class="feature-box fbox-sm mb-5">
@@ -119,8 +119,8 @@
                         <div class="row justify-content-between col-mb-30">
                             <div class="col-md-4">
                                 <h3 class="mb-1 color">Customer Support</h3>
-                                <a href="tel:+021809892" class="text-dark"><u>0218098928</u></a><br>
-                                <a href="https://api.whatsapp.com/send?phone=" class="text-dark"><u></u></a>
+                                <a href="tel:+021809892" class="text-dark"><u>082310981637</u></a><br>
+                                <a href="https://api.whatsapp.com/send?phone=6282310981637" class="text-dark"><u></u></a>
                             </div>
 
                             <div class="col-md-4">
@@ -131,7 +131,7 @@
 
                             <div class="col-md-4">
                                 <h3 class="mb-1 color">Live chat with Us</h3>
-                                <a href="https://api.whatsapp.com/send?phone=082210201552" class="text-dark"><u>Click
+                                <a href="https://api.whatsapp.com/send?phone=6282310981637" class="text-dark"><u>Click
                                         here</u><i class="icon-line-arrow-right"></i></a>
                             </div>
                         </div>

@@ -46,7 +46,7 @@
                                     <div class="fbox-content">
                                         <span class="text-muted">Chat Whatsapp:</span><br>
                                         <h3 class="nott ls0 fw-semibold"><a
-                                                href="https://api.whatsapp.com/send?phone="></a>
+                                                href="https://api.whatsapp.com/send?phone=6282310981637">082310981637</a>
                                         </h3>
                                     </div>
                                 </div>
