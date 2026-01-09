@@ -482,23 +482,50 @@ class HomeController extends Controller
 
     public function updateAnggota(Request $request, $id)
     {
+        // Validasi input
+        $request->validate([
+            'sio' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // max 5MB
+        ]);
+    
+        // Handle fasilitas
         if (!empty($request->id_fasilitas)) {
             $fasilitas = implode(",", $request->id_fasilitas);
         } else {
             $fasilitas = NULL;
         }
-
+    
         $destinationPath = 'images/file/';
-
+        
+        // Ambil data anggota yang sudah ada untuk preserve SIO lama jika tidak ada upload baru
+        $anggotaLama = Anggota::where('id', $id)->first();
+        $sio = $anggotaLama->sio; // Default: gunakan SIO yang sudah ada
+    
+        // Handle upload SIO baru
         if ($request->hasFile('sio')) {
-            $img_ext = $request->file('sio')->getClientOriginalExtension();
-            $sio = 'sio-' . time() . '.' . $img_ext;
-            $path = $request->file('sio')->move($destinationPath, $sio);
-        } else {
-            $sio = NULL;
+            $sioFile = $request->file('sio');
+            $img_ext = $sioFile->getClientOriginalExtension();
+            $newSioName = 'sio-' . time() . '-' . $id . '.' . $img_ext;
+            
+            // Pastikan direktori ada
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            
+            // Upload file baru
+            if ($sioFile->move($destinationPath, $newSioName)) {
+                // Hapus file SIO lama jika ada dan berbeda dengan yang baru
+                if ($anggotaLama->sio && $anggotaLama->sio !== $newSioName && file_exists($destinationPath . $anggotaLama->sio)) {
+                    unlink($destinationPath . $anggotaLama->sio);
+                }
+                $sio = $newSioName;
+            } else {
+                // Jika gagal upload, tetap gunakan SIO lama
+                session()->flash('warning', 'Upload SIO gagal, data lainnya berhasil disimpan');
+            }
         }
-
-        Anggota::where('id', $id)->update([
+    
+        // Prepare data untuk update
+        $updateData = [
             'nama_klinik' => $request->nama_klinik,
             'status' => $request->status,
             'id_provinsi' => $request->id_provinsi,
@@ -528,10 +555,29 @@ class HomeController extends Controller
             'fasilitas_klinik' => implode(",", $request->fasilitas_klinik),
             'id_user' => Auth::user()->id,
             'status' => 'create_dokter',
-            'sio' => $sio
-        ]);
-
-        return redirect()->route('pendaftaran.sdm');
+            'sio' => $sio // Pastikan SIO selalu ter-update
+        ];
+    
+        try {
+            Anggota::where('id', $id)->update($updateData);
+            
+            $message = 'Data anggota berhasil diperbarui';
+            if ($request->hasFile('sio')) {
+                $message .= ' dan file SIO berhasil diupload';
+            }
+            
+            session()->flash('success', $message);
+            return redirect()->route('pendaftaran.sdm');
+            
+        } catch (\Exception $e) {
+            // Jika database update gagal dan ada file baru yang diupload, hapus file tersebut
+            if ($request->hasFile('sio') && isset($newSioName) && file_exists($destinationPath . $newSioName)) {
+                unlink($destinationPath . $newSioName);
+            }
+            
+            session()->flash('error', 'Gagal memperbarui data: ' . $e->getMessage());
+            return redirect()->back()->withInput();
+        }
     }
 
     public function SyaratKetentuan()

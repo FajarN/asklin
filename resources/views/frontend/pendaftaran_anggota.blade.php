@@ -12,9 +12,26 @@
 @include('frontend.step')
 
 <div class="container pt-3 pb-2">
-    <form action="{{ route('update.anggota', $anggota->id) }}" method="POST">
+    <!-- Tambahkan enctype="multipart/form-data" untuk upload file -->
+    <form action="{{ route('update.anggota', $anggota->id) }}" method="POST" enctype="multipart/form-data">
         @CSRF
         @method('PUT')
+        
+        <!-- Alert untuk menampilkan pesan -->
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+        
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+        
         <div class="row pt-6">
             <div class="col-md-6 col-lg-6 mb-5 mb-lg-0">
                 <div class="form-group row">
@@ -41,10 +58,48 @@
                         <input class="form-control text-3 h-auto py-2" type="number" name="tlf" value="{{ $anggota->tlf }}" required>
                     </div>
                 </div>
+                
+                <!-- Field SIO yang diperbaiki -->
                 <div class="form-group row">
-                    <legend class="col-form-label col-sm-3 pt-0"><strong>File SIO</strong> <b style="color:red; font-size:17px">*</b></legend>
+                    <legend class="col-form-label col-sm-3 pt-0"><strong>File SIO</strong> <span class="text-muted">(Opsional)</span></legend>
                     <div class="col-lg-9">
-                        <input class="form-control text-3 h-auto py-2" type="file" name="sio" value="{{ $anggota->sio }}">
+                        <div class="input-group">
+                            <input class="form-control text-3 h-auto py-2" 
+                                   type="file" 
+                                   name="sio" 
+                                   id="sio_input"
+                                   accept=".pdf,.jpg,.jpeg,.png">
+                            @if($anggota->sio)
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-info btn-sm" onclick="previewSIO('{{ asset('images/file/' . $anggota->sio) }}')">
+                                        <i class="fas fa-eye"></i> Lihat File
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        @if($anggota->sio)
+                            <small class="text-success d-block mt-1">
+                                <i class="fas fa-check-circle"></i> File SIO sudah ada: {{ $anggota->sio }}
+                            </small>
+                        @endif
+                        
+                        <small class="text-muted d-block">
+                            Format: PDF, JPG, JPEG, PNG (Maksimal 5MB)
+                        </small>
+                        
+                        @error('sio')
+                            <small class="text-danger d-block">{{ $message }}</small>
+                        @enderror
+                        
+                        <!-- Preview area untuk file baru -->
+                        <div id="sio_preview" class="mt-2" style="display: none;">
+                            <div class="alert alert-info py-2">
+                                <i class="fas fa-file"></i>
+                                <span id="sio_filename"></span>
+                                <small class="d-block">File baru akan mengganti file yang sudah ada</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -83,6 +138,7 @@
             </div>
         </div>
 
+        <!-- Bagian alamat dan fasilitas tetap sama seperti sebelumnya -->
         <div class="row pt-6">
             <div class="container py-5 shop" id="shop">
                 <div class="row pt-1 pb-1">
@@ -386,6 +442,44 @@ $(function(e) {
     }).change();
 });
 
+// Handle file SIO upload preview dan validasi
+$("#sio_input").on('change', function(e) {
+    const file = e.target.files[0];
+    const preview = $("#sio_preview");
+    const filename = $("#sio_filename");
+    
+    if (file) {
+        // Validasi ukuran file (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Ukuran file terlalu besar! Maksimal 5MB');
+            $(this).val('');
+            preview.hide();
+            return;
+        }
+        
+        // Validasi format file
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Format file tidak didukung! Gunakan PDF, JPG, JPEG, atau PNG');
+            $(this).val('');
+            preview.hide();
+            return;
+        }
+        
+        // Tampilkan preview
+        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+        filename.text(`${file.name} (${fileSize} MB)`);
+        preview.show();
+    } else {
+        preview.hide();
+    }
+});
+
+// Function untuk preview SIO yang sudah ada
+function previewSIO(url) {
+    window.open(url, '_blank');
+}
+
 $("#status_kepemilikan_klinik").change(function() {
     $('#perorangan').hide();
     if ($(this).val() == "Perorangan") {
@@ -438,6 +532,3 @@ $("#jenis_klinik").change(function() {
 $("#jenis_klinik").trigger("change");
 </script>
 @endpush
-
-
-
