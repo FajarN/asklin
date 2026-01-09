@@ -21,7 +21,7 @@
                             <div class="fbox-content">
                                 <h3 class="nott text-larger fw-normal mb-2 color">
                                     <strong class="mb-2 h6 d-block text-dark">Kantor Pusat Asklin:</strong>
-                                    Jl. Pinang Ranti II No.1A Kel.Pinang Ranti Kec. Makasar<br>
+                                    Jl. Pinang Ranti II Kel.Pinang Ranti Kec. Makasar<br>
                                     Jakarta Timur<br>
                                     Kode Pos : 13560
                                 </h3>
@@ -32,8 +32,7 @@
                                 <i class="bg-color-50 color icon-call"></i>
                             </div>
                             <div class="fbox-content">Telp :
-                                <h3 class="nott text-larger fw-normal mb-2"><a href="tel:+0218098928">
-                                        (021)8098928</a></h3>
+
                             </div>
                         </div>
                         <div class="feature-box fbox-sm mb-3">

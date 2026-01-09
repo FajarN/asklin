@@ -34,7 +34,6 @@
                                     </div>
                                     <div class="fbox-content">
                                         <span class="text-muted">Hubungi Kami:</span><br>
-                                        <h3 class="nott ls0 fw-semibold">(021)8098928</h3>
                                     </div>
                                 </div>
                             </div>

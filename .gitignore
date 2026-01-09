@@ -25,3 +25,5 @@ yarn-error.log
 /.vscode
 .user.ini
 public/.user.ini
+/public/images/*
+/public/.well-known/*
