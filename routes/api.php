@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::prefix('anggota')->group(function () {
+Route::prefix('anggota')->middleware('throttle:60,1')->group(function () {
     Route::get('/location', [AnggotaApiController::class, 'getAnggotaByLocation']);
     
     Route::get('/updates/latest', [AnggotaApiController::class, 'getLastUpdatedAnggota']);

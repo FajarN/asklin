@@ -98,7 +98,7 @@ class DashboardController extends Controller
 
     public function getKota(Request $request)
     {
-        $kota = Regency::where('province_code', $request->id_provinsi)->get();
+        $kota = City::where('province_code', $request->id_provinsi)->get();
 
         $options = '<option value="">Pilih Kota/Kabupaten</option>';
         foreach ($kota as $k) {

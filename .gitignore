@@ -12,8 +12,11 @@
 /storage/*.key
 /vendor
 .env
+.env.*
+.env-live
 .env.backup
 .env.production
+error_log
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml

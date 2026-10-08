@@ -58,11 +58,17 @@ class Anggota extends Model
     protected static function booted()
     {
         static::creating(function ($model) {
-            $model->created_by = Auth()->user()->id;
-            $model->updated_by = Auth()->user()->id;
+            $userId = auth()->id();
+            if ($userId) {
+                $model->created_by = $model->created_by ?? $userId;
+                $model->updated_by = $model->updated_by ?? $userId;
+            }
         });
         static::saving(function ($model) {
-            $model->updated_by = Auth()->user()->id;
+            $userId = auth()->id();
+            if ($userId) {
+                $model->updated_by = $userId;
+            }
         });
     }
     

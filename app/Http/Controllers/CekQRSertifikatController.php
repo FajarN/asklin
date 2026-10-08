@@ -35,6 +35,10 @@ class CekQRSertifikatController extends Controller
             ->where('sertifikat.id', $id)
             ->first();
 
+        if (!$anggota) {
+            abort(404, 'Data sertifikat tidak ditemukan.');
+        }
+
         $id = $anggota->id;
 
 

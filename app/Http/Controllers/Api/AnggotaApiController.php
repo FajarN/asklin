@@ -152,7 +152,12 @@ class AnggotaApiController extends Controller
 
     private function validateApiKey($apiKey)
     {
-        // Untuk testing lokal, gunakan hardcoded key
-        return $apiKey === '+HBmMyXqMLFPvhh4hd7EaYP/kFFQnas8t16vI74cErHScWG2YFzyoTIXyt+kxfmMn+PxxgO1WtAB5sxKSRVKhZhp2pHFFREzQ3v6t4DUfLylyzgz7b/csnVLD6JQ8Vd442YBVd0gH3hi2ERRsJfl65rYmX8PwH3O4S7pQFsH4Gq6VZUbu5/afNIJ+6BxFGGTpxK5kfq5FFzDPsrFjRFMdHq+oyh2U2Neez32D3OEbGd9qhYjrSl7PfKvxGTP/zrgKQkXAaDMiP2Gl8fX1Nhim7w+L/GWxRXPHJ8XiWUUocURKG3iunfjbIpZzAKiMBebwGIfy/YRAe/ztOtt0EVjddiCj+zm1CShELySjCkiVF85udTrPWzTPBiK9qCAD69MJSv7R1LnBDkFMhWzkxHbXLO+iLjB0tw7Sd/OXpGNn2QMft20AJnbe4gLEapFUxUg1JnyyRqRhbkX7MMPE4yGL0+PoK17MvEyxBMGF5IoZ8gwoQbm8d6cRbiXvEAa7LW9KUnHSsGO15vK4VARo2DmF7KwXdKGmU1IqFBYpm1JXA1HhU6oqN68PzN+pcpZZSsxI0W10XNAVarx0R6YlRJ8XvNRWvCW7XqFXErsgSbxSmkwJ1898aj/9FuD7FpmVL/r1jA461e5iFOYEt5D2TfW+8mw';
+        $validKey = config('services.asklin_api.key', env('ASKLIN_API_KEY', '+HBmMyXqMLFPvhh4hd7EaYP/kFFQnas8t16vI74cErHScWG2YFzyoTIXyt+kxfmMn+PxxgO1WtAB5sxKSRVKhZhp2pHFFREzQ3v6t4DUfLylyzgz7b/csnVLD6JQ8Vd442YBVd0gH3hi2ERRsJfl65rYmX8PwH3O4S7pQFsH4Gq6VZUbu5/afNIJ+6BxFGGTpxK5kfq5FFzDPsrFjRFMdHq+oyh2U2Neez32D3OEbGd9qhYjrSl7PfKvxGTP/zrgKQkXAaDMiP2Gl8fX1Nhim7w+L/GWxRXPHJ8XiWUUocURKG3iunfjbIpZzAKiMBebwGIfy/YRAe/ztOtt0EVjddiCj+zm1CShELySjCkiVF85udTrPWzTPBiK9qCAD69MJSv7R1LnBDkFMhWzkxHbXLO+iLjB0tw7Sd/OXpGNn2QMft20AJnbe4gLEapFUxUg1JnyyRqRhbkX7MMPE4yGL0+PoK17MvEyxBMGF5IoZ8gwoQbm8d6cRbiXvEAa7LW9KUnHSsGO15vK4VARo2DmF7KwXdKGmU1IqFBYpm1JXA1HhU6oqN68PzN+pcpZZSsxI0W10XNAVarx0R6YlRJ8XvNRWvCW7XqFXErsgSbxSmkwJ1898aj/9FuD7FpmVL/r1jA461e5iFOYEt5D2TfW+8mw'));
+
+        if (empty($apiKey) || empty($validKey)) {
+            return false;
+        }
+
+        return hash_equals((string)$validKey, (string)$apiKey);
     }
 }

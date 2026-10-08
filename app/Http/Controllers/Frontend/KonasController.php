@@ -105,6 +105,12 @@ class KonasController extends Controller
     
     public function store(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'foto' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+            'surat_mandat' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
         // cek apakah email sudah terdaftar sebelumnya
         $existingUser = KonasPeserta::where('email', $request->email)->first();
         if ($existingUser) {
@@ -124,6 +130,9 @@ class KonasController extends Controller
         $response = $data_request->object();
         
         $destinationPath = 'images/konas/';
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
         
         $cekdata = KonasPeserta::find($request->id);
         $cd = KonasPeserta::selectRaw('MAX(RIGHT(no_anggota,4)) AS kd_max')->get();
@@ -138,16 +147,17 @@ class KonasController extends Controller
         }
     
         $noanggota = 'konas-'.$kd;
+        $foto = null;
     
         if($request->hasFile('foto')) {
-            $img_ext1 = $request->file('foto')->getClientOriginalExtension();
-            $foto = 'foto-' . time() . '.' . $img_ext1;
+            $img_ext1 = strtolower($request->file('foto')->getClientOriginalExtension());
+            $foto = 'foto-' . time() . '-' . uniqid() . '.' . $img_ext1;
             $path = $request->file('foto')->move($destinationPath, $foto);
         }
         
         if($request->hasFile('surat_mandat')) {
-            $img_ext2 = $request->file('surat_mandat')->getClientOriginalExtension();
-            $surat_mandat = 'suratmandat-' . time() . '.' . $img_ext2;
+            $img_ext2 = strtolower($request->file('surat_mandat')->getClientOriginalExtension());
+            $surat_mandat = 'suratmandat-' . time() . '-' . uniqid() . '.' . $img_ext2;
             $path = $request->file('surat_mandat')->move($destinationPath, $surat_mandat);
         }else{
             $surat_mandat = NULL;
@@ -208,7 +218,16 @@ class KonasController extends Controller
     
     public function callback()
     {
+        $callbackToken = env('XENDIT_CALLBACK_TOKEN');
+        if ($callbackToken && request()->header('x-callback-token') !== $callbackToken) {
+            return response()->json(['message' => 'Unauthorized callback'], 401);
+        }
+
         $data = request()->all();
+        if (empty($data['status']) || empty($data['external_id'])) {
+            return response()->json(['message' => 'Invalid callback payload'], 400);
+        }
+
         $status = $data['status'];
         $external_id = $data['external_id'];
         
@@ -315,6 +334,18 @@ class KonasController extends Controller
                 ->where('konas_peserta.id', $id)
                 ->first();
         
+        if (!$peserta) {
+            abort(404, 'Data peserta tidak ditemukan.');
+        }
+
+        $user = Auth::user();
+        if ($user) {
+            $isAdminOrStaff = $user->hasAnyRole(['Superadmin', 'Admin Pusat', 'Admin Cabang', 'Admin Daerah', 'Sekjen', 'Ketua Umum', 'Bendahara']);
+            if (!$isAdminOrStaff && $peserta->email != $user->email) {
+                abort(403, 'Anda tidak memiliki hak akses untuk dokumen ini.');
+            }
+        }
+
         $id = $peserta->id;
 
       try {

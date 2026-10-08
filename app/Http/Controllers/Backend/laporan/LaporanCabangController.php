@@ -56,7 +56,7 @@ class LaporanCabangController extends Controller
                     }
                 })
                 ->addIndexColumn()
-                ->addColumn('action', 'backend.verifikasi.action')
+                ->addColumn('action', 'backend.verifikasi_anggota.action')
                 ->rawColumns(['action'])
                 ->make(true);
         }

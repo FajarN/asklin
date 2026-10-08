@@ -24,6 +24,10 @@ class CekQRCodeController extends Controller
             ->where('anggota.id', $id)
             ->first();
 
+        if (!$anggota) {
+            abort(404, 'Data anggota tidak ditemukan.');
+        }
+
         $id = $anggota->id;
 
 

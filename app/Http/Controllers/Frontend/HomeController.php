@@ -487,6 +487,9 @@ class HomeController extends Controller
             'sio' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // max 5MB
         ]);
     
+        // Ambil data anggota yang sudah ada dan pastikan milik user yang login
+        $anggotaLama = Anggota::where('id', $id)->where('id_user', Auth::user()->id)->firstOrFail();
+    
         // Handle fasilitas
         if (!empty($request->id_fasilitas)) {
             $fasilitas = implode(",", $request->id_fasilitas);
@@ -495,16 +498,13 @@ class HomeController extends Controller
         }
     
         $destinationPath = 'images/file/';
-        
-        // Ambil data anggota yang sudah ada untuk preserve SIO lama jika tidak ada upload baru
-        $anggotaLama = Anggota::where('id', $id)->first();
         $sio = $anggotaLama->sio; // Default: gunakan SIO yang sudah ada
     
         // Handle upload SIO baru
         if ($request->hasFile('sio')) {
             $sioFile = $request->file('sio');
-            $img_ext = $sioFile->getClientOriginalExtension();
-            $newSioName = 'sio-' . time() . '-' . $id . '.' . $img_ext;
+            $img_ext = strtolower($sioFile->getClientOriginalExtension());
+            $newSioName = 'sio-' . time() . '-' . $anggotaLama->id . '.' . $img_ext;
             
             // Pastikan direktori ada
             if (!file_exists($destinationPath)) {
@@ -519,7 +519,6 @@ class HomeController extends Controller
                 }
                 $sio = $newSioName;
             } else {
-                // Jika gagal upload, tetap gunakan SIO lama
                 session()->flash('warning', 'Upload SIO gagal, data lainnya berhasil disimpan');
             }
         }
@@ -548,18 +547,18 @@ class HomeController extends Controller
             'kode_pos' => $request->kode_pos,
             'tlf_klinik' => $request->tlf_klinik,
             'id_fasilitas' => $fasilitas,
-            'id_layanan' => implode(",", $request->id_layanan),
+            'id_layanan' => is_array($request->id_layanan) ? implode(",", $request->id_layanan) : $request->id_layanan,
             'no_ijin' => $request->no_ijin,
-            'tgl_ijin' => date('Y-m-d', strtotime($request->tgl_ijin)),
-            'tgl_akhir_ijin' => date('Y-m-d', strtotime($request->tgl_akhir_ijin)),
-            'fasilitas_klinik' => implode(",", $request->fasilitas_klinik),
+            'tgl_ijin' => $request->tgl_ijin ? date('Y-m-d', strtotime($request->tgl_ijin)) : null,
+            'tgl_akhir_ijin' => $request->tgl_akhir_ijin ? date('Y-m-d', strtotime($request->tgl_akhir_ijin)) : null,
+            'fasilitas_klinik' => is_array($request->fasilitas_klinik) ? implode(",", $request->fasilitas_klinik) : $request->fasilitas_klinik,
             'id_user' => Auth::user()->id,
             'status' => 'create_dokter',
-            'sio' => $sio // Pastikan SIO selalu ter-update
+            'sio' => $sio
         ];
     
         try {
-            Anggota::where('id', $id)->update($updateData);
+            Anggota::where('id', $anggotaLama->id)->where('id_user', Auth::user()->id)->update($updateData);
             
             $message = 'Data anggota berhasil diperbarui';
             if ($request->hasFile('sio')) {
@@ -633,25 +632,45 @@ class HomeController extends Controller
 
     public function store_sdm_pj(Request $request)
     {
-        $anggota = Anggota::where('id_user', Auth::user()->id)->first();
+        $request->validate([
+            'file_sip_pj' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'file_str_pj' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
         $destinationPath = 'images/file/';
-        if ($request->hasFile('file_sip_pj')) {
-            $img_ext = $request->file('file_sip_pj')->getClientOriginalExtension();
-            $file_sip = 'sip-' . time() . '.' . $img_ext;
-            $path = $request->file('file_sip_pj')->move($destinationPath, $file_sip);
-        } else {
-            $file_sip = NULL;
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
         }
+
+        $existing = $request->id_pj ? SDM::where('id', $request->id_pj)->where('id_klinik', $anggota->id)->first() : null;
+        $file_sip = $existing ? $existing->file_sip : null;
+        $file_str = $existing ? $existing->file_str : null;
+
+        if ($request->hasFile('file_sip_pj')) {
+            $img_ext = strtolower($request->file('file_sip_pj')->getClientOriginalExtension());
+            $new_file_sip = 'sip-' . time() . '-' . uniqid() . '.' . $img_ext;
+            if ($request->file('file_sip_pj')->move($destinationPath, $new_file_sip)) {
+                if ($file_sip && file_exists($destinationPath . $file_sip)) {
+                    unlink($destinationPath . $file_sip);
+                }
+                $file_sip = $new_file_sip;
+            }
+        }
+
         if ($request->hasFile('file_str_pj')) {
-            $img_ext1 = $request->file('file_str_pj')->getClientOriginalExtension();
-            $file_str = 'str-' . time() . '.' . $img_ext1;
-            $path = $request->file('file_str_pj')->move($destinationPath, $file_str);
-        } else {
-            $file_str = NULL;
+            $img_ext1 = strtolower($request->file('file_str_pj')->getClientOriginalExtension());
+            $new_file_str = 'str-' . time() . '-' . uniqid() . '.' . $img_ext1;
+            if ($request->file('file_str_pj')->move($destinationPath, $new_file_str)) {
+                if ($file_str && file_exists($destinationPath . $file_str)) {
+                    unlink($destinationPath . $file_str);
+                }
+                $file_str = $new_file_str;
+            }
         }
 
         $data = SDM::updateOrCreate(
-            ['id' => $request->id_pj],
+            ['id' => $request->id_pj, 'id_klinik' => $anggota->id],
             [
                 'nama_dokter' => $request->nama_dokter_pj,
                 'nama' => $request->nama_dokter_pj,
@@ -661,7 +680,7 @@ class HomeController extends Controller
                 'no_str' => $request->no_str_pj,
                 'no_sip' => $request->no_sip_pj,
                 'email_dokter' => $request->email_dokter_pj,
-                'tgl_akhir_sip' => date('Y-m-d', strtotime($request->tgl_akhir_sip_pj)),
+                'tgl_akhir_sip' => $request->tgl_akhir_sip_pj ? date('Y-m-d', strtotime($request->tgl_akhir_sip_pj)) : null,
                 'no_tlf' => $request->no_tlf_pj,
                 'file_sip' => $file_sip,
                 'file_str' => $file_str,
@@ -674,14 +693,17 @@ class HomeController extends Controller
 
     public function delete_sdm_pj(Request $request)
     {
-        $data = SDM::where('id', $request->id)->first();
-        // if(file_exists(public_path() .  '/images/file/' . $data->file_str)) {
-        //     unlink(public_path() .  '/images/file/' . $data->file_str);
-        // }
-        // if(file_exists(public_path() .  '/images/file/' . $data->file_sip)) {
-        //     unlink(public_path() .  '/images/file/' . $data->file_sip);
-        // }
-        $data->delete();
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
+        $data = SDM::where('id', $request->id)->where('id_klinik', $anggota->id)->first();
+        if ($data) {
+            if ($data->file_str && file_exists(public_path('images/file/' . $data->file_str))) {
+                unlink(public_path('images/file/' . $data->file_str));
+            }
+            if ($data->file_sip && file_exists(public_path('images/file/' . $data->file_sip))) {
+                unlink(public_path('images/file/' . $data->file_sip));
+            }
+            $data->delete();
+        }
         return Response()->json($data);
     }
 
@@ -707,18 +729,32 @@ class HomeController extends Controller
 
     public function store_sdm_dp(Request $request)
     {
-        $anggota = Anggota::where('id_user', Auth::user()->id)->first();
+        $request->validate([
+            'file_str_dp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
         $destinationPath = 'images/file/';
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        $existing = $request->id_dp ? SDM::where('id', $request->id_dp)->where('id_klinik', $anggota->id)->first() : null;
+        $file_str = $existing ? $existing->file_str : null;
+
         if ($request->hasFile('file_str_dp')) {
-            $img_ext1 = $request->file('file_str_dp')->getClientOriginalExtension();
-            $file_str = 'str-' . time() . '.' . $img_ext1;
-            $path = $request->file('file_str_dp')->move($destinationPath, $file_str);
-        } else {
-            $file_str = NULL;
+            $img_ext1 = strtolower($request->file('file_str_dp')->getClientOriginalExtension());
+            $new_file_str = 'str-' . time() . '-' . uniqid() . '.' . $img_ext1;
+            if ($request->file('file_str_dp')->move($destinationPath, $new_file_str)) {
+                if ($file_str && file_exists($destinationPath . $file_str)) {
+                    unlink($destinationPath . $file_str);
+                }
+                $file_str = $new_file_str;
+            }
         }
 
         $data = SDM::updateOrCreate(
-            ['id' => $request->id_dp],
+            ['id' => $request->id_dp, 'id_klinik' => $anggota->id],
             [
                 'nama_dokter' => $request->nama_dokter_dp,
                 'nama' => $request->nama_dokter_dp,
@@ -728,7 +764,7 @@ class HomeController extends Controller
                 'no_str' => $request->no_str_dp,
                 'no_sip' => $request->no_sip_dp,
                 'email_dokter' => $request->email_dokter_dp,
-                'tgl_akhir_sip' => date('Y-m-d', strtotime($request->tgl_akhir_sip_dp)),
+                'tgl_akhir_sip' => $request->tgl_akhir_sip_dp ? date('Y-m-d', strtotime($request->tgl_akhir_sip_dp)) : null,
                 'no_tlf' => $request->no_tlf_dp,
                 'file_str' => $file_str,
                 'id_klinik' => $anggota->id
@@ -760,24 +796,38 @@ class HomeController extends Controller
 
     public function store_sdm_tk(Request $request)
     {
-        $anggota = Anggota::where('id_user', Auth::user()->id)->first();
+        $request->validate([
+            'file_str_tk' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
         $destinationPath = 'images/file/';
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        $existing = $request->id_tk ? SDM::where('id', $request->id_tk)->where('id_klinik', $anggota->id)->first() : null;
+        $file_str = $existing ? $existing->file_str : null;
+
         if ($request->hasFile('file_str_tk')) {
-            $img_ext1 = $request->file('file_str_tk')->getClientOriginalExtension();
-            $file_str = 'str-' . time() . '.' . $img_ext1;
-            $path = $request->file('file_str_tk')->move($destinationPath, $file_str);
-        } else {
-            $file_str = NULL;
+            $img_ext1 = strtolower($request->file('file_str_tk')->getClientOriginalExtension());
+            $new_file_str = 'str-' . time() . '-' . uniqid() . '.' . $img_ext1;
+            if ($request->file('file_str_tk')->move($destinationPath, $new_file_str)) {
+                if ($file_str && file_exists($destinationPath . $file_str)) {
+                    unlink($destinationPath . $file_str);
+                }
+                $file_str = $new_file_str;
+            }
         }
 
         $data = SDM::updateOrCreate(
-            ['id' => $request->id_tk],
+            ['id' => $request->id_tk, 'id_klinik' => $anggota->id],
             [
                 'nama' => $request->nama_tk,
                 'id_kategori_sdm' => '3',
                 'no_sib_sik' => $request->no_sib_sik_tk,
                 'no_str' => $request->no_str_tk,
-                'tgl_akhir_str' => date('Y-m-d', strtotime($request->tgl_akhir_str_tk)),
+                'tgl_akhir_str' => $request->tgl_akhir_str_tk ? date('Y-m-d', strtotime($request->tgl_akhir_str_tk)) : null,
                 'no_tlf' => $request->no_tlf_tk,
                 'file_str' => $file_str,
                 'id_klinik' => $anggota->id
@@ -809,24 +859,38 @@ class HomeController extends Controller
 
     public function store_sdm_tkl(Request $request)
     {
-        $anggota = Anggota::where('id_user', Auth::user()->id)->first();
+        $request->validate([
+            'file_str_tkl' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
         $destinationPath = 'images/file/';
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        $existing = $request->id_tkl ? SDM::where('id', $request->id_tkl)->where('id_klinik', $anggota->id)->first() : null;
+        $file_str = $existing ? $existing->file_str : null;
+
         if ($request->hasFile('file_str_tkl')) {
-            $img_ext1 = $request->file('file_str_tkl')->getClientOriginalExtension();
-            $file_str = 'str-' . time() . '.' . $img_ext1;
-            $path = $request->file('file_str_tkl')->move($destinationPath, $file_str);
-        } else {
-            $file_str = NULL;
+            $img_ext1 = strtolower($request->file('file_str_tkl')->getClientOriginalExtension());
+            $new_file_str = 'str-' . time() . '-' . uniqid() . '.' . $img_ext1;
+            if ($request->file('file_str_tkl')->move($destinationPath, $new_file_str)) {
+                if ($file_str && file_exists($destinationPath . $file_str)) {
+                    unlink($destinationPath . $file_str);
+                }
+                $file_str = $new_file_str;
+            }
         }
 
         $data = SDM::updateOrCreate(
-            ['id' => $request->id_tkl],
+            ['id' => $request->id_tkl, 'id_klinik' => $anggota->id],
             [
                 'nama' => $request->nama_tkl,
                 'farmasi_apoteker' => $request->farmasi_apoteker_tkl,
                 'id_kategori_sdm' => '4',
                 'no_str' => $request->no_str_tkl,
-                'tgl_akhir_str' => date('Y-m-d', strtotime($request->tgl_akhir_str_tkl)),
+                'tgl_akhir_str' => $request->tgl_akhir_str_tkl ? date('Y-m-d', strtotime($request->tgl_akhir_str_tkl)) : null,
                 'no_sip' => $request->no_sip_tkl,
                 'no_sib_sik' => $request->no_sip_tkl,
                 'ket_sib_sik' => $request->ket_sib_sik_tkl,
@@ -861,18 +925,32 @@ class HomeController extends Controller
 
     public function store_sdm_lain(Request $request)
     {
-        $anggota = Anggota::where('id_user', Auth::user()->id)->first();
+        $request->validate([
+            'file_str_lain' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
         $destinationPath = 'images/file/';
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        $existing = $request->id_lain ? SDM::where('id', $request->id_lain)->where('id_klinik', $anggota->id)->first() : null;
+        $file_ijazah = $existing ? $existing->file_str : null;
+
         if ($request->hasFile('file_str_lain')) {
-            $img_ext = $request->file('file_str_lain')->getClientOriginalExtension();
-            $file_ijazah = 'ijazah-' . time() . '.' . $img_ext;
-            $path = $request->file('file_str_lain')->move($destinationPath, $file_ijazah);
-        } else {
-            $file_str = NULL;
+            $img_ext = strtolower($request->file('file_str_lain')->getClientOriginalExtension());
+            $new_file_ijazah = 'ijazah-' . time() . '-' . uniqid() . '.' . $img_ext;
+            if ($request->file('file_str_lain')->move($destinationPath, $new_file_ijazah)) {
+                if ($file_ijazah && file_exists($destinationPath . $file_ijazah)) {
+                    unlink($destinationPath . $file_ijazah);
+                }
+                $file_ijazah = $new_file_ijazah;
+            }
         }
 
         $data = SDM::updateOrCreate(
-            ['id' => $request->id_lain],
+            ['id' => $request->id_lain, 'id_klinik' => $anggota->id],
             [
                 'nama' => $request->nama_lain,
                 'ijazah_terakhir' => $request->ijazah_terakhir_lain,
@@ -888,11 +966,14 @@ class HomeController extends Controller
 
     public function delete_sdm_lain(Request $request)
     {
-        $data = SDM::where('id', $request->id)->first();
-        if (file_exists(public_path() .  '/images/file/' . $data->file_str)) {
-            unlink(public_path() .  '/images/file/' . $data->file_str);
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
+        $data = SDM::where('id', $request->id)->where('id_klinik', $anggota->id)->first();
+        if ($data) {
+            if ($data->file_str && file_exists(public_path('images/file/' . $data->file_str))) {
+                unlink(public_path('images/file/' . $data->file_str));
+            }
+            $data->delete();
         }
-        $data->delete();
         return Response()->json($data);
     }
 
@@ -918,9 +999,9 @@ class HomeController extends Controller
 
     public function store_sdm_rumah_sakit(Request $request)
     {
-        $anggota = Anggota::where('id_user', Auth::user()->id)->first();
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
         $data = RumahSakit::updateOrCreate(
-            ['id' => $request->id_rs],
+            ['id' => $request->id_rs, 'id_klinik' => $anggota->id],
             [
                 'nama' => $request->nama_rs,
                 'alamat' => $request->alamat_rs,
@@ -935,7 +1016,8 @@ class HomeController extends Controller
 
     public function delete_sdm_rumah_sakit(Request $request)
     {
-        $data = RumahSakit::where('id', $request->id)->delete();
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
+        $data = RumahSakit::where('id', $request->id)->where('id_klinik', $anggota->id)->delete();
         return Response()->json($data);
     }
 
@@ -961,16 +1043,32 @@ class HomeController extends Controller
 
     public function store_sdm_asuransi(Request $request)
     {
-        $anggota = Anggota::where('id_user', Auth::user()->id)->first();
+        $request->validate([
+            'bukti_as' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
         $destinationPath = 'images/file/';
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        $existing = $request->id_as ? Asuransi::where('id', $request->id_as)->where('id_klinik', $anggota->id)->first() : null;
+        $bukti = $existing ? $existing->bukti : null;
+
         if ($request->hasFile('bukti_as')) {
-            $img_ext = $request->file('bukti_as')->getClientOriginalExtension();
-            $bukti = 'bukti-' . time() . '.' . $img_ext;
-            $path = $request->file('bukti_as')->move($destinationPath, $bukti);
+            $img_ext = strtolower($request->file('bukti_as')->getClientOriginalExtension());
+            $new_bukti = 'bukti-' . time() . '-' . uniqid() . '.' . $img_ext;
+            if ($request->file('bukti_as')->move($destinationPath, $new_bukti)) {
+                if ($bukti && file_exists($destinationPath . $bukti)) {
+                    unlink($destinationPath . $bukti);
+                }
+                $bukti = $new_bukti;
+            }
         }
 
         $data = Asuransi::updateOrCreate(
-            ['id' => $request->id_as],
+            ['id' => $request->id_as, 'id_klinik' => $anggota->id],
             [
                 'nama' => $request->nama_as,
                 'nama_kontak' => $request->nama_kontak_as,
@@ -986,12 +1084,14 @@ class HomeController extends Controller
 
     public function delete_sdm_asuransi(Request $request)
     {
-        $data = Asuransi::where('id', $request->id)->first();
-        if (file_exists(public_path() .  '/images/file/' . $data->bukti)) {
-            unlink(public_path() .  '/images/file/' . $data->bukti);
-        } else {
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
+        $data = Asuransi::where('id', $request->id)->where('id_klinik', $anggota->id)->first();
+        if ($data) {
+            if ($data->bukti && file_exists(public_path('images/file/' . $data->bukti))) {
+                unlink(public_path('images/file/' . $data->bukti));
+            }
+            $data->delete();
         }
-        $data->delete();
         return Response()->json($data);
     }
 
@@ -1017,16 +1117,32 @@ class HomeController extends Controller
 
     public function store_sdm_foto(Request $request)
     {
-        $anggota = Anggota::where('id_user', Auth::user()->id)->first();
+        $request->validate([
+            'foto_foto' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+        ]);
+
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
         $destinationPath = 'images/file/';
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        $existing = $request->id_foto ? FotoKlinik::where('id', $request->id_foto)->where('id_klinik', $anggota->id)->first() : null;
+        $foto = $existing ? $existing->foto : null;
+
         if ($request->hasFile('foto_foto')) {
-            $img_ext = $request->file('foto_foto')->getClientOriginalExtension();
-            $foto = 'ruang-' . time() . '.' . $img_ext;
-            $path = $request->file('foto_foto')->move($destinationPath, $foto);
+            $img_ext = strtolower($request->file('foto_foto')->getClientOriginalExtension());
+            $new_foto = 'ruang-' . time() . '-' . uniqid() . '.' . $img_ext;
+            if ($request->file('foto_foto')->move($destinationPath, $new_foto)) {
+                if ($foto && file_exists($destinationPath . $foto)) {
+                    unlink($destinationPath . $foto);
+                }
+                $foto = $new_foto;
+            }
         }
 
         $data = FotoKlinik::updateOrCreate(
-            ['id' => $request->id_foto],
+            ['id' => $request->id_foto, 'id_klinik' => $anggota->id],
             [
                 'nama' => $request->nama_foto,
                 'foto' => $foto,
@@ -1040,11 +1156,14 @@ class HomeController extends Controller
 
     public function delete_sdm_foto(Request $request)
     {
-        $data = FotoKlinik::where('id', $request->id)->first();
-        if (file_exists(public_path() .  '/images/file/' . $data->foto)) {
-            unlink(public_path() .  '/images/file/' . $data->foto);
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
+        $data = FotoKlinik::where('id', $request->id)->where('id_klinik', $anggota->id)->first();
+        if ($data) {
+            if ($data->foto && file_exists(public_path('images/file/' . $data->foto))) {
+                unlink(public_path('images/file/' . $data->foto));
+            }
+            $data->delete();
         }
-        $data->delete();
         return Response()->json($data);
     }
 
@@ -1068,16 +1187,29 @@ class HomeController extends Controller
 
     public function uploadFotoKlinik(Request $request)
     {
+        $request->validate([
+            'logo' => 'nullable|file|mimes:jpg,jpeg,png|max:3072',
+        ]);
+
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
         $destinationPath = 'images/file/';
-        if ($request->hasFile('logo')) {
-            $img_ext = $request->file('logo')->getClientOriginalExtension();
-            $foto = 'logo-' . time() . '.' . $img_ext;
-            $path = $request->file('logo')->move($destinationPath, $foto);
-        } else {
-            $cek = Anggota::where('id_user', Auth::user()->id)->first();
-            $foto = $cek->logo;
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
         }
-        Anggota::where('id_user', Auth::user()->id)->update([
+
+        $foto = $anggota->logo;
+        if ($request->hasFile('logo')) {
+            $img_ext = strtolower($request->file('logo')->getClientOriginalExtension());
+            $new_foto = 'logo-' . time() . '-' . uniqid() . '.' . $img_ext;
+            if ($request->file('logo')->move($destinationPath, $new_foto)) {
+                if ($foto && file_exists($destinationPath . $foto)) {
+                    unlink($destinationPath . $foto);
+                }
+                $foto = $new_foto;
+            }
+        }
+
+        $anggota->update([
             'logo' => $foto
         ]);
 
@@ -1108,19 +1240,38 @@ class HomeController extends Controller
 
     public function storeTagihan(Request $request)
     {
+        $request->validate([
+            'bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'id_kategori' => 'required',
+            'total' => 'required',
+        ]);
+
+        $anggota = Anggota::where('id_user', Auth::user()->id)->firstOrFail();
         $destinationPath = 'images/file/';
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        $existing = $request->id ? Pembayaran::where('id', $request->id)->where('id_anggota', $anggota->id)->first() : null;
+        $bukti = $existing ? $existing->bukti : null;
+
         if ($request->hasFile('bukti')) {
-            $img_ext = $request->file('bukti')->getClientOriginalExtension();
-            $bukti = 'bukti-pembayaran-' . time() . '.' . $img_ext;
-            $path = $request->file('bukti')->move($destinationPath, $bukti);
+            $img_ext = strtolower($request->file('bukti')->getClientOriginalExtension());
+            $new_bukti = 'bukti-pembayaran-' . time() . '-' . uniqid() . '.' . $img_ext;
+            if ($request->file('bukti')->move($destinationPath, $new_bukti)) {
+                if ($bukti && file_exists($destinationPath . $bukti)) {
+                    unlink($destinationPath . $bukti);
+                }
+                $bukti = $new_bukti;
+            }
         }
 
         $data = Pembayaran::updateOrCreate(
-            ['id' => $request->id],
+            ['id' => $request->id, 'id_anggota' => $anggota->id],
             [
                 'id_kategori' => $request->id_kategori,
                 'status' => '0',
-                'id_anggota' => $request->id_anggota,
+                'id_anggota' => $anggota->id,
                 'keterangan' => $request->keterangan,
                 'bukti' => $bukti,
                 'tanggal_bayar' => date('Y-m-d'),
@@ -1177,6 +1328,18 @@ class HomeController extends Controller
             ->where('anggota.id', $id)
             ->first();
 
+        if (!$anggota) {
+            abort(404, 'Data anggota tidak ditemukan.');
+        }
+
+        $user = Auth::user();
+        if ($user) {
+            $isAdminOrStaff = $user->hasAnyRole(['Superadmin', 'Admin Pusat', 'Admin Cabang', 'Admin Daerah', 'Sekjen', 'Ketua Umum', 'Bendahara']);
+            if (!$isAdminOrStaff && $anggota->id_user != $user->id) {
+                abort(403, 'Anda tidak memiliki hak akses untuk dokumen ini.');
+            }
+        }
+
         $id = $anggota->id;
 
         // Periksa apakah created_on kosong, jika ya, gunakan created_at atau verifikasi_pusat
@@ -1209,6 +1372,7 @@ class HomeController extends Controller
     {
         $anggota = Sertifikat::select(
             'sertifikat.*',
+            'a.id_user',
             'a.nama_klinik',
             'a.no_anggota',
             'a.updated_at',
@@ -1230,6 +1394,18 @@ class HomeController extends Controller
             ->leftJoin('indonesia_provinces as e', 'e.code', '=', 'a.id_provinsi')
             ->where('sertifikat.id', $id)
             ->first();
+
+        if (!$anggota) {
+            abort(404, 'Sertifikat tidak ditemukan.');
+        }
+
+        $user = Auth::user();
+        if ($user) {
+            $isAdminOrStaff = $user->hasAnyRole(['Superadmin', 'Admin Pusat', 'Admin Cabang', 'Admin Daerah', 'Sekjen', 'Ketua Umum', 'Bendahara']);
+            if (!$isAdminOrStaff && $anggota->id_user != $user->id) {
+                abort(403, 'Anda tidak memiliki hak akses untuk dokumen ini.');
+            }
+        }
 
         $id = $anggota->id;
 

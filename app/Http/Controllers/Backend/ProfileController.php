@@ -18,29 +18,28 @@ class ProfileController extends Controller
 
     public function index()
     {
-        $user = User::where('id', Auth::user()->id);
+        $user = Auth::user();
 
         return view('backend.profile.index', compact('user'));
     }
 
     public function update(Request $request, $id)
     {
+        $user = Auth::user();
+
         $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
-            'password' => 'same:confirm-password',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|min:8|same:confirm-password',
         ]);
 
-        $input = $request->all();
-        if(!empty($input['password'])){ 
-            $input['password'] = Hash::make($input['password']);
-        }else{
-            $input = Arr::except($input,array('password'));    
+        $input = $request->only(['name', 'email']);
+        if (!empty($request->password)) {
+            $input['password'] = Hash::make($request->password);
         }
 
-        $user = User::find($id);
         $user->update($input);
 
-        return redirect()->route('profile.index', $user->id)->with('success','User updated successfully');
+        return redirect()->route('profile.index', $user->id)->with('success', 'User updated successfully');
     }
 }

@@ -97,7 +97,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   1. Tambahkan validasi ketat pada request: `'file_sip_pj' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048'`.
   2. Gunakan hash nama acak dan hindari `$file->getClientOriginalExtension()`; gunakan `$file->extension()` bawaan PHP MIME detector.
   3. Simpan file di direktori non-eksekusi (private storage disk) atau pasang `.htaccess` di dalam `public/images/` dengan arahan `php_flag engine off` dan `RemoveHandler .php .phtml .php8`.
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: Validasi tipe file/MIME/size, penamaan unik acak, dan proteksi direktori telah diimplementasikan di seluruh metode upload HomeController).
 
 ---
 
@@ -119,7 +119,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   1. Keluarkan berkas dari indeks Git tanpa menghapus file lokal: `git rm --cached .env-live`.
   2. Tambahkan `.env*` dan `.env-live` ke dalam `.gitignore`.
   3. Segera rotasi password database dan API credential production yang pernah tercatat di berkas tersebut.
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: Berkas `.env-live` & `error_log` telah dikeluarkan dari Git tracking dan `.gitignore` diperbarui mengabaikan `.env*`).
 
 ---
 
@@ -143,7 +143,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   ```
 - **Rekomendasi:**  
   Hapus hardcoded string. Gunakan Sanctum token (`auth:sanctum`) atau simpan hash API key yang terdaftar di tabel khusus/environment variable yang aman.
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: API key kini mendukung konfigurasi via `.env`/config dengan perbandingan timing-safe `hash_equals()`, serta penambahan middleware `throttle:60,1` pada rute API anggota).
 
 ---
 
@@ -179,7 +179,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   ```
 - **Rekomendasi:**  
   Terapkan HMAC signature verification (misal Xendit/Midtrans/Doku header token signature) dan validasi secret callback key sebelum mengeksekusi database update.
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: Validasi payload webhook dan verifikasi token callback Xendit telah diterapkan pada `KonasController::callback`).
 
 ---
 
@@ -208,7 +208,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   ```
 - **Rekomendasi:**  
   Abaikan parameter `$id` dari URL. Selalu gunakan `$user = Auth::user();` untuk pembaruan profil sendiri.
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: `ProfileController::update` kini mengunci pembaruan akun secara ketat pada `Auth::user()` sehingga IDOR account takeover dicegah sepenuhnya).
 
 ---
 
@@ -236,7 +236,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   ```
 - **Rekomendasi:**  
   Gunakan klausa kepemilikan: `$anggota = Anggota::where('id', $id)->where('id_user', Auth::id())->firstOrFail();` atau implementasikan Laravel Policy (`$this->authorize('update', $anggota)`).
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: `HomeController::updateAnggota` kini memverifikasi kepemilikan klinik dengan `id_user == Auth::id()` sebelum mengizinkan pembaruan data dan berkas SIO).
 
 ---
 
@@ -262,7 +262,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   ```
 - **Rekomendasi:**  
   Verifikasi relasi klinik sebelum delete: pastikan relasi `id_klinik` pada data cocok dengan `Anggota::where('id_user', Auth::id())->value('id')`.
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: Seluruh metode penghapusan SDM, Rumah Sakit, Asuransi, dan Foto Klinik telah dibatasi strictly dengan klausa kepemilikan `id_klinik == $anggota->id`).
 
 ---
 
@@ -322,7 +322,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   ```
 - **Rekomendasi:**  
   Tambahkan pengecekan: pastikan `$anggota->id_user === Auth::id()`, kecuali jika user memiliki role pengurus pusat / admin.
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: Metode `downloadSK` dan `cetakSertifikat` kini memverifikasi otorisasi kepemilikan akun atau kepemilikan peran pengurus/admin sebelum dokumen PDF di-generate).
 
 ---
 
@@ -342,7 +342,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   ```
 - **Rekomendasi:**  
   Perbaiki target view menjadi `'backend.verifikasi_anggota.action'` atau buatkan partial view khusus laporan.
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: Target view action pada `LaporanCabangController` dan `LaporanDaerahController` telah diperbaiki menjadi `'backend.verifikasi_anggota.action'`).
 
 ---
 
@@ -367,7 +367,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   ```
 - **Rekomendasi:**  
   Ganti `Regency` dengan model `City` yang sudah di-import: `City::where('province_code', $request->id_provinsi)->get();`.
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: Pemanggilan class `Regency` di `DashboardController` telah diganti dengan model `City` bawaan Laravolt yang telah ter-import).
 
 ---
 
@@ -443,7 +443,7 @@ Pemeriksaan audit mencakup seluruh komponen kode pada direktori aplikasi:
   Jika ada proses create/save anggota yang dieksekusi di luar sesi login web (misal: webhook callback, background job, seeder, atau artisan console command), `Auth()->user()` akan bernilai `null` dan memicu fatal error: `Attempt to read property "id" on null`.
 - **Rekomendasi:**  
   Gunakan safe operator: `Auth::id() ?? null` atau `auth()->user()?->id`.
-- **Status:** OPEN
+- **Status:** RESOLVED (Session 1 Remediated: Event hook `booted` pada model `Anggota` kini menggunakan safe check `auth()->id()` untuk mencegah Null Pointer Exception).
 
 ---
 
@@ -737,3 +737,4 @@ Perbaikan cepat yang **sangat aman, berdampak besar, dan TIDAK menyentuh databas
 3. **Fase 3 (Upgrade Framework):** Lakukan upgrade bertahap `Laravel 9 -> 10` lalu `Laravel 10 -> 11` di branch terpisah dengan pengujian menyeluruh tanpa mengubah skema database.
 4. **Fase 4 (Setup Tailwind & Design System):** Bangun design system baru dengan Tailwind CSS dan dark mode support.
 5. **Fase 5 (Implementasi UI & Modul Per Sesi):** Redesign tampilan secara bertahap (Dashboard, Anggota, Verifikasi, Laporan, Konas, Administrasi) sesuai roadmap blueprint yang telah disetujui.
+
