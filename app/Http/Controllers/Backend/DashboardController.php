@@ -19,60 +19,32 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-        $approved = Anggota::where('status', 'approved')->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
-                    $query->where('id_kota', Auth::user()->kota);
-                })
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
-                    $query->where('id_provinsi', Auth::user()->provinsi);
-                })->count();
-        $proses = Anggota::where('status', 'proses')->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
-                    $query->where('id_kota', Auth::user()->kota);
-                })
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
-                    $query->where('id_provinsi', Auth::user()->provinsi);
-                })->count();
-        $ditolak = Anggota::where('status', 'ditolak pusat')->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
-                    $query->where('id_kota', Auth::user()->kota);
-                })
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
-                    $query->where('id_provinsi', Auth::user()->provinsi);
-                })->count();
-        $perbaikan = Anggota::where('status', 'Perlu Perbaikan')->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
-                    $query->where('id_kota', Auth::user()->kota);
-                })
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
-                    $query->where('id_provinsi', Auth::user()->provinsi);
-                })->count();
-        $diverifikasi_cabang = Anggota::where('status', 'Diverifikasi Cabang')->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
-                    $query->where('id_kota', Auth::user()->kota);
-                })
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
-                    $query->where('id_provinsi', Auth::user()->provinsi);
-                })->count();
-        $terverifikasi_cabang = Anggota::where('status', 'Terverifikasi Cabang')->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
-                    $query->where('id_kota', Auth::user()->kota);
-                })
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
-                    $query->where('id_provinsi', Auth::user()->provinsi);
-                })->count();
-        $waiting = Anggota::where('status', 'waiting')->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
-                    $query->where('id_kota', Auth::user()->kota);
-                })
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
-                    $query->where('id_provinsi', Auth::user()->provinsi);
-                })->count();
-        $create_dokter = Anggota::where('status', 'create_dokter')->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
-                    $query->where('id_kota', Auth::user()->kota);
-                })
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
-                    $query->where('id_provinsi', Auth::user()->provinsi);
-                })->count();
-        $terverifikasi_cabang = Anggota::where('status', 'Terverifikasi Cabang')->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
-                    $query->where('id_kota', Auth::user()->kota);
-                })
-                ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
-                    $query->where('id_provinsi', Auth::user()->provinsi);
-                })->count();
+        $stats = Anggota::selectRaw("
+            SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved,
+            SUM(CASE WHEN status = 'proses' THEN 1 ELSE 0 END) as proses,
+            SUM(CASE WHEN status = 'ditolak pusat' THEN 1 ELSE 0 END) as ditolak,
+            SUM(CASE WHEN status = 'Perlu Perbaikan' THEN 1 ELSE 0 END) as perbaikan,
+            SUM(CASE WHEN status = 'Diverifikasi Cabang' THEN 1 ELSE 0 END) as diverifikasi_cabang,
+            SUM(CASE WHEN status = 'Terverifikasi Cabang' THEN 1 ELSE 0 END) as terverifikasi_cabang,
+            SUM(CASE WHEN status = 'waiting' THEN 1 ELSE 0 END) as waiting,
+            SUM(CASE WHEN status = 'create_dokter' THEN 1 ELSE 0 END) as create_dokter
+        ")
+        ->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
+            $query->where('id_kota', Auth::user()->kota);
+        })
+        ->when(Auth::user()->hasRole('Admin Daerah'), function ($query) use ($request) {
+            $query->where('id_provinsi', Auth::user()->provinsi);
+        })
+        ->first();
+
+        $approved = (int) ($stats->approved ?? 0);
+        $proses = (int) ($stats->proses ?? 0);
+        $ditolak = (int) ($stats->ditolak ?? 0);
+        $perbaikan = (int) ($stats->perbaikan ?? 0);
+        $diverifikasi_cabang = (int) ($stats->diverifikasi_cabang ?? 0);
+        $terverifikasi_cabang = (int) ($stats->terverifikasi_cabang ?? 0);
+        $waiting = (int) ($stats->waiting ?? 0);
+        $create_dokter = (int) ($stats->create_dokter ?? 0);
         $recent = Anggota::orderBy('updated_at', 'DESC')->when(Auth::user()->hasRole('Admin Cabang'), function ($query) use ($request) {
                     $query->where('id_kota', Auth::user()->kota);
                 })
