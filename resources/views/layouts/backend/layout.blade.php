@@ -34,8 +34,16 @@
     <!-- Legacy Compatibility CSS (Bootstrap 4 grid/utilities for existing views) -->
     <link rel="stylesheet" href="{{ asset('assets/backend/modules/bootstrap/css/bootstrap.min.css') }}">
 
-    <!-- Compiled Tailwind CSS & App JS via Vite -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Compiled Tailwind CSS & App JS via Vite (with resilient fallback for production) -->
+    @php
+        $manifestPath = public_path('build/manifest.json');
+        $manifestData = file_exists($manifestPath) ? json_decode(@file_get_contents($manifestPath), true) : null;
+    @endphp
+    @if ($manifestData && isset($manifestData['resources/css/app.css']))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @elseif ($manifestData && isset($manifestData['resources/sass/app.scss']))
+        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @endif
 
     <!-- Modern UI Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/backend/css/modern-custom.css') }}">

@@ -33,8 +33,16 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Compiled Assets via Vite -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Compiled Assets via Vite (with resilient fallback for production) -->
+    @php
+        $manifestPath = public_path('build/manifest.json');
+        $manifestData = file_exists($manifestPath) ? json_decode(@file_get_contents($manifestPath), true) : null;
+    @endphp
+    @if ($manifestData && isset($manifestData['resources/css/app.css']))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @elseif ($manifestData && isset($manifestData['resources/sass/app.scss']))
+        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @endif
 
     <!-- Modern UI Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/backend/css/modern-custom.css') }}">

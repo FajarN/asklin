@@ -1,5 +1,5 @@
 /node_modules
-/public/build
+# /public/build (tracked to ensure production has compiled Vite assets)
 /public/hot
 /public/storage
 /public/assets/images/sliders
