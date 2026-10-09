@@ -1,48 +1,63 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Manajemen Group & Roles')
+@section('page_title', 'Manajemen Group')
+
 @section('content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Manajemen Group</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Roles Management</div>
-                </div>
-            </div>
-        </section>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>
-                            <button type="button" class="btn btn-icon icon-left btn-danger btn-outline-secondary"
-                                id="create-btn" onclick="showModal()">
-                                <i class="fas fa-plus"></i> Tambah Roles
-                            </button>
-                        </h4>
-                        <div class="card-header-form">
-                            <input type="text" class="form-control" placeholder="Search" id="search">
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped" id="table">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Group</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Manajemen Peran & Wewenang (Roles)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Atur grup wewenang dan izin akses pengguna (RBAC) pada setiap modul aplikasi.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button type="button" class="btn btn-primary btn-sm" id="create-btn" onclick="showModal()">
+                <i class="fas fa-plus"></i>
+                <span>Tambah Role Baru</span>
+            </button>
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+        <div class="card-header flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <i class="fas fa-shield-alt text-emerald-600 mr-1.5"></i> Daftar Role / Group Pengguna
+            </h4>
+            <div class="w-full sm:w-64">
+                <div class="relative">
+                    <input type="text" class="form-control pl-9 w-full text-xs" placeholder="Cari role..." id="search">
+                    <i class="fas fa-search absolute left-3 top-3 text-xs text-slate-400"></i>
                 </div>
             </div>
         </div>
+
+        <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
+            <div class="table-responsive">
+                <table class="table table-striped" id="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Group / Peran</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
+</div>
 
     <!-- Modal -->
     <div class="modal fade" tabindex="-1" role="dialog" id="roleModal">

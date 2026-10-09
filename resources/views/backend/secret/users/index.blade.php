@@ -1,61 +1,78 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Manajemen Pengguna')
+@section('page_title', 'Manajemen Pengguna')
+
 @section('content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Manajemen User</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Users Managemen</div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Manajemen Pengguna Sistem
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Kelola hak akses pengguna, wilayah penugasan, dan peran dalam organisasi ASKLIN.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i>
+                <span>Tambah Pengguna Baru</span>
+            </a>
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter & Table Card -->
+    <div class="card">
+        <div class="card-header flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <i class="fas fa-users-cog text-emerald-600 mr-1.5"></i> Daftar Akun Pengguna
+            </h4>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                <div class="w-full sm:w-48">
+                    <select id="role" class="form-control w-full text-xs" data-placeholder="Pilih Role...">
+                        <option value="">Semua Peran / Role</option>
+                        @foreach ($role as $i)
+                            <option value="{{ $i->name }}">{{ $i->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
-            </div>
-        </section>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>
-                            <a href="{{ route('users.create') }}"
-                                class="btn btn-icon icon-left btn-danger btn-outline-secondary">
-                                <i class="fas fa-plus"></i> Tambah User
-                            </a>
-                        </h4>
-                        <div class="card-header-form">
-                            <select id="role" class="form-control form-control-sm">
-                                <option></option>
-                                @foreach ($role as $i)
-                                    <option value="{{ $i->name }}">{{ $i->name }}
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="card-header-form">
-                            <input type="text" class="form-control" placeholder="Search" id="search">
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped" id="table">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Group</th>
-                                        <th>Propinsi</th>
-                                        <th>Kab/Kota</th>
-                                        <th>Login Terakhir</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                <div class="w-full sm:w-64">
+                    <div class="relative">
+                        <input type="text" class="form-control pl-9 w-full text-xs" placeholder="Cari nama, email..." id="search">
+                        <i class="fas fa-search absolute left-3 top-3 text-xs text-slate-400"></i>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
+            <div class="table-responsive">
+                <table class="table table-striped" id="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Group / Role</th>
+                            <th>Propinsi</th>
+                            <th>Kab/Kota</th>
+                            <th>Login Terakhir</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
+</div>
 @endsection
 
 @push('css')

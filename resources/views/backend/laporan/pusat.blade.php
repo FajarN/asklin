@@ -1,21 +1,31 @@
 @extends('layouts.backend.layout')
 
-@section('content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Laporan Data Anggota ASKLIN</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Laporan Pusat</div>
-                </div>
-            </div>
+@section('title', 'Laporan Data Anggota ASKLIN')
+@section('page_title', 'Laporan Pusat')
 
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-12">
-                        <!-- Column Selection Card -->
-                        <div class="card mb-3">
+@section('content')
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Laporan Data Anggota ASKLIN (Pusat)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Kustomisasi kolom, filter wilayah/periode, serta ekspor data ke Excel atau PDF.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Column Selection Card -->
+    <div class="card mb-3">
                             <div class="card-header">
                                 <div class="row w-100 align-items-center">
                                     <div class="col-md-6">
@@ -154,26 +164,20 @@
                                 </div>
                             </div>
 
-                            <div class="card-footer bg-light">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <small class="text-muted">
-                                            <i class="fas fa-clock"></i> Data diupdate real-time
-                                        </small>
+                            </div>
+
+                            <div class="card-footer bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 p-4">
+                                <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+                                    <div>
+                                        <i class="fas fa-clock mr-1"></i> Data diupdate real-time
                                     </div>
-                                    <div class="col-md-6 text-right">
-                                        <small class="text-muted">
-                                            Role: <strong>{{ Auth::user()->getRoleNames()->first() }}</strong>
-                                        </small>
+                                    <div>
+                                        Role: <strong class="text-slate-700 dark:text-slate-300">{{ Auth::user()->getRoleNames()->first() }}</strong>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+</div>
 
     <!-- Loading Modal -->
     <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">

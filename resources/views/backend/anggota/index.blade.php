@@ -1,103 +1,114 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Data Anggota Approved')
+@section('page_title', 'Data Anggota')
+
 @section('content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Data Anggota Approved</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Data Anggota Approved</div>
-                </div>
-            </div>
-        </section>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4></h4>
-                        <div class="card-header-form">
-                            <input type="text" class="form-control" placeholder="Search" id="search">
-                        </div>
-                    </div>
+<div class="space-y-6">
 
-                    <!-- Filter Section -->
-                    <div class="card-body pt-3 pb-2">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label class="form-label">Filter Tahun Approve:</label>
-                                <select class="form-control" id="filter_tahun_approve">
-                                    <option value="">Semua Tahun</option>
-                                    @for ($year = date('Y'); $year >= 2018; $year--)
-                                        <option value="{{ $year }}">{{ $year }}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Filter Bulan Approve:</label>
-                                <select class="form-control" id="filter_bulan_approve">
-                                    <option value="">Semua Bulan</option>
-                                    <option value="1">Januari</option>
-                                    <option value="2">Februari</option>
-                                    <option value="3">Maret</option>
-                                    <option value="4">April</option>
-                                    <option value="5">Mei</option>
-                                    <option value="6">Juni</option>
-                                    <option value="7">Juli</option>
-                                    <option value="8">Agustus</option>
-                                    <option value="9">September</option>
-                                    <option value="10">Oktober</option>
-                                    <option value="11">November</option>
-                                    <option value="12">Desember</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Filter Jenis Klinik:</label>
-                                <select class="form-control" id="filter_jenis">
-                                    <option value="">Semua Jenis</option>
-                                    <option value="Pratama">Pratama</option>
-                                    <option value="Utama">Utama</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">&nbsp;</label>
-                                <div>
-                                    <button type="button" class="btn btn-primary" id="btn_filter">
-                                        <i class="fas fa-filter"></i> Filter
-                                    </button>
-                                    <button type="button" class="btn btn-secondary" id="btn_reset">
-                                        <i class="fas fa-undo"></i> Reset
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Data Anggota Klinik (Approved)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Daftar seluruh klinik yang telah lolos verifikasi dan berstatus aktif di organisasi ASKLIN.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali ke Dashboard</span>
+            </a>
+        </div>
+    </div>
 
-
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped" id="table">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>No. Anggota</th>
-                                        <th>Kab/Kota</th>
-                                        <th>Nama Klinik</th>
-                                        <th>Jenis Klinik</th>
-                                        <th>Kriteria Klinik</th>
-                                        <th>Tanggal Daftar</th>
-                                        <th>Tanggal Approve</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
+    <!-- Filter & Search Card -->
+    <div class="card">
+        <div class="card-header flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <i class="fas fa-filter text-emerald-600 mr-1.5"></i> Filter & Pencarian Anggota
+            </h4>
+            <div class="w-full sm:w-72">
+                <div class="relative">
+                    <input type="text" class="form-control pl-9 w-full text-xs" placeholder="Cari nama klinik, no anggota..." id="search">
+                    <i class="fas fa-search absolute left-3 top-3 text-xs text-slate-400"></i>
                 </div>
             </div>
         </div>
+
+        <!-- Filter Section -->
+        <div class="card-body pt-4 pb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label class="form-label" for="filter_tahun_approve">Tahun Approve:</label>
+                    <select class="form-control w-full" id="filter_tahun_approve">
+                        <option value="">Semua Tahun</option>
+                        @for ($year = date('Y'); $year >= 2018; $year--)
+                            <option value="{{ $year }}">{{ $year }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" for="filter_bulan_approve">Bulan Approve:</label>
+                    <select class="form-control w-full" id="filter_bulan_approve">
+                        <option value="">Semua Bulan</option>
+                        <option value="1">Januari</option>
+                        <option value="2">Februari</option>
+                        <option value="3">Maret</option>
+                        <option value="4">April</option>
+                        <option value="5">Mei</option>
+                        <option value="6">Juni</option>
+                        <option value="7">Juli</option>
+                        <option value="8">Agustus</option>
+                        <option value="9">September</option>
+                        <option value="10">Oktober</option>
+                        <option value="11">November</option>
+                        <option value="12">Desember</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" for="filter_jenis">Jenis Klinik:</label>
+                    <select class="form-control w-full" id="filter_jenis">
+                        <option value="">Semua Jenis</option>
+                        <option value="Pratama">Pratama</option>
+                        <option value="Utama">Utama</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" class="btn btn-primary flex-1" id="btn_filter">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <button type="button" class="btn btn-secondary flex-1" id="btn_reset">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
+            <div class="table-responsive">
+                <table class="table table-striped" id="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>No. Anggota</th>
+                            <th>Kab/Kota</th>
+                            <th>Nama Klinik</th>
+                            <th>Jenis Klinik</th>
+                            <th>Kriteria Klinik</th>
+                            <th>Tanggal Daftar</th>
+                            <th>Tanggal Approve</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
+</div>
 
     <!-- Modal Konfirmasi Delete -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"

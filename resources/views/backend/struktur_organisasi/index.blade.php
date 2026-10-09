@@ -1,74 +1,82 @@
 @extends('layouts.backend.layout')
-<meta name="csrf-token" content="{{ csrf_token() }}">
+
+@section('title', 'Struktur Organisasi')
+@section('page_title', 'Struktur Organisasi')
+
 @section('content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Manajemen Struktur Organisasi</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Struktur Organisasi</div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Struktur Organisasi ASKLIN
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Susunan kepengurusan, periode masa bakti pengurus cabang, daerah, dan pengurus pusat.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button type="button" class="btn btn-primary btn-sm" id="btnAdd">
+                <i class="fas fa-plus"></i>
+                <span>Tambah Struktur</span>
+            </button>
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+        <div class="card-header flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <i class="fas fa-sitemap text-emerald-600 mr-1.5"></i> Kepengurusan Organisasi
+            </h4>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                <div class="w-full sm:w-56">
+                    <select class="form-control w-full text-xs" id="filter_tingkatan">
+                        <option value="">Semua Tingkatan</option>
+                        @foreach ($tingkatanList as $tingkatan)
+                            <option value="{{ $tingkatan->id }}">{{ $tingkatan->nama_tingkatan }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" class="btn btn-primary btn-sm" id="btnFilter">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnReset">
+                        <i class="fas fa-sync"></i> Reset
+                    </button>
                 </div>
             </div>
-        </section>
+        </div>
 
-    <div class="section-body">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <button type="button" class="btn btn-primary" id="btnAdd">
-                            <i class="fas fa-plus"></i> Tambah Struktur
-                        </button>
-                        <div class="d-flex">
-                            <div class="form-group mb-0 mr-2">
-                                <select class="form-control" id="filter_tingkatan">
-                                    <option value="">Semua Tingkatan</option>
-                                    @foreach ($tingkatanList as $tingkatan)
-                                        <option value="{{ $tingkatan->id }}">{{ $tingkatan->nama_tingkatan }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-sm btn-info" id="btnFilter">
-                                    <i class="fas fa-filter"></i> Filter
-                                </button>
-                                <button type="button" class="btn btn-sm btn-light" id="btnReset">
-                                    <i class="fas fa-sync"></i> Reset
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped" id="table-struktur">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nama&nbsp;Struktur</th>
-                                                    <th>Tingkatan</th>
-                                                    <th>Propinsi</th>
-                                                    <th>Kabupaten/kota</th>
-                                                    <th>Periode</th>
-                                                    <th>Tanggal&nbsp;Muscab</th>
-                                                    <th>Status</th>
-                                                    <th>Aksi</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- Data will be filled with DataTables -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </section>
+        <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
+            <div class="table-responsive">
+                <table class="table table-striped" id="table-struktur">
+                    <thead>
+                        <tr>
+                            <th>Nama Struktur</th>
+                            <th>Tingkatan</th>
+                            <th>Propinsi</th>
+                            <th>Kabupaten/kota</th>
+                            <th>Periode</th>
+                            <th>Tanggal Muscab</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be filled with DataTables -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
                 <!-- Modal for Add/Edit Struktur -->
                 <div class="modal fade" id="strukturModal" tabindex="-1" role="dialog"

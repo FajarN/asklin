@@ -8,8 +8,10 @@
     <!-- Brand Header -->
     <div class="h-16 flex items-center justify-between px-6 border-b border-slate-200/80 dark:border-slate-800">
         <a href="{{ route('dashboard.index') }}" class="flex items-center gap-3 group">
-            @if(setting('logo'))
+            @if(setting('logo') && file_exists(public_path('storage/' . setting('logo'))))
                 <img src="{{ asset('storage/' . setting('logo')) }}" alt="Logo ASKLIN" class="w-9 h-9 object-contain rounded-lg">
+            @elseif(file_exists(public_path('assets/images/logo_asklin.png')))
+                <img src="{{ asset('assets/images/logo_asklin.png') }}" alt="Logo ASKLIN" class="w-9 h-9 object-contain rounded-lg">
             @else
                 <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center font-extrabold text-sm shadow-sm group-hover:scale-105 transition-transform">
                     A

@@ -1,47 +1,64 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Master Fasilitas Klinik')
+@section('page_title', 'Fasilitas Klinik')
+
 @section('content')
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-            <h1>Fasilitas Klinik</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                <div class="breadcrumb-item">Fasilitas Klinik</div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Fasilitas Penunjang Klinik
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Katalog sarana prasarana fisik klinik (UGD 24 jam, ambulans, apotek, rontgen, USG, dsb).
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="javascript:void(0)" onclick="add()" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i>
+                <span>Tambah Fasilitas</span>
+            </a>
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+        <div class="card-header flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <i class="fas fa-hospital-alt text-emerald-600 mr-1.5"></i> Daftar Fasilitas Penunjang
+            </h4>
+            <div class="w-full sm:w-64">
+                <div class="relative">
+                    <input type="text" class="form-control pl-9 w-full text-xs" placeholder="Cari fasilitas..." id="search">
+                    <i class="fas fa-search absolute left-3 top-3 text-xs text-slate-400"></i>
+                </div>
             </div>
         </div>
-    </section>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4>
-                        <a href="javascript:void(0)" onclick="add()" class="btn btn-icon icon-left btn-danger btn-outline-secondary">
-                            <i class="fas fa-plus"></i> Tambah Fasilitas
-                        </a>
-                    </h4>
-                    <div class="card-header-form">
-                        <input type="text" class="form-control" placeholder="Search" id="search">
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-striped" id="table">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
+
+        <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
+            <div class="table-responsive">
+                <table class="table table-striped" id="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Fasilitas</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
+</div>
     <!-- Modal -->
     <div class="modal fade" tabindex="-1" role="dialog" id="tambah">
         <div class="modal-dialog" role="document">

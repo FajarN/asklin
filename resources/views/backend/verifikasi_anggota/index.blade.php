@@ -1,108 +1,134 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Verifikasi Anggota')
+@section('page_title', 'Verifikasi Anggota')
+
 @section('content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Verifikasi Anggota</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Verifikasi Anggota</div>
-                </div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Verifikasi Anggota Klinik
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Tinjau dan proses permohonan keanggotaan klinik berjenjang (Cabang &rarr; Daerah &rarr; Pusat).
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali ke Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter & Search Card -->
+    <div class="card">
+        <div class="card-header flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <div>
+                <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                    <i class="fas fa-filter text-emerald-600 mr-1.5"></i> Filter & Pencarian
+                </h4>
             </div>
-        </section>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4></h4>
-                        <div class="card-header-form">
-                            <input type="text" class="form-control" placeholder="Search" id="search">
-                        </div>
-                    </div>
-
-                    <!-- Filter Section -->
-                    <div class="card-body pt-3 pb-2">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label class="form-label">Filter Usia Data:</label>
-                                <select class="form-control" id="filter_usia">
-                                    <option value="">Semua Usia</option>
-                                    <option value="tahun_ini">Tahun Ini (2025)</option>
-                                    <option value="1_tahun">1 Tahun Lalu (2024)</option>
-                                    <option value="2_tahun">2 Tahun Lalu (2023)</option>
-                                    <option value="3_tahun">3 Tahun Lalu (2022)</option>
-                                    <option value="4_tahun_lebih">4+ Tahun Lalu (≤2021)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Filter Status:</label>
-                                <select class="form-control" id="filter_status">
-                                    <option value="">Semua Status</option>
-                                    <option value="waiting">Waiting</option>
-                                    <option value="Perlu Perbaikan">Perlu Perbaikan</option>
-                                    <option value="create_dokter">Create Dokter</option>
-                                    <option value="Verifikasi Sekjen">Verifikasi Sekjen</option>
-                                    <option value="Verifikasi Bendahara">Verifikasi Bendahara</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Filter Jenis Klinik:</label>
-                                <select class="form-control" id="filter_jenis">
-                                    <option value="">Semua Jenis</option>
-                                    <option value="Pratama">Pratama</option>
-                                    <option value="Utama">Utama</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">&nbsp;</label>
-                                <div>
-                                    <button type="button" class="btn btn-primary" id="btn_filter">
-                                        <i class="fas fa-filter"></i> Filter
-                                    </button>
-                                    <button type="button" class="btn btn-secondary" id="btn_reset">
-                                        <i class="fas fa-undo"></i> Reset
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Keterangan Warna -->
-                    <div class="card-body pt-0 pb-2">
-                        <div class="alert alert-secondary mb-2">
-                            <strong>Keterangan Warna Tanggal:</strong>
-                            <span style="color: #32CD32; font-weight: bold;">■ Tahun ini</span> |
-                            <span style="color: #FFA500; font-weight: bold;">■ > 1 tahun</span> |
-                            <span style="color: #FF4500; font-weight: bold;">■ > 2 tahun</span> |
-                            <span style="color: #FF0000; font-weight: bold;">■ > 3 tahun</span> |
-                            <span style="color: #8B0000; font-weight: bold;">■ > 4 tahun</span>
-                        </div>
-                    </div>
-
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped" id="table">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>No. Anggota</th>
-                                        <th>Kab/Kota</th>
-                                        <th>Nama Klinik</th>
-                                        <th>Jenis Klinik</th>
-                                        <th>Kriteria Klinik</th>
-                                        <th>Status Verifikasi</th>
-                                        <th>Tanggal Daftar</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
+            <div class="w-full sm:w-72">
+                <div class="relative">
+                    <input type="text" class="form-control pl-9 w-full text-xs" placeholder="Cari nama klinik, nomor..." id="search">
+                    <i class="fas fa-search absolute left-3 top-3 text-xs text-slate-400"></i>
                 </div>
             </div>
         </div>
+
+        <!-- Filter Grid -->
+        <div class="card-body pt-4 pb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label class="form-label" for="filter_usia">Usia Pendaftaran:</label>
+                    <select class="form-control" id="filter_usia">
+                        <option value="">Semua Usia</option>
+                        <option value="tahun_ini">Tahun Ini (2025/2026)</option>
+                        <option value="1_tahun">1 Tahun Lalu</option>
+                        <option value="2_tahun">2 Tahun Lalu</option>
+                        <option value="3_tahun">3 Tahun Lalu</option>
+                        <option value="4_tahun_lebih">4+ Tahun Lalu</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" for="filter_status">Status Verifikasi:</label>
+                    <select class="form-control" id="filter_status">
+                        <option value="">Semua Status</option>
+                        <option value="waiting">Waiting</option>
+                        <option value="Perlu Perbaikan">Perlu Perbaikan</option>
+                        <option value="create_dokter">Create Dokter</option>
+                        <option value="Verifikasi Sekjen">Verifikasi Sekjen</option>
+                        <option value="Verifikasi Bendahara">Verifikasi Bendahara</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" for="filter_jenis">Jenis Klinik:</label>
+                    <select class="form-control" id="filter_jenis">
+                        <option value="">Semua Jenis</option>
+                        <option value="Pratama">Pratama</option>
+                        <option value="Utama">Utama</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" class="btn btn-primary flex-1 justify-center" id="btn_filter">
+                        <i class="fas fa-filter"></i>
+                        <span>Filter</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary flex-1 justify-center" id="btn_reset">
+                        <i class="fas fa-undo"></i>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Color Age Legend -->
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-2 text-xs">
+                <span class="font-bold text-slate-500 dark:text-slate-400 text-[11px] uppercase mr-1">Indikator Usia:</span>
+                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Tahun Ini
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/60">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span> &gt; 1 Tahun
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-orange-50 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/60">
+                    <span class="w-2 h-2 rounded-full bg-orange-500"></span> &gt; 2 Tahun
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border border-rose-200/60 dark:border-rose-800/60">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span> &gt; 3 Tahun
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-red-100 text-red-900 dark:bg-red-950/80 dark:text-red-300 border border-red-300/60 dark:border-red-800/60">
+                    <span class="w-2 h-2 rounded-full bg-red-700"></span> &gt; 4 Tahun
+                </span>
+            </div>
+        </div>
+
+        <!-- Table Responsive Container -->
+        <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
+            <div class="table-responsive">
+                <table class="table table-striped w-full text-xs" id="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>No. Anggota</th>
+                            <th>Kab/Kota</th>
+                            <th>Nama Klinik</th>
+                            <th>Jenis Klinik</th>
+                            <th>Kriteria Klinik</th>
+                            <th>Status Verifikasi</th>
+                            <th>Tanggal Daftar</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
     </div>
 
     <!-- Modal Konfirmasi Delete untuk Verifikasi Anggota -->

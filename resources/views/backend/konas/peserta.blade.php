@@ -1,69 +1,59 @@
-<style>
-    .myButton {
-	box-shadow:inset 0px 1px 0px 0px #bbdaf7;
-	background:linear-gradient(to bottom, #79bbff 5%, #378de5 100%);
-	background-color:#79bbff;
-	border-radius:6px;
-	border:1px solid #84bbf3;
-	display:inline-block;
-	cursor:pointer;
-	color:#ffffff;
-	font-family:Arial;
-	font-size:15px;
-	font-weight:bold;
-	padding:6px 24px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #528ecc;
-}
-.myButton:hover {
-	background:linear-gradient(to bottom, #378de5 5%, #79bbff 100%);
-	background-color:#378de5;
-}
-.myButton:active {
-	position:relative;
-	top:1px;
-}
-
-</style>
 @extends('layouts.backend.layout')
 
+@section('title', 'Peserta KONAS')
+@section('page_title', 'Peserta KONAS')
+
 @section('content')
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-            <h1>Peserta Konas</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                <div class="breadcrumb-item">Peserta Konas</div>
-            </div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Peserta Kongres Nasional (KONAS)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Data pendaftaran delegasi cabang dan daerah, surat mandat, dan verifikasi komisi.
+            </p>
         </div>
-    </section>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4>
-                        <!--<a href="javascript:void(0)" onclick="add()" class="btn btn-icon icon-left btn-danger btn-outline-secondary">-->
-                        <!--    <i class="fas fa-plus"></i> Tambah-->
-                        <!--</a>-->
-                    </h4>
-                    <div class="card-header-form">
-                        <select id="provinsi" class="form-control form-control">
-                            <option></option>
-                            @foreach($provinsi as $i)
-                                <option value="{{ $i->code }}">{{ $i->name }}
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="card-header-form">
-                        <select id="cabang" class="form-control form-control">
-                        </select>
-                    </div>
-                    <div class="card-header-form">
-                        <input type="text" class="form-control" placeholder="Search" id="search">
+        <div class="flex items-center gap-2">
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+        <div class="card-header flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <i class="fas fa-users text-emerald-600 mr-1.5"></i> Daftar Delegasi Peserta
+            </h4>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                <div class="w-full sm:w-44">
+                    <select id="provinsi" class="form-control w-full text-xs">
+                        <option value="">Semua Provinsi</option>
+                        @foreach($provinsi as $i)
+                            <option value="{{ $i->code }}">{{ $i->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="w-full sm:w-44">
+                    <select id="cabang" class="form-control w-full text-xs">
+                        <option value="">Semua Cabang</option>
+                    </select>
+                </div>
+                <div class="w-full sm:w-56">
+                    <div class="relative">
+                        <input type="text" class="form-control pl-9 w-full text-xs" placeholder="Cari nama, klinik..." id="search">
+                        <i class="fas fa-search absolute left-3 top-3 text-xs text-slate-400"></i>
                     </div>
                 </div>
-                <div class="card-body p-0">
+            </div>
+        </div>
+
+        <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
                     <div class="table-responsive">
                         <table class="table table-striped" id="table">
                             <thead>
@@ -86,9 +76,6 @@
                             </thead>
                             <tbody></tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>

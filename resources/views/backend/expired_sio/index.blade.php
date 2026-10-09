@@ -1,37 +1,39 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Monitoring SIO Kadaluwarsa')
+@section('page_title', 'Monitoring SIO')
+
 @section('content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Expired SIO</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Expired SIO</div>
-                </div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Monitoring Surat Izin Operasional (SIO)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Deteksi dini klinik yang masa berlaku izin operasionalnya mendekati atau telah habis masa berlakunya.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="btn-group" role="group" aria-label="Export buttons">
+                <button type="button" class="btn btn-primary btn-sm btn-export" id="btn-export-excel">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm btn-export" id="btn-export-pdf">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </button>
             </div>
-        </section>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row w-100 align-items-center">
-                            <div class="col-md-6">
-                                <h4 class="mb-0">Filter & Export Data</h4>
-                                <small class="text-muted">Kelola dan ekspor data SIO yang akan expired</small>
-                            </div>
-                            <div class="col-md-6 text-right">
-                                <div class="btn-group" role="group" aria-label="Export buttons">
-                                    <button type="button" class="btn btn-success btn-sm btn-export" id="btn-export-excel">
-                                        <i class="fas fa-file-excel"></i> Export Excel
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-sm btn-export" id="btn-export-pdf">
-                                        <i class="fas fa-file-pdf"></i> Export PDF
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
 
                     <div class="card-body">
                         <!-- Filter Section -->
@@ -165,24 +167,18 @@
                         </div>
                     </div>
 
-                    <div class="card-footer bg-light">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <small class="text-muted">
-                                    <i class="fas fa-clock"></i> Data diupdate real-time
-                                </small>
+                    <div class="card-footer bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 p-4">
+                        <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+                            <div>
+                                <i class="fas fa-clock mr-1"></i> Data diupdate real-time
                             </div>
-                            <div class="col-md-6 text-right">
-                                <small class="text-muted">
-                                    Role: <strong>{{ Auth::user()->getRoleNames()->first() }}</strong>
-                                </small>
+                            <div>
+                                Role: <strong class="text-slate-700 dark:text-slate-300">{{ Auth::user()->getRoleNames()->first() }}</strong>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+</div>
 
     <!-- Loading Modal -->
     <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"

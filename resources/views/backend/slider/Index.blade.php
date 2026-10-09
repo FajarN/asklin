@@ -1,51 +1,66 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Banner Slider')
+@section('page_title', 'Slider')
+
 @section('content')
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-            <h1>Slider</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                <div class="breadcrumb-item">Slider</div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Banner & Slider Beranda
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Kelola foto spanduk/banner carousel yang tampil pada halaman utama portal ASKLIN.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="javascript:void(0)" onclick="add()" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i>
+                <span>Tambah Slider Baru</span>
+            </a>
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+        <div class="card-header flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <i class="fas fa-images text-emerald-600 mr-1.5"></i> Daftar Banner Slider
+            </h4>
+            <div class="w-full sm:w-64">
+                <div class="relative">
+                    <input type="text" class="form-control pl-9 w-full text-xs" placeholder="Cari slider..." id="search">
+                    <i class="fas fa-search absolute left-3 top-3 text-xs text-slate-400"></i>
+                </div>
             </div>
         </div>
-    </section>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4>
-                        <a href="javascript:void(0)" onclick="add()"
-                            class="btn btn-icon icon-left btn-info btn-outline-secondary">
-                            <i class="fas fa-plus"></i> Tambah
-                        </a>
-                    </h4>
-                    <div class="card-header-form">
-                        <input type="text" class="form-control" placeholder="Search" id="search">
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table id="table" class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Judul</th>
-                                    <th>Foto Slider</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
+            <div class="table-responsive">
+                <table id="table" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Judul</th>
+                            <th>Foto Slider</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Modal -->
     <div class="modal fade" tabindex="-1" role="dialog" id="tambah">
