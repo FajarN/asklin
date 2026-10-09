@@ -9,10 +9,10 @@
     <!-- Page Header Banner -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+            <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-white">
                 Verifikasi Anggota Klinik
             </h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400 mt-1">
                 Tinjau dan proses permohonan keanggotaan klinik berjenjang (Cabang &rarr; Daerah &rarr; Pusat).
             </p>
         </div>
@@ -240,7 +240,36 @@
                     },
                     {
                         data: 'status',
-                        name: 'status'
+                        name: 'status',
+                        render: function(data, type, row) {
+                            if (!data) return '<span class="text-slate-400 text-xs">-</span>';
+                            var cls = 'bg-slate-100 text-slate-700 border-slate-200';
+                            var icon = 'fa-clock';
+                            var s = data.toLowerCase();
+                            if (s.includes('approved') || s.includes('disetujui') || s.includes('selesai')) {
+                                cls = 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30';
+                                icon = 'fa-check-circle';
+                            } else if (s.includes('cabang')) {
+                                cls = 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-500/30';
+                                icon = 'fa-code-branch';
+                            } else if (s.includes('daerah')) {
+                                cls = 'bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30';
+                                icon = 'fa-map-marker-alt';
+                            } else if (s.includes('sekjen') || s.includes('ketum')) {
+                                cls = 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30';
+                                icon = 'fa-stamp';
+                            } else if (s.includes('dokter') || s.includes('create')) {
+                                cls = 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border-cyan-500/30';
+                                icon = 'fa-user-md';
+                            } else if (s.includes('perlu') || s.includes('tolak') || s.includes('revisi')) {
+                                cls = 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30';
+                                icon = 'fa-exclamation-circle';
+                            } else if (s.includes('waiting') || s.includes('menunggu')) {
+                                cls = 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30';
+                                icon = 'fa-hourglass-half';
+                            }
+                            return '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border ' + cls + '"><i class="fas ' + icon + ' text-[10px]"></i>' + data + '</span>';
+                        }
                     },
                     {
                         data: 'tanggal_daftar_formatted',

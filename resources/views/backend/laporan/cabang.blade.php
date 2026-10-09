@@ -14,10 +14,10 @@
                 <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
                 <span class="text-slate-500">Laporan Wilayah</span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+            <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-white">
                 Laporan Data Anggota ASKLIN Cabang
             </h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400 mt-1">
                 Daftar rincian klinik anggota terdaftar di wilayah cabang dan fasilitas ekspor data.
             </p>
         </div>

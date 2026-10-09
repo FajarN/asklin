@@ -14,10 +14,10 @@
                 <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
                 <span class="text-slate-500">Detail Peserta</span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+            <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-white">
                 Detail Registrasi Konas ASKLIN ke-2
             </h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400 mt-1">
                 Rincian informasi peserta, pemesanan akomodasi kamar hotel, serta jadwal penerbangan.
             </p>
         </div>

@@ -15,7 +15,7 @@
                 <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
                 <span class="text-slate-500">Detail Bagan</span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white flex items-center gap-2">
+            <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-white flex items-center gap-2">
                 <span>{{ $struktur->nama_struktur }}</span>
                 @php
                     $statusClass = [
@@ -28,7 +28,7 @@
                     {{ ucfirst($struktur->status) }}
                 </span>
             </h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400 mt-1">
                 Tingkatan: <strong class="text-slate-700 dark:text-slate-200">{{ $struktur->tingkatanPengurus->nama_tingkatan ?? '-' }}</strong> &bull;
                 Periode: <strong class="text-slate-700 dark:text-slate-200">{{ $struktur->periode }}</strong>
             </p>

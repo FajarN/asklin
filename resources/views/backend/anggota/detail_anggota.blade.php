@@ -17,10 +17,10 @@
                     ID #{{ $anggota->id }}
                 </span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">
                 {{ $anggota->nama_klinik }}
             </h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            <p class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400">
                 Informasi profil lengkap klinik, legalitas SIO, SDM kesehatan, dan data fasilitas faskes terdaftar.
             </p>
         </div>

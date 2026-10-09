@@ -14,10 +14,10 @@
                 <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
                 <span class="text-slate-500">Laporan Nasional</span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+            <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-white">
                 Laporan Data Anggota ASKLIN Nasional
             </h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400 mt-1">
                 Filter seluruh basis data klinik nasional per provinsi beserta status legalitas dan kontak faskes.
             </p>
         </div>

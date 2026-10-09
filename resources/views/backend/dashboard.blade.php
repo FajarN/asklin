@@ -18,10 +18,10 @@
                         {{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y') }}
                     </span>
                 </div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                <h2 class="text-lg sm:text-xl font-bold tracking-tight text-white">
                     Selamat Datang, {{ Auth::user()->name }}!
                 </h2>
-                <p class="text-sm text-emerald-100 max-w-2xl leading-relaxed">
+                <p class="text-xs text-emerald-100 max-w-2xl leading-relaxed">
                     Sistem Manajemen Keanggotaan Asosiasi Klinik Indonesia. Pantau status registrasi, verifikasi berkas faskes, dan laporan persebaran klinik nasional.
                 </p>
             </div>
