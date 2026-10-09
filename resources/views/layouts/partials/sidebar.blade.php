@@ -35,7 +35,7 @@
     </div>
 
     <!-- Navigation Links Scroll Area -->
-    <nav class="flex-1 overflow-y-auto px-4 py-5 custom-scrollbar space-y-6 text-xs font-medium">
+    <nav class="flex-1 overflow-y-auto px-4 py-5 custom-scrollbar space-y-5 text-xs font-medium">
         
         <!-- Section: Overview -->
         <div>
@@ -45,7 +45,7 @@
             <ul class="space-y-1">
                 <li>
                     <a href="{{ route('dashboard.index') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all {{ Request::url() == route('dashboard.index') ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-semibold shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60' }}">
+                        class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ Request::url() == route('dashboard.index') ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-semibold shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60' }}">
                         <i class="fas fa-home text-sm {{ Request::url() == route('dashboard.index') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400' }}"></i>
                         <span>Dashboard</span>
                     </a>
@@ -62,7 +62,7 @@
                 <ul class="space-y-1">
                     <li>
                         <a href="{{ route('verifikasi_anggota.index') }}"
-                            class="flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ Request::url() == route('verifikasi_anggota.index') ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60' }}">
+                            class="flex items-center justify-between px-3 py-2 rounded-xl transition-all {{ Request::url() == route('verifikasi_anggota.index') ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60' }}">
                             <div class="flex items-center gap-3">
                                 <i class="fas fa-clipboard-check text-sm {{ Request::url() == route('verifikasi_anggota.index') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400' }}"></i>
                                 <span>Verifikasi Anggota</span>
@@ -115,7 +115,7 @@
         <!-- Section: Pembayaran Iuran -->
         @canany(['pembayaran-list', 'pembayaran-pusat-list'])
             <div class="sidebar-dropdown-group" data-group="pembayaran">
-                <button type="button" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
+                <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
                     <div class="flex items-center gap-3">
                         <i class="fas fa-receipt text-sm text-slate-400 group-hover:text-emerald-600"></i>
                         <span>Keuangan & Iuran</span>
@@ -146,10 +146,67 @@
             </div>
         @endcanany
 
+        <!-- Section: Ruang Pengurus (Struktur Organisasi & Persuratan) -->
+        @canany(['struktur-organisasi-list', 'jenis-surat-list', 'penomoran-surat-list', 'surat-keluar-list', 'surat-tugas-list', 'surat-undangan-list'])
+            <div class="sidebar-dropdown-group" data-group="pengurus">
+                <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-sitemap text-sm text-slate-400 group-hover:text-emerald-600"></i>
+                        <span>Ruang Pengurus</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-[10px] text-slate-400 transition-transform dropdown-arrow"></i>
+                </button>
+                <ul class="dropdown-submenu hidden pl-7 pr-1 mt-1 space-y-1">
+                    @can('struktur-organisasi-list')
+                        <li>
+                            <a href="{{ route('struktur_organisasi.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('struktur_organisasi.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                <i class="fas fa-users-cog mr-1"></i> Struktur Organisasi
+                            </a>
+                        </li>
+                    @endcan
+                    @can('jenis-surat-list')
+                        <li>
+                            <a href="{{ route('jenis_surat.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('jenis_surat.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Jenis Surat
+                            </a>
+                        </li>
+                    @endcan
+                    @can('penomoran-surat-list')
+                        <li>
+                            <a href="{{ route('surat_penomoran.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('surat_penomoran.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Penomoran Surat
+                            </a>
+                        </li>
+                    @endcan
+                    @can('surat-keluar-list')
+                        <li>
+                            <a href="{{ route('surat_keluar.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('surat_keluar.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Surat Keluar
+                            </a>
+                        </li>
+                    @endcan
+                    @can('surat-tugas-list')
+                        <li>
+                            <a href="{{ route('surat_tugas.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('surat_tugas.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Surat Tugas
+                            </a>
+                        </li>
+                    @endcan
+                    @can('surat-undangan-list')
+                        <li>
+                            <a href="{{ route('surat_undangan.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('surat_undangan.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Surat Undangan
+                            </a>
+                        </li>
+                    @endcan
+                </ul>
+            </div>
+        @endcanany
+
         <!-- Section: Ruang Administrasi & Sertifikat -->
         @canany(['agenda-list', 'sertifikat-list', 'expired-sertifikat'])
             <div class="sidebar-dropdown-group" data-group="administrasi">
-                <button type="button" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
+                <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
                     <div class="flex items-center gap-3">
                         <i class="fas fa-certificate text-sm text-slate-400 group-hover:text-emerald-600"></i>
                         <span>Administrasi & Sertifikat</span>
@@ -182,10 +239,75 @@
             </div>
         @endcanany
 
+        <!-- Section: Content Website (Berita, Event, Slider, Galeri, Kontak) -->
+        @canany(['slider-list', 'event-list', 'berita-list', 'gallery-list', 'kontak-list'])
+            <div class="sidebar-dropdown-group" data-group="website">
+                <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-globe text-sm text-slate-400 group-hover:text-emerald-600"></i>
+                        <span>Konten Website</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-[10px] text-slate-400 transition-transform dropdown-arrow"></i>
+                </button>
+                <ul class="dropdown-submenu hidden pl-7 pr-1 mt-1 space-y-1">
+                    @can('berita-list')
+                        <li><a href="{{ route('berita.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('berita.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Berita & Artikel</a></li>
+                    @endcan
+                    @can('event-list')
+                        <li><a href="{{ route('events.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('events.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Agenda Event</a></li>
+                    @endcan
+                    @can('slider-list')
+                        <li><a href="{{ route('slider.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('slider.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Banner Slider</a></li>
+                    @endcan
+                    @can('gallery-list')
+                        <li><a href="{{ route('galery.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('galery.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Galeri Foto</a></li>
+                    @endcan
+                    @can('kontak-list')
+                        <li><a href="{{ route('kontak.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('kontak.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Pesan Masuk (Kontak)</a></li>
+                    @endcan
+                </ul>
+            </div>
+        @endcanany
+
+        <!-- Section: Modul KONAS (Kongres Nasional) -->
+        @hasanyrole('Superadmin|Admin Konas')
+            @canany(['konas-master-hotel-list', 'konas-tipe-hotel-list', 'konas-peserta-list', 'konas-booking-hotel-list', 'konas-data-penerbangan-list', 'konas-partner-list'])
+                <div class="sidebar-dropdown-group" data-group="konas">
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-hotel text-sm text-slate-400 group-hover:text-emerald-600"></i>
+                            <span>Modul Konas</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-[10px] text-slate-400 transition-transform dropdown-arrow"></i>
+                    </button>
+                    <ul class="dropdown-submenu hidden pl-7 pr-1 mt-1 space-y-1">
+                        @can('konas-peserta-list')
+                            <li><a href="{{ route('konas.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('konas.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Peserta Konas</a></li>
+                        @endcan
+                        @can('konas-booking-hotel-list')
+                            <li><a href="{{ route('konas_booking.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('konas_booking.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Booking Hotel</a></li>
+                        @endcan
+                        @can('konas-data-penerbangan-list')
+                            <li><a href="{{ route('konas_penerbangan.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('konas_penerbangan.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Data Penerbangan</a></li>
+                        @endcan
+                        @can('konas-master-hotel-list')
+                            <li><a href="{{ route('konas_master_hotel.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('konas_master_hotel.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Master Hotel</a></li>
+                        @endcan
+                        @can('konas-tipe-hotel-list')
+                            <li><a href="{{ route('konas_master_tipe_hotel.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('konas_master_tipe_hotel.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Tipe Hotel</a></li>
+                        @endcan
+                        @can('konas-partner-list')
+                            <li><a href="{{ route('partner.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('partner.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Partner</a></li>
+                        @endcan
+                    </ul>
+                </div>
+            @endcanany
+        @endhasanyrole
+
         <!-- Section: Laporan -->
         @canany(['laporan-pusat', 'laporan-daerah', 'laporan-cabang'])
             <div class="sidebar-dropdown-group" data-group="laporan">
-                <button type="button" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
+                <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
                     <div class="flex items-center gap-3">
                         <i class="fas fa-file-invoice text-sm text-slate-400 group-hover:text-emerald-600"></i>
                         <span>Laporan Anggota</span>
@@ -222,7 +344,7 @@
         @hasrole('Superadmin|Admin Pusat')
             @canany(['fasilitas-list', 'fasilitas-klinik-list', 'layanan-list', 'kategori-berita-list', 'kategori-event-list', 'kategori-pembayaran-list'])
                 <div class="sidebar-dropdown-group" data-group="master">
-                    <button type="button" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
+                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
                         <div class="flex items-center gap-3">
                             <i class="fas fa-database text-sm text-slate-400 group-hover:text-emerald-600"></i>
                             <span>Master Data</span>
@@ -239,6 +361,12 @@
                         @can('layanan-list')
                             <li><a href="{{ route('layanan.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('layanan.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Layanan</a></li>
                         @endcan
+                        @can('kategori-berita-list')
+                            <li><a href="{{ route('berita_kategori.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('berita_kategori.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kategori Berita</a></li>
+                        @endcan
+                        @can('kategori-event-list')
+                            <li><a href="{{ route('event_kategori.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('event_kategori.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kategori Event</a></li>
+                        @endcan
                         @can('kategori-pembayaran-list')
                             <li><a href="{{ route('kategori_pembayaran.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('kategori_pembayaran.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kategori Pembayaran</a></li>
                         @endcan
@@ -250,7 +378,7 @@
         <!-- Section: Pengaturan (RBAC & System) -->
         @can('secret')
             <div class="sidebar-dropdown-group" data-group="pengaturan">
-                <button type="button" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
+                <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
                     <div class="flex items-center gap-3">
                         <i class="fas fa-sliders-h text-sm text-slate-400 group-hover:text-emerald-600"></i>
                         <span>Pengaturan Sistem</span>
@@ -291,4 +419,3 @@
         </div>
     </div>
 </aside>
-
