@@ -96,7 +96,13 @@ $(function () {
             }},
             {data: 'no_hp', name: 'no_hp'},
             {data: 'email', name: 'email'},
-            {data: 'nama_klinik', name: 'nama_klinik'},
+            {
+                data: 'nama_klinik',
+                name: 'nama_klinik',
+                render: function (data) {
+                    return data ? '<span class="nama-klinik-highlight font-bold text-red-600 dark:text-red-400">' + data + '</span>' : '<span class="text-slate-400">-</span>';
+                }
+            },
             {data: 'tanggal', name: 'tanggal'},
             {data: 'dari', name: 'dari'},
             {data: 'tujuan', name: 'tujuan'},

@@ -266,7 +266,7 @@
                             <i class="fas fa-clinic-medical"></i>
                         </div>
                         <div class="min-w-0">
-                            <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-white truncate">
+                            <h4 class="text-xs sm:text-sm font-bold text-red-600 dark:text-red-400 truncate">
                                 {{ $item->nama_klinik }}
                             </h4>
                             <p class="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">

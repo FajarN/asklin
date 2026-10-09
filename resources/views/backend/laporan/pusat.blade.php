@@ -445,6 +445,8 @@
                         
                         // Special formatting for certain columns
                         switch (column) {
+                            case 'nama_klinik':
+                                return `<span class="nama-klinik-highlight font-bold text-red-600 dark:text-red-400">${data}</span>`;
                             case 'status':
                                 return getStatusBadge(data);
                             case 'status_pembayaran':

@@ -94,7 +94,13 @@ $(function () {
             {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
             {data: 'no_anggota', name: 'no_anggota'},
             {data: 'name', name: 'name'},
-            {data: 'nama_klinik', name: 'nama_klinik'},
+            {
+                data: 'nama_klinik',
+                name: 'nama_klinik',
+                render: function (data) {
+                    return data ? '<span class="nama-klinik-highlight font-bold text-red-600 dark:text-red-400">' + data + '</span>' : '<span class="text-slate-400">-</span>';
+                }
+            },
             {data: 'jenis_klinik', name: 'jenis_klinik'},
             {data: 'kriteria', name: 'kriteria'},
             {data: 'status', name: 'status'},

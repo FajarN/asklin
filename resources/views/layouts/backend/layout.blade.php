@@ -37,291 +37,8 @@
     <!-- Compiled Tailwind CSS & App JS via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Modernization Adapter Styles -->
-    <style>
-        /* Smooth base */
-        body {
-            font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif !important;
-            background-color: #f8fafc !important;
-            color: #1e293b !important;
-        }
-        .dark body {
-            background-color: #020617 !important;
-            color: #f1f5f9 !important;
-        }
-
-        /* Override old Stisla layout wrappers */
-        .main-wrapper, .main-wrapper-1, #app {
-            min-height: 100vh !important;
-            background: transparent !important;
-        }
-        .main-content {
-            padding: 1.5rem !important;
-            width: 100% !important;
-            position: static !important;
-            min-height: calc(100vh - 8rem) !important;
-        }
-        @media (min-width: 1024px) {
-            .main-content {
-                padding: 2rem !important;
-            }
-        }
-        .navbar-bg, .main-sidebar, .main-navbar, nav.navbar {
-            display: none !important;
-        }
-        .section-header {
-            display: none !important; /* Managed by top navbar */
-        }
-        .section-body {
-            margin-top: 0 !important;
-        }
-
-        /* Modernize Cards */
-        .card {
-            border-radius: 1rem !important;
-            border: 1px solid rgba(226, 232, 240, 0.9) !important;
-            background: #ffffff !important;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
-            margin-bottom: 1.5rem !important;
-            overflow: hidden !important;
-        }
-        .dark .card {
-            background: #0f172a !important;
-            border-color: #1e293b !important;
-            color: #f8fafc !important;
-        }
-        .card-header {
-            border-bottom: 1px solid #f1f5f9 !important;
-            padding: 1.125rem 1.5rem !important;
-            background: transparent !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-        }
-        .dark .card-header {
-            border-bottom-color: #1e293b !important;
-        }
-        .card-header h4 {
-            font-size: 1rem !important;
-            font-weight: 700 !important;
-            color: #0f172a !important;
-            letter-spacing: -0.02em !important;
-            margin-bottom: 0 !important;
-        }
-        .dark .card-header h4 {
-            color: #f8fafc !important;
-        }
-        .card-body {
-            padding: 1.5rem !important;
-        }
-
-        /* Modernize Buttons */
-        .btn {
-            font-weight: 600 !important;
-            border-radius: 0.75rem !important;
-            padding: 0.5rem 1rem !important;
-            font-size: 0.8125rem !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            gap: 0.375rem !important;
-            transition: all 0.15s ease-in-out !important;
-        }
-        .btn-sm {
-            padding: 0.35rem 0.75rem !important;
-            font-size: 0.75rem !important;
-            border-radius: 0.5rem !important;
-        }
-        .btn-primary {
-            background-color: #059669 !important;
-            border-color: #059669 !important;
-            color: #ffffff !important;
-        }
-        .btn-primary:hover, .btn-primary:focus {
-            background-color: #047857 !important;
-            border-color: #047857 !important;
-            transform: translateY(-1px) !important;
-        }
-        .btn-info {
-            background-color: #0284c7 !important;
-            border-color: #0284c7 !important;
-            color: #ffffff !important;
-        }
-        .btn-info:hover {
-            background-color: #0369a1 !important;
-        }
-        .btn-danger {
-            background-color: #e11d48 !important;
-            border-color: #e11d48 !important;
-            color: #ffffff !important;
-        }
-        .btn-danger:hover {
-            background-color: #be123c !important;
-        }
-        .btn-warning {
-            background-color: #d97706 !important;
-            border-color: #d97706 !important;
-            color: #ffffff !important;
-        }
-        .btn-secondary {
-            background-color: #f1f5f9 !important;
-            border-color: #e2e8f0 !important;
-            color: #475569 !important;
-        }
-        .dark .btn-secondary {
-            background-color: #1e293b !important;
-            border-color: #334155 !important;
-            color: #cbd5e1 !important;
-        }
-
-        /* Modernize Forms */
-        .form-control, .form-select, select.form-control {
-            border-radius: 0.75rem !important;
-            border: 1px solid #cbd5e1 !important;
-            padding: 0.5rem 0.875rem !important;
-            font-size: 0.8125rem !important;
-            background-color: #ffffff !important;
-            color: #0f172a !important;
-            transition: all 0.15s ease !important;
-        }
-        .form-control:focus {
-            border-color: #10b981 !important;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
-        }
-        .dark .form-control, .dark .form-select, .dark select.form-control {
-            background-color: #1e293b !important;
-            border-color: #334155 !important;
-            color: #f8fafc !important;
-        }
-        label, .form-label {
-            font-size: 0.75rem !important;
-            font-weight: 600 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.05em !important;
-            color: #64748b !important;
-            margin-bottom: 0.375rem !important;
-        }
-        .dark label, .dark .form-label {
-            color: #94a3b8 !important;
-        }
-
-        /* Modernize DataTables */
-        .table {
-            color: #334155 !important;
-            font-size: 0.8125rem !important;
-            margin-bottom: 0 !important;
-        }
-        .dark .table {
-            color: #cbd5e1 !important;
-        }
-        .table thead th {
-            background-color: #f8fafc !important;
-            border-bottom: 1px solid #e2e8f0 !important;
-            color: #64748b !important;
-            font-size: 0.6875rem !important;
-            font-weight: 700 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.05em !important;
-            padding: 0.875rem 1rem !important;
-            border-top: none !important;
-        }
-        .dark .table thead th {
-            background-color: #0f172a !important;
-            border-bottom-color: #1e293b !important;
-            color: #94a3b8 !important;
-        }
-        .table td {
-            padding: 0.875rem 1rem !important;
-            vertical-align: middle !important;
-            border-top: 1px solid #f1f5f9 !important;
-        }
-        .dark .table td {
-            border-top-color: #1e293b !important;
-        }
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: rgba(248, 250, 252, 0.5) !important;
-        }
-        .dark .table-striped tbody tr:nth-of-type(odd) {
-            background-color: rgba(30, 41, 59, 0.3) !important;
-        }
-        .table tbody tr:hover {
-            background-color: rgba(241, 245, 249, 0.8) !important;
-        }
-        .dark .table tbody tr:hover {
-            background-color: rgba(30, 41, 59, 0.6) !important;
-        }
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-            background: #059669 !important;
-            border-color: #059669 !important;
-            color: #ffffff !important;
-            border-radius: 0.5rem !important;
-        }
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            border-radius: 0.5rem !important;
-        }
-        .dataTables_wrapper .dataTables_info,
-        .dataTables_wrapper .dataTables_length,
-        .dataTables_wrapper .dataTables_filter {
-            font-size: 0.75rem !important;
-            color: #64748b !important;
-            padding: 0.75rem 0 !important;
-        }
-        .dark .dataTables_wrapper .dataTables_info,
-        .dark .dataTables_wrapper .dataTables_length,
-        .dark .dataTables_wrapper .dataTables_filter {
-            color: #94a3b8 !important;
-        }
-
-        /* Modernize Modals */
-        .modal-content {
-            border-radius: 1.25rem !important;
-            border: 1px solid #e2e8f0 !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-            overflow: hidden !important;
-        }
-        .dark .modal-content {
-            background-color: #0f172a !important;
-            border-color: #1e293b !important;
-            color: #f8fafc !important;
-        }
-        .modal-header {
-            padding: 1.25rem 1.5rem !important;
-            border-bottom: 1px solid #f1f5f9 !important;
-        }
-        .dark .modal-header {
-            border-bottom-color: #1e293b !important;
-        }
-        .modal-footer {
-            padding: 1rem 1.5rem !important;
-            border-top: 1px solid #f1f5f9 !important;
-        }
-        .dark .modal-footer {
-            border-top-color: #1e293b !important;
-        }
-
-        /* Modernize Badges & Alerts */
-        .badge {
-            border-radius: 9999px !important;
-            font-weight: 600 !important;
-            padding: 0.35rem 0.65rem !important;
-            font-size: 0.6875rem !important;
-            letter-spacing: 0.02em !important;
-        }
-        .alert {
-            border-radius: 1rem !important;
-            border: 1px solid transparent !important;
-        }
-        .alert-secondary {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-            color: #475569 !important;
-        }
-        .dark .alert-secondary {
-            background-color: #1e293b !important;
-            border-color: #334155 !important;
-            color: #cbd5e1 !important;
-        }
-    </style>
+    <!-- Modern UI Stylesheet -->
+    <link rel="stylesheet" href="{{ asset('assets/backend/css/modern-custom.css') }}">
 
     @stack('css')
 </head>
@@ -467,5 +184,29 @@
 
     <!-- Custom View JS -->
     @stack('js')
+
+    <!-- Global DataTable Clinic Name Auto-Highlighter -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.$) {
+                $(document).on('init.dt draw.dt', function (e, settings) {
+                    if (!settings || !settings.aoColumns) return;
+                    settings.aoColumns.forEach(function (col, idx) {
+                        var title = (col.sTitle || '').toLowerCase();
+                        var name = (col.name || '').toLowerCase();
+                        var data = (typeof col.data === 'string' ? col.data : '').toLowerCase();
+                        if (name === 'nama_klinik' || data === 'nama_klinik' || title.includes('nama klinik')) {
+                            $(settings.nTable).find('tbody tr').each(function () {
+                                var $td = $(this).children('td').eq(idx);
+                                if ($td.length && !$td.hasClass('nama-klinik-highlight')) {
+                                    $td.addClass('nama-klinik-highlight');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>

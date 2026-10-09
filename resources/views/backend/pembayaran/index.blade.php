@@ -204,7 +204,13 @@ $(function () {
         },
         columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-            {data: 'nama_klinik', name: 'nama_klinik'},
+            {
+                data: 'nama_klinik',
+                name: 'nama_klinik',
+                render: function (data) {
+                    return data ? '<span class="nama-klinik-highlight font-bold text-red-600 dark:text-red-400">' + data + '</span>' : '<span class="text-slate-400">-</span>';
+                }
+            },
             {data: 'nama', name: 'nama'},
             {data: 'tanggal_bayar', name: 'tanggal_bayar'},
             {data: "dari" ,

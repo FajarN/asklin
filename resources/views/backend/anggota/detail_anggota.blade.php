@@ -17,7 +17,7 @@
                     ID #{{ $anggota->id }}
                 </span>
             </div>
-            <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">
+            <h2 class="text-base sm:text-lg font-bold tracking-tight text-red-600 dark:text-red-400">
                 {{ $anggota->nama_klinik }}
             </h2>
             <p class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400">

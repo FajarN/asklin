@@ -289,7 +289,7 @@
                         name: 'nama_klinik',
                         render: function(data, type, row) {
                             if (!data) return '<span class="text-muted">-</span>';
-                            return '<div class="font-weight-bold">' + data + '</div>' +
+                            return '<div class="nama-klinik-highlight font-bold text-red-600 dark:text-red-400">' + data + '</div>' +
                                    '<small class="text-muted">' + (row.no_anggota || 'No anggota belum ada') + '</small>';
                         }
                     },

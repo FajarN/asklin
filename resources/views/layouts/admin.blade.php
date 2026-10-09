@@ -36,6 +36,9 @@
     <!-- Compiled Assets via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Modern UI Stylesheet -->
+    <link rel="stylesheet" href="{{ asset('assets/backend/css/modern-custom.css') }}">
+
     @stack('css')
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-200">
@@ -173,6 +176,30 @@
     </script>
 
     @stack('js')
+
+    <!-- Global DataTable Clinic Name Auto-Highlighter -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.$) {
+                $(document).on('init.dt draw.dt', function (e, settings) {
+                    if (!settings || !settings.aoColumns) return;
+                    settings.aoColumns.forEach(function (col, idx) {
+                        var title = (col.sTitle || '').toLowerCase();
+                        var name = (col.name || '').toLowerCase();
+                        var data = (typeof col.data === 'string' ? col.data : '').toLowerCase();
+                        if (name === 'nama_klinik' || data === 'nama_klinik' || title.includes('nama klinik')) {
+                            $(settings.nTable).find('tbody tr').each(function () {
+                                var $td = $(this).children('td').eq(idx);
+                                if ($td.length && !$td.hasClass('nama-klinik-highlight')) {
+                                    $td.addClass('nama-klinik-highlight');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 
