@@ -1,16 +1,37 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Laporan Data Anggota (Cabang)')
+@section('page_title', 'Laporan Cabang')
+
 @section('content')
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-            <h1>Laporan Data Anggota ASKLIN</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                <div class="breadcrumb-item">Laporan Cabang</div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                <a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a>
+                <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
+                <span class="text-slate-500">Laporan Wilayah</span>
             </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Laporan Data Anggota ASKLIN Cabang
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Daftar rincian klinik anggota terdaftar di wilayah cabang dan fasilitas ekspor data.
+            </p>
         </div>
-    </section>
+        <div class="flex items-center gap-2">
+            <button type="button" class="btn btn-primary btn-sm" id="exportBtn">
+                <i class="fas fa-file-excel mr-1"></i>
+                <span>Export Excel</span>
+            </button>
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12">
             <div class="card">

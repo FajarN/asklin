@@ -1,62 +1,105 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Tambah User Baru')
+@section('page_title', 'Tambah Pengguna')
+
 @section('content')
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-            <h1>Input User</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('users.index') }}">Users Management</a></div>
-                <div class="breadcrumb-item">Create</div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                <a href="{{ route('users.index') }}" class="hover:underline">Manajemen Pengguna</a>
+                <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
+                <span class="text-slate-500">Tambah Baru</span>
             </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Buat Akun Pengguna Sistem
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Daftarkan akun administrator baru dan tentukan hak akses peran serta wilayah teritori.
+            </p>
         </div>
-    </section>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('users.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </div>
+    </div>
+
+    @if (count($errors) > 0)
+        <div class="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300">
+            <strong class="font-bold flex items-center gap-1.5 mb-1 text-sm">
+                <i class="fas fa-exclamation-circle"></i> Perhatian: Terjadi Kesalahan Input
+            </strong>
+            <ul class="list-disc list-inside text-xs space-y-0.5">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form action="{{ route('users.store') }}" method="POST">
         @csrf
-        <div class="row mt-sm-4">
-            <div class="col-12 col-md-12 col-lg-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left Column: Kredensial & Role -->
+            <div class="lg:col-span-6 space-y-6">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-header">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-user-lock text-emerald-600 mr-1.5"></i> Data Akun & Akses
+                        </h4>
+                    </div>
+                    <div class="card-body space-y-4">
                         <div class="form-group">
-                            <div class="form-group">
-                                <label>Nama Lengkap</label>
-                                <input type="text" class="form-control" name="name">
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" class="form-control" name="email">
-                            </div>
-                            <div class="form-group">
-                                <label>Group</label>
-                                <select class="form-control" name="roles">
-                                    <option></option>
-                                    @foreach($role as $i)
-                                        <option value="{{ $i->id }}">{{ $i->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" class="form-control" name="password">
-                            </div>
-                            <div class="form-group">
-                                <label>Konfirmasi Password</label>
-                                <input type="password" class="form-control" name="confirm-password">
-                            </div>
+                            <label class="form-label">Nama Lengkap <span class="text-rose-500">*</span></label>
+                            <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="Masukkan nama lengkap" required>
                         </div>
-                        <div class="card-footer text-right">
-                            <button class="btn btn-primary">Submit</button>
-                            <a href="{{ route('users.index') }}" class="btn btn-info">Kembali</a>
+
+                        <div class="form-group">
+                            <label class="form-label">Alamat Email <span class="text-rose-500">*</span></label>
+                            <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="admin@asklin.org" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Peran Pengguna (Group Role) <span class="text-rose-500">*</span></label>
+                            <select class="form-control" name="roles" required>
+                                <option value="">-- Pilih Peran / Role --</option>
+                                @foreach($role as $i)
+                                    <option value="{{ $i->id }}" {{ old('roles') == $i->id ? 'selected' : '' }}>{{ $i->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                            <div class="form-group">
+                                <label class="form-label">Kata Sandi <span class="text-rose-500">*</span></label>
+                                <input type="password" class="form-control" name="password" placeholder="Minimal 8 karakter" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Konfirmasi Kata Sandi <span class="text-rose-500">*</span></label>
+                                <input type="password" class="form-control" name="confirm-password" placeholder="Ulangi kata sandi" required>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-12 col-lg-6">
+
+            <!-- Right Column: Wilayah / Teritori -->
+            <div class="lg:col-span-6 space-y-6">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-header">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-map-marked-alt text-emerald-600 mr-1.5"></i> Teritori & Wilayah Penugasan
+                        </h4>
+                    </div>
+                    <div class="card-body space-y-4">
                         <div class="form-group">
-                            <label>Propinsi</label>
+                            <label class="form-label">Provinsi</label>
                             <select class="form-control" name="provinsi" id="provinsi">
                                 <option value="">Pilih Provinsi</option>
                                 @foreach ($provinsi as $i)
@@ -64,27 +107,38 @@
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="form-group">
-                            <label>Kab/Kota</label>
+                            <label class="form-label">Kabupaten / Kota</label>
                             <select class="form-control" name="kota" id="kota">
                                 <option value="">Pilih Kota/Kabupaten</option>
                             </select>
                         </div>
+
                         <div class="form-group">
-                            <label>Kecamatan</label>
+                            <label class="form-label">Kecamatan</label>
                             <select class="form-control" name="kecamatan" id="kecamatan">
                                 <option value="">Pilih Kecamatan</option>
                             </select>
                         </div>
+
                         <div class="form-group">
-                            <label>Kelurahan</label>
+                            <label class="form-label">Kelurahan / Desa</label>
                             <select class="form-control" name="kelurahan" id="kelurahan">
                                 <option value="">Pilih Kelurahan</option>
                             </select>
                         </div>
                     </div>
+
+                    <div class="card-footer flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                        <a href="{{ route('users.index') }}" class="btn btn-secondary btn-sm">Batal</a>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-check mr-1.5"></i> Simpan Pengguna Baru
+                        </button>
+                    </div>
                 </div>
             </div>
+
         </div>
     </form>
 </div>
@@ -104,10 +158,10 @@ $(function(e) {
         }
     });
 
-    $('#provinsi').select2();
-    $('#kota').select2();
-    $('#kecamatan').select2();
-    $('#kelurahan').select2();
+    $('#provinsi').select2({ width: '100%' });
+    $('#kota').select2({ width: '100%' });
+    $('#kecamatan').select2({ width: '100%' });
+    $('#kelurahan').select2({ width: '100%' });
 
     $('#provinsi').on('change', function(){
         let id_provinsi = $('#provinsi').val();
@@ -118,10 +172,10 @@ $(function(e) {
             cache: false,
             success: function(data){
                 $('#kota').html(data);
-                $('#kecamatan').html();
-                $('#kelurahan').html();
+                $('#kecamatan').html('<option value="">Pilih Kecamatan</option>');
+                $('#kelurahan').html('<option value="">Pilih Kelurahan</option>');
             }
-        })
+        });
     });
 
     $('#kota').on('change', function(){
@@ -133,9 +187,9 @@ $(function(e) {
             cache: false,
             success: function(data){
                 $('#kecamatan').html(data);
-                $('#kelurahan').html();
+                $('#kelurahan').html('<option value="">Pilih Kelurahan</option>');
             }
-        })
+        });
     });
 
     $('#kecamatan').on('change', function(){
@@ -148,7 +202,7 @@ $(function(e) {
             success: function(data){
                 $('#kelurahan').html(data);
             }
-        })
+        });
     });
 });
 </script>

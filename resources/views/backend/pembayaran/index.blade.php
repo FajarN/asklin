@@ -1,157 +1,177 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Pembayaran Iuran')
+@section('page_title', 'Pembayaran Iuran')
+
 @section('content')
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-            <h1>Pembayaran Iuran</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                <div class="breadcrumb-item">Pembayaran Iuran</div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                <a href="{{ route('dashboard.index') }}" class="hover:underline">Dashboard</a>
+                <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
+                <span class="text-slate-500">Keuangan Organisasi</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Pembayaran Iuran Anggota Klinik
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Kelola setoran uang iuran berkala anggota, konfirmasi status pelunasan, dan verifikasi bukti transfer.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="javascript:void(0)" onclick="add()" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i>
+                <span>Tambah Pembayaran</span>
+            </a>
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+        <div class="card-header flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <i class="fas fa-receipt text-emerald-600 mr-1.5"></i> Riwayat Pembayaran Iuran
+            </h4>
+            <div class="w-full sm:w-64">
+                <div class="relative">
+                    <input type="text" class="form-control pl-9 w-full text-xs" placeholder="Cari klinik, kategori..." id="search">
+                    <i class="fas fa-search absolute left-3 top-3 text-xs text-slate-400"></i>
+                </div>
             </div>
         </div>
-    </section>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4>
-                        <a href="javascript:void(0)" onclick="add()" class="btn btn-icon icon-left btn-danger btn-outline-secondary">
-                            <i class="fas fa-plus"></i> Tambah Pembayaran Iuran
-                        </a>
-                    </h4>
-                   
-                    <div class="card-header-form">
-                        <input type="text" class="form-control" placeholder="Search" id="search">
-                
 
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-striped" id="table">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Anggota</th>
-                                    <th>Kategori</th>
-                                    <th>Tanggal Bayar</th>
-                                    <th>Periode</th>
-                                    <th>total</th>
-                                    <th>Keterangan</th>
-                                    <th>Bukti</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
+        <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
+            <div class="table-responsive">
+                <table class="table table-striped" id="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Anggota</th>
+                            <th>Kategori</th>
+                            <th>Tanggal Bayar</th>
+                            <th>Periode</th>
+                            <th>Total</th>
+                            <th>Keterangan</th>
+                            <th>Bukti</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Form Tambah/Edit -->
     <div class="modal fade" tabindex="-1" role="dialog" id="tambah">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title font-bold text-slate-800 dark:text-white"></h5>
+                    <button type="button" class="close text-slate-400 hover:text-slate-600" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <form id="form" class="form" action="javascript:void(0)">
                     <input type="hidden" name="id" id="id">
-                    <div class="modal-body">
+                    <div class="modal-body space-y-4">
                         <div class="form-group">
-                            <label>Anggota</label>
-                            <select  class="form-control" id="id_anggota" name="id_anggota" style="width:100%">
+                            <label class="form-label">Klinik Anggota</label>
+                            <select class="form-control" id="id_anggota" name="id_anggota" style="width:100%">
                                 @foreach($anggota as $i)
                                     <option value="{{ $i->id }}">{{ $i->nama_klinik }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Kategori</label>
-                            <select class="form-control form-control-sm" id="id_kategori" name="id_kategori">
-                                <option value="1">Uang Iuran</option>
-                            </select>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label class="form-label">Kategori</label>
+                                <select class="form-control" id="id_kategori" name="id_kategori">
+                                    <option value="1">Uang Iuran</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <select class="form-control" id="status" name="status">
+                                    <option value="1">Aktif / Lunas</option>
+                                    <option value="0">Menunggu Verifikasi</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label>Status</label>
-                            <select class="form-control form-control-sm" id="status" name="status">
-                                <option value="1">Aktif</option>
-                                <option value="0">Tidak Aktif</option>
-                            </select>
+                            <label class="form-label">Tanggal Bayar</label>
+                            <input type="date" class="form-control" id="tanggal_bayar" name="tanggal_bayar">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label class="form-label">Dari Periode</label>
+                                <input type="date" class="form-control" id="dari" name="dari">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Sampai Periode</label>
+                                <input type="date" class="form-control" id="sampai" name="sampai">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label>Tanggal Bayar</label>
-                            <input type="date" class="form-control form-control-sm" id="tanggal_bayar" name="tanggal_bayar">
+                            <label class="form-label">Jumlah Pembayaran (Rp)</label>
+                            <input type="number" class="form-control font-semibold" id="total" name="total" placeholder="0">
                         </div>
                         <div class="form-group">
-                            <label>Dari Bulan</label>
-                            <input type="date" class="form-control form-control-sm" id="dari" name="dari">
+                            <label class="form-label">Keterangan / Catatan</label>
+                            <textarea class="form-control" id="keterangan" name="keterangan" rows="2"></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Sampai Bulan</label>
-                            <input type="date" class="form-control form-control-sm" id="sampai" name="sampai">
+                            <label class="form-label">Unggah Bukti Transfer</label>
+                            <input type="file" class="form-control" id="bukti" name="bukti">
                         </div>
-                        <div class="form-group">
-                            <label>Keterangan</label>
-                            <textarea class="form-control form-control-sm" id="keterangan" name="keterangan"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Jumlah Pembayaran</label>
-                            <input type="number" class="form-control form-control-sm" id="total" name="total">
-                        </div>
-                        <div class="form-group">
-                            <label>Bukti Transfer</label>
-                            <input type="file" class="form-control form-control" id="bukti" name="bukti">
-                        </div>
-                        <div class="modal-footer bg-whitesmoke br">
-                            <button type="submit" id="btn-save" class="btn btn-primary">Simpan</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
+                    </div>
+                    <div class="modal-footer flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
+                        <button type="submit" id="btn-save" class="btn btn-primary btn-sm">Simpan Pembayaran</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-</div>
 
-    <!-- Modal 2 -->
+    <!-- Modal Status Update -->
     <div class="modal fade" tabindex="-1" role="dialog" id="update">
-        <div class="modal-dialog modal-md" role="document">
+        <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title font-bold text-slate-800 dark:text-white"></h5>
+                    <button type="button" class="close text-slate-400 hover:text-slate-600" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="form" class="form" action="javascript:void(0)">
-                    <input type="hidden" name="id" id="id">
-                    <div class="modal-body">
-                        
+                <form id="form_status" class="form" action="javascript:void(0)">
+                    <input type="hidden" name="id" id="status_id">
+                    <div class="modal-body space-y-4">
                         <div class="form-group">
-                            <label>Status</label>
-                            <select class="form-control form-control-sm" id="status" name="status">
-                                <option value="1">Lunas</option>
-                                <option value="0">Belum Bayar</option>
+                            <label class="form-label">Status Pembayaran</label>
+                            <select class="form-control" id="status_val" name="status">
+                                <option value="1">Lunas / Selesai</option>
+                                <option value="0">Menunggu Verifikasi</option>
                             </select>
                         </div>
-                       
-                        <div class="modal-footer bg-whitesmoke br">
-                            <button type="submit" id="btn-save" class="btn btn-primary">Simpan</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
+                    </div>
+                    <div class="modal-footer flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>
+                        <button type="button" id="btn-save-status" onclick="submitStatusUpdate()" class="btn btn-primary btn-sm">Simpan Status</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 </div>
 @endsection
 
@@ -188,23 +208,24 @@ $(function () {
             {data: 'nama', name: 'nama'},
             {data: 'tanggal_bayar', name: 'tanggal_bayar'},
             {data: "dari" ,
-                "render": function (  data, type, row, meta ) {
-                    return row.dari + ' - ' + row.sampai;
+                "render": function ( data, type, row, meta ) {
+                    return (row.dari || '-') + ' s/d ' + (row.sampai || '-');
                 }
             },
             {data: 'total', name: 'total'},
             {data: 'keterangan', name: 'keterangan'},
             {data: "bukti" ,
-                "render": function (  data, type, row, meta ) {
-                return '<a href="{{ asset("images/file") }}/' + row.bukti +'" target="_blank"  class="chocolat-image"><div data-crop-image="285"><img alt="image" src="{{ asset("images/file") }}/' + row.bukti + '" width="40" class="img-fluid"></div></a>';
+                "render": function ( data, type, row, meta ) {
+                    if(!row.bukti) return '<span class="text-slate-400 text-xs">Tidak ada</span>';
+                    return '<a href="{{ asset("images/file") }}/' + row.bukti +'" target="_blank" class="inline-block p-1 rounded-lg bg-slate-100 hover:bg-emerald-50 border border-slate-200"><img alt="bukti" src="{{ asset("images/file") }}/' + row.bukti + '" width="36" height="36" class="rounded object-cover"></a>';
                 }
             },
             {data: "status" ,
-                "render": function (  data, type, row, meta ) {
+                "render": function ( data, type, row, meta ) {
                     if(row.status == "0"){
-                        return "Menunggu";
+                        return '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">Menunggu</span>';
                     }else{
-                        return "Selesai";
+                        return '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">Selesai</span>';
                     }
                 }
             },
@@ -219,10 +240,10 @@ $(function () {
 
 function add(){
     $('#form').trigger("reset");
-    $('.modal-title').html("Tambah Pembayaran");
+    $('#tambah .modal-title').html("Tambah Pembayaran Iuran");
     $('#tambah').modal('show');
     $('#id').val('');
-    $('#id_anggota').select2({ dropdownParent: $('#tambah'), width: 'resolve', placeholder: "Pilih anggota",});
+    $('#id_anggota').select2({ dropdownParent: $('#tambah'), width: '100%', placeholder: "Pilih klinik anggota"});
 }
 
 function edit(id){
@@ -232,10 +253,10 @@ function edit(id){
         data: { id: id },
         dataType: 'json',
         success: function(data){
-            $('.modal-title').html("Edit Pembayaran");
+            $('#tambah .modal-title').html("Edit Pembayaran Iuran");
             $('#tambah').modal('show');
             $('#id').val(data['id']);
-            $("#id_anggota").select2({ dropdownParent: $('#tambah'), width: 'resolve', placeholder: "Pilih anggota",}).val(data['id_anggota']).trigger("change");
+            $("#id_anggota").select2({ dropdownParent: $('#tambah'), width: '100%', placeholder: "Pilih klinik anggota"}).val(data['id_anggota']).trigger("change");
             $('#id_kategori').val(data['id_kategori']);
             $('#status').val(data['status']);
             $('#tanggal_bayar').val(data['tanggal_bayar']);
@@ -254,19 +275,37 @@ function updateStatus(id){
         data: { id: id },
         dataType: 'json',
         success: function(data){
-            $('.modal-title').html("Update Status Pembayaran");
+            $('#update .modal-title').html("Update Status Pembayaran");
             $('#update').modal('show');
-            $('#id').val(data['id']);
-            $('#status').val(data['status']);
-             $("#btn-save").html('Submit');
-            $("#btn-save"). attr("disabled", false);
+            $('#status_id').val(data['id']);
+            $('#status_val').val(data['status']);
+        }
+    });
+}
+
+function submitStatusUpdate() {
+    let id = $('#status_id').val();
+    let status = $('#status_val').val();
+    $('#btn-save-status').attr("disabled", true).text('Menyimpan...');
+
+    $.ajax({
+        type: 'POST',
+        url: '{{ route('pembayaran.updateStatus') }}',
+        data: { id: id, status: status, _token: '{{ csrf_token() }}' },
+        success: function() {
+            $('#update').modal('hide');
+            $('#table').DataTable().ajax.reload(null, false);
+            $('#btn-save-status').attr("disabled", false).text('Simpan Status');
+        },
+        error: function() {
+            $('#btn-save-status').attr("disabled", false).text('Simpan Status');
         }
     });
 }
 
 $('#form').submit(function(e) {
     e.preventDefault();
-    $("#btn-save"). attr("disabled", true);
+    $("#btn-save").attr("disabled", true).text('Menyimpan...');
     var formData = new FormData(this);
     $.ajax({
         type:'POST',
@@ -277,26 +316,24 @@ $('#form').submit(function(e) {
         processData: false,
         success: (data) => {
             $("#tambah").modal('hide');
-            $('#table').dataTable().fnDraw(false);
-            $("#btn-save").html('Submit');
-            $("#btn-save"). attr("disabled", false);
+            $('#table').DataTable().ajax.reload(null, false);
+            $("#btn-save").html('Simpan Pembayaran').attr("disabled", false);
         },
         error: function(data){
-            $("#btn-save"). attr("disabled", false);
+            $("#btn-save").html('Simpan Pembayaran').attr("disabled", false);
         }
     });
 });
 
 function deleteu(id){
     if (confirm("Hapus pembayaran ini?") == true) {
-        var id = id;
         $.ajax({
             type:"POST",
             url: "{{ route('pembayaran.delete') }}",
             data: { id: id },
             dataType: 'json',
             success: function(res){
-                $('#table').dataTable().fnDraw(false);
+                $('#table').DataTable().ajax.reload(null, false);
             }
         });
     }

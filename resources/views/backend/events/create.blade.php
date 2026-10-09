@@ -1,17 +1,33 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Input Event Baru')
+@section('page_title', 'Tambah Event')
+
 @section('content')
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-            <h1>Input Events</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('events.index') }}">Events</a></div>
-                <div class="breadcrumb-item">Create</div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                <a href="{{ route('events.index') }}" class="hover:underline">Agenda & Event</a>
+                <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
+                <span class="text-slate-500">Tambah Event</span>
             </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Buat Agenda Kegiatan Baru
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Lengkapi jadwal pelaksanaan, cakupan wilayah penyelenggara, serta materi pengumuman.
+            </p>
         </div>
-    </section>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('events.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </div>
+    </div>
     
     <form action="{{ route('events.store') }}" method="POST" enctype="multipart/form-data">
         @csrf

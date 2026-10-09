@@ -1,94 +1,147 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Perbarui Event')
+@section('page_title', 'Edit Event')
+
 @section('content')
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-            <h1>Update Event</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('events.index') }}">Events</a></div>
-                <div class="breadcrumb-item">Edit</div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                <a href="{{ route('events.index') }}" class="hover:underline">Agenda & Event</a>
+                <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
+                <span class="text-slate-500">Edit Data</span>
             </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Perbarui Agenda Kegiatan
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Sesuaikan jadwal waktu pelaksanaan, lokasi wilayah, dan isi brosur pengumuman kegiatan.
+            </p>
         </div>
-    </section>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('events.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </div>
+    </div>
+
     <form action="{{ route('events.update', $data->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        <div class="row mt-sm-4">
-            <div class="col-12 col-md-12 col-lg-4">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left Column: Event Information (5 cols) -->
+            <div class="lg:col-span-5 space-y-6">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-header">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-calendar-alt text-emerald-600 mr-1.5"></i> Informasi & Jadwal Kegiatan
+                        </h4>
+                    </div>
+                    <div class="card-body space-y-4">
                         <div class="form-group">
+                            <label class="form-label">Kategori Event <span class="text-rose-500">*</span></label>
+                            <select class="form-control" name="id_kategori" required>
+                                @foreach($kategori as $i)
+                                    <option value="{{ $i->id }}" {{ old('id_kategori', $data->id_kategori) == $i->id ? 'selected' : '' }}>
+                                        {{ $i->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Judul Event <span class="text-rose-500">*</span></label>
+                            <input type="text" class="form-control" name="judul" id="title" value="{{ old('judul', $data->judul) }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Slug URL <span class="text-rose-500">*</span></label>
+                            <input type="text" class="form-control font-mono text-xs" name="path" id="path" value="{{ old('path', $data->path) }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Ganti Brosur / Poster</label>
+                            <input type="file" class="form-control" name="gambar" accept="image/*">
+                            @if ($data->gambar)
+                                <div class="mt-3 flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                    <img src="{{ asset('assets/images/events/' . $data->gambar) }}"
+                                         alt="Banner Event"
+                                         class="w-24 h-16 object-cover rounded-lg shadow-sm">
+                                    <span class="text-xs text-slate-500">Poster yang terpasang</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-group">
-                                <label>Kategori *</label>
-                                <select class="form-control" name="id_kategori">
-                                    @foreach($kategori as $i)
-                                        <option value="{{ $i->id }}" {{ old('id_kategori',$data->id_kategori)==$i->id? 'selected':'' }}>{{ $i->nama }}</option>
+                                <label class="form-label">Waktu Mulai <span class="text-rose-500">*</span></label>
+                                <input type="datetime-local" class="form-control" name="mulai" value="{{ old('mulai', $data->mulai) }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Waktu Selesai <span class="text-rose-500">*</span></label>
+                                <input type="datetime-local" class="form-control" name="selesai" value="{{ old('selesai', $data->selesai) }}" required>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="btn btn-primary w-full justify-center">
+                                <i class="fas fa-save mr-1.5"></i> Simpan Perubahan Event
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Wilayah & Konten (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-map-marked-alt text-emerald-600 mr-1.5"></i> Wilayah & Konten Brosur
+                        </h4>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label class="form-label">Provinsi</label>
+                                <select class="form-control" name="id_provinsi" id="id_provinsi">
+                                    <option value="">Pilih Provinsi</option>
+                                    @foreach ($provinsi as $i)
+                                        <option value="{{ $i->code }}" {{ old('id_provinsi', $data->id_provinsi) == $i->code ? 'selected' : '' }}>
+                                            {{ $i->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Judul *</label>
-                                <input type="text" class="form-control" name="judul" id="title" value="{{ $data->judul }}">
-                            </div>
-                            <div class="form-group">
-                                <label>URL *</label>
-                                <input type="text" class="form-control" name="path" id="path" value="{{ $data->path }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Thumbnail</label>
-                                <input type="file" class="form-control" name="gambar">
-                                <img class="img-fluid" src="{{ asset('assets/images/events').'/'.$data->gambar }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Tanggal Mulai *</label>
-                                <input type="datetime-local" class="form-control" name="mulai" value="{{ $data->mulai }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Tanggal Selesai *</label>
-                                <input type="datetime-local" class="form-control" name="selesai" value="{{ $data->selesai }}">
+                                <label class="form-label">Kabupaten / Kota</label>
+                                <select class="form-control" name="id_kota" id="id_kota"></select>
                             </div>
                         </div>
-                        <div class="card-footer text-right">
-                            <button class="btn btn-primary">Submit</button>
-                            <a href="{{ route('events.index') }}" class="btn btn-info">Kembali</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-md-12 col-lg-8">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label>Propinsi</label>
-                            <select class="form-control" name="id_provinsi" id="id_provinsi">
-                                <option value="">Pilih Provinsi</option>
-                                @foreach ($provinsi as $i)
-                                    <option value="{{ $i->code }}" {{ old('id_provinsi', $data->id_provinsi) == $i->code ? 'selected':'' }}>{{ $i->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Kab/Kota</label>
-                            <select class="form-control" name="id_kota" id="id_kota"></select>
-                        </div>
+
                         @hasanyrole('Superadmin|Admin Pusat')
                         <div class="form-group">
-                            <label>Status *</label>
+                            <label class="form-label">Status Publikasi <span class="text-rose-500">*</span></label>
                             <select class="form-control" name="status">
-                                <option value="0" {{ old('status',$data->status)=="0"? 'selected':'' }}>Draft</option>
-                                <option value="1" {{ old('status',$data->status)=="1"? 'selected':'' }}>Live</option>
+                                <option value="0" {{ old('status', $data->status) == '0' ? 'selected' : '' }}>Draft (Konsep)</option>
+                                <option value="1" {{ old('status', $data->status) == '1' ? 'selected' : '' }}>Live (Terpublikasi)</option>
                             </select>
                         </div>
                         @endhasanyrole
+
                         <div class="form-group">
-                            <label>Konten *</label>
-                            <textarea name="konten" class="summernote">{{ $data->konten }}</textarea>
+                            <label class="form-label">Deskripsi Lengkap Acara <span class="text-rose-500">*</span></label>
+                            <textarea name="konten" class="summernote" required>{{ old('konten', $data->konten) }}</textarea>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </form>
 </div>
@@ -110,10 +163,17 @@ $(function(e) {
         }
     });
 
-    $("#id_provinsi").select2().val({{ $data->id_provinsi }}).trigger("change");
+    $('.summernote').summernote({
+        dialogsInBody: true,
+        minHeight: 280,
+    });
+
+    $("#id_provinsi").select2({ width: '100%' }).val("{{ $data->id_provinsi }}").trigger("change");
+    $("#id_kota").select2({ width: '100%' });
     
     $('#id_provinsi').on('change', function(){
         let id_provinsi = $('#id_provinsi').val();
+        if(!id_provinsi) return;
         $.ajax({
             type: 'POST',
             url: '{{ route('getKota') }}',
@@ -121,17 +181,18 @@ $(function(e) {
             cache: false,
             success: function(data){
                 $('#id_kota').html(data);
-                $("#id_kota").select2().val({{ $data->id_kota }}).trigger("change");
+                $("#id_kota").val("{{ $data->id_kota }}").trigger("change");
             }
-        })
-    }).change();
-});
-$("#title").keyup(function() {
-    var Text = $(this).val();
-    Text = Text.toLowerCase();
-    var regExp = /\s+/g;
-    Text = Text.replace(regExp,'-');
-    $("#path").val(Text);        
+        });
+    });
+
+    $("#title").keyup(function() {
+        var Text = $(this).val();
+        Text = Text.toLowerCase();
+        var regExp = /\s+/g;
+        Text = Text.replace(regExp,'-').replace(/[^a-z0-9-]/g, '');
+        $("#path").val(Text);        
+    });
 });
 </script>
 @endpush

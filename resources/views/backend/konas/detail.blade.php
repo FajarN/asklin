@@ -1,159 +1,168 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Detail Peserta Konas')
+@section('page_title', 'Detail Peserta Konas')
+
 @section('content')
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-            <h1>Detail Peserta Konas</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
+<div class="space-y-6">
+
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                <a href="{{ route('konas.peserta') }}" class="hover:underline">Konas ASKLIN</a>
+                <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
+                <span class="text-slate-500">Detail Peserta</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Detail Registrasi Konas ASKLIN ke-2
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Rincian informasi peserta, pemesanan akomodasi kamar hotel, serta jadwal penerbangan.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="download_konas.php" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="fas fa-file-invoice"></i>
+                <span>Download Invoice</span>
+            </a>
+            <a href="{{ route('dashboard.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Profile Card -->
+        <div class="lg:col-span-5 space-y-6">
+            <div class="card overflow-hidden">
+                <!-- Header Banner -->
+                <div class="h-28 bg-gradient-to-r from-emerald-600 to-teal-700 relative">
+                    <div class="absolute -bottom-10 left-6">
+                        <div class="w-20 h-20 rounded-2xl bg-white dark:bg-slate-900 p-1.5 shadow-lg border border-slate-200 dark:border-slate-700">
+                            <img alt="Konas Logo"
+                                 src="{{ asset('assets/images/logo-konas.png') }}"
+                                 onerror="this.onerror=null; this.src='{{ asset('assets/backend/img/avatar/avatar-1.png') }}';"
+                                 class="w-full h-full rounded-xl object-contain bg-slate-50 dark:bg-slate-800">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body pt-12 pb-6 px-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Fajar Nuralamsyah</h3>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 mt-1">
+                                Peserta Konas
+                            </span>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800">
+                            konas-0001
+                        </span>
+                    </div>
+
+                    <div class="mt-6 divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                        <div class="py-2.5 flex items-center justify-between">
+                            <span class="text-slate-400 font-medium">Nomor Induk Kependudukan</span>
+                            <span class="font-semibold text-slate-800 dark:text-slate-200">10293010</span>
+                        </div>
+                        <div class="py-2.5 flex items-center justify-between">
+                            <span class="text-slate-400 font-medium">Nomor WhatsApp / Telp</span>
+                            <span class="font-semibold text-slate-800 dark:text-slate-200">021-032-39383</span>
+                        </div>
+                        <div class="py-2.5 flex items-center justify-between">
+                            <span class="text-slate-400 font-medium">Alamat Email</span>
+                            <span class="font-semibold text-slate-800 dark:text-slate-200">fajar.nuralamsyah16@gmail.com</span>
+                        </div>
+                        <div class="py-2.5 flex items-center justify-between">
+                            <span class="text-slate-400 font-medium">Komisi Kerja</span>
+                            <span class="font-semibold text-emerald-600 dark:text-emerald-400">Komisi 1</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <a href="download_konas.php" class="btn btn-primary w-full justify-center">
+                            <i class="fas fa-file-download mr-1.5"></i> Unduh Invoice & Bukti Registrasi
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
 
-  <div class="section-body">
-            <h2 class="section-title">Terimakasih telah melakukan pendaftaran peserta Konas ASKLIN KE-2 </h2>
-            <p class="section-lead">
-              berikut adalah detail pemesanan anda di akun peserta konas : 
-            </p>
-            <div class="row mt-sm-4">
-              <div class="col-12 col-md-12 col-lg-5">
-                <div class="card profile-widget">
-                  <div class="profile-widget-header">                     
-                    <img alt="image" src="{{ asset("assets/images/logo-konas.png") }}" class="rounded-circle profile-widget-picture">
-                    <div class="profile-widget-items">
-                      <div class="profile-widget-item">
-                        <h2>Fajar nuralamsyah</h2>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="profile-widget-description">
-                    <div class="profile-widget-name">
-                       <table class="table table-bordered table-striped">
-                        <tbody>
-                        <tr>
-                            <th>NIK</th>
-                            <td>10293010</td>
-                        </tr>
-                        <tr>
-                            <th>No&nbsp;Anggota</th>
-                            <td>konas-0001</td>
-                        </tr>
-                        <tr>
-                            <th>Telp</th>
-                            <td>021-032-39383</td>
-                        </tr>
-                        <tr>
-                            <th>Email</th>
-                            <td>fajar.nuralamsyah16@gmail.com</td>
-                        </tr>
-                        <tr>
-                            <th>Status</th>
-                            <td>Peserta</td>
-                        </tr>
-                        <tr>
-                            <th>Komisi</th>
-                            <td>Komisi 1</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    </div>
-                   
-                  </div>
-                  <div class="card-footer text-center">
-                    <div class="font-weight-bold mb-2">
-                        <a href="download_konas.php" class="btn btn-info">Download Invoice</a></div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12 col-md-12 col-lg-7">
-                <div class="card">
-                    <div class="card-header">
-                      <h4>Pemesanan hotel</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                        <table class="table demo-table">
-                        <thead>
-                            <tr>
-                                <th>Tanggal&nbsp;Pemesanan</th>
-                                <th>Hotel</th>
-                                <th>Tipe</th>
-                                <th>Harga&nbsp;<small>perkamar</small></th>
-                                <th>Jml&nbsp;Kamar</th>
-                                <th>Harga&nbsp;Extrabed</th>
-                                <th>Jml&nbsp;Extrabed</th>
-                                <th>Total</th>
-                                <th>Status&nbsp;Pembayaran</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- akhir -->
+        <!-- Right Column: Accommodation & Flight Cards -->
+        <div class="lg:col-span-7 space-y-6">
 
-                 <div class="card-header">
-                      <h4>Info Penerbangan</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                        <table class="table demo-table">
-                        <thead>
-                            <tr>
-                                <th>Tanggal </th>
-                                <th>Dari Bandara</th>
-                                <th>Tujuan Bandara</th>
-                                <th>Pesawat</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- Hotel Reservation -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                        <i class="fas fa-hotel text-emerald-600 mr-1.5"></i> Reservasi Kamar Hotel
+                    </h4>
                 </div>
-                <!-- akhir -->
-              </div>
+                <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal Pemesanan</th>
+                                    <th>Hotel</th>
+                                    <th>Tipe</th>
+                                    <th>Harga/Kamar</th>
+                                    <th>Jml</th>
+                                    <th>Extrabed</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="text-center py-8 text-xs text-slate-400">
+                                        <i class="fas fa-bed text-2xl text-slate-300 block mb-2"></i>
+                                        Belum ada data pemesanan kamar hotel tercatat untuk peserta ini.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            </div>
-          </div>
-        </section>
-      </div>
 
-             
-    
+            <!-- Flight Information -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                        <i class="fas fa-plane-departure text-emerald-600 mr-1.5"></i> Informasi Jadwal Penerbangan
+                    </h4>
+                </div>
+                <div class="card-body p-0 border-t border-slate-100 dark:border-slate-800">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal Penerbangan</th>
+                                    <th>Dari Bandara</th>
+                                    <th>Tujuan Bandara</th>
+                                    <th>Maskapai / Pesawat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="text-center py-8 text-xs text-slate-400">
+                                        <i class="fas fa-plane-slash text-2xl text-slate-300 block mb-2"></i>
+                                        Belum ada jadwal tiket penerbangan yang dilampirkan.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
 @endsection
-
-@push('css')
-<link rel="stylesheet" href="{{ asset('assets/backend/modules/datatables/datatables.min.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/backend/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
-@endpush
-
-@push('js')
-<script src="{{ asset('assets/backend/modules/datatables/datatables.min.js') }}"></script>
-<script src="{{ asset('assets/backend/modules/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}"></script>
-<script type="text/javascript">
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
-
-</script>
-@endpush

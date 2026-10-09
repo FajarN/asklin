@@ -1,19 +1,33 @@
 @extends('layouts.backend.layout')
 
+@section('title', 'Edit Surat Keluar')
+@section('page_title', 'Perbarui Surat Keluar')
+
 @section('content')
+<div class="space-y-6">
 
-
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Input Surat Keluar</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="{{ route('surat_keluar.index') }}">Surat Keluar</a></div>
-                    <div class="breadcrumb-item">Create</div>
-                </div>
+    <!-- Page Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                <a href="{{ route('surat_keluar.index') }}" class="hover:underline">Persuratan</a>
+                <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
+                <span class="text-slate-500">Edit Data</span>
             </div>
-        </section>
+            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
+                Perbarui Surat Keluar
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Nomor Surat: <strong class="text-emerald-600 font-mono">{{ $suratKeluar->no_surat }}</strong> &bull; Perihal: {{ $suratKeluar->perihal }}
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('surat_keluar.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </div>
+    </div>
         <form action="{{ route('surat_keluar.update', $suratKeluar->id) }}" method="POST">
             @csrf
             @method('PUT')
