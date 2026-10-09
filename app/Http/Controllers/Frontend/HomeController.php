@@ -22,6 +22,7 @@ use Spipu\Html2Pdf\Exception\Html2PdfException;
 use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use App\Services\TemplateService;
 
 
 class HomeController extends Controller
@@ -66,7 +67,7 @@ class HomeController extends Controller
 
         $struktur = $query->get();
 
-        return view('frontend.home.index', compact(
+        return TemplateService::view('index', compact(
             'title',
             'description',
             'sliders',
@@ -86,7 +87,7 @@ class HomeController extends Controller
         $description = "Pendaftaran Event.";
         $provinsi = Province::get();
 
-        return view('frontend.home.pendaftaran_event', compact('title', 'description', 'provinsi'));
+        return TemplateService::view('pendaftaran_event', compact('title', 'description', 'provinsi'));
     }
 
     public function daftarEvent(Request $request)
@@ -116,7 +117,7 @@ class HomeController extends Controller
         $title = "Sejarah";
         $description = "Sejarah asklin.";
 
-        return view('frontend.home.sejarah', compact('title', 'description'));
+        return TemplateService::view('sejarah', compact('title', 'description'));
     }
 
     public function visimisi()
@@ -124,7 +125,7 @@ class HomeController extends Controller
         $title = "Visi Misi";
         $description = "Visi misi asklin.";
 
-        return view('frontend.home.visimisi', compact('title', 'description'));
+        return TemplateService::view('visimisi', compact('title', 'description'));
     }
 
     public function latarbelakang()
@@ -132,7 +133,7 @@ class HomeController extends Controller
         $title = "Latar Belakang";
         $description = "Latar belakang asklin.";
 
-        return view('frontend.home.latarbelakang', compact('title', 'description'));
+        return TemplateService::view('latarbelakang', compact('title', 'description'));
     }
 
     public function penguruspusat()
@@ -166,7 +167,7 @@ class HomeController extends Controller
             ->orderBy('urutan', 'asc')
             ->get();
 
-        return view('frontend.home.penguruspusat', compact('title', 'description', 'struktur', 'pengurus'));
+        return TemplateService::view('penguruspusat', compact('title', 'description', 'struktur', 'pengurus'));
     }
 
     public function agendakegiatan()
@@ -174,7 +175,7 @@ class HomeController extends Controller
         $title = "Agenda & Kegiatan";
         $description = "Agenda kegiatan asklin.";
 
-        return view('frontend.home.agendakegiatan', compact('title', 'description'));
+        return TemplateService::view('agendakegiatan', compact('title', 'description'));
     }
 
     public function berita(Request $request)
@@ -187,7 +188,7 @@ class HomeController extends Controller
             ->where('berita.status', '1')
             ->orderBy('id', 'DESC')->paginate(10);
 
-        return view('frontend.home.berita', compact('title', 'description', 'data'));
+        return TemplateService::view('berita', compact('title', 'description', 'data'));
     }
 
     public function beritaDetail($path)
@@ -211,7 +212,7 @@ class HomeController extends Controller
 
         $images = BeritaImage::where('berita_id', $berita->id)->get();
 
-        return view('frontend.home.beritadetail', compact('title', 'desc', 'berita', 'images'));
+        return TemplateService::view('beritadetail', compact('title', 'desc', 'berita', 'images'));
     }
 
 
@@ -276,7 +277,7 @@ class HomeController extends Controller
         // Ambil semua kategori untuk dropdown
         $categories = EventKategori::where('status', 1)->get();
 
-        return view('frontend.home.event', compact('title', 'description', 'event', 'categories'));
+        return TemplateService::view('event', compact('title', 'description', 'event', 'categories'));
     }
 
     // Controller - Adaptive approach
@@ -301,7 +302,7 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
-        return view('frontend.home.eventdetail', compact('title', 'description', 'event', 'relatedEvents'));
+        return TemplateService::view('eventdetail', compact('title', 'description', 'event', 'relatedEvents'));
     }
 
     /**
@@ -409,7 +410,7 @@ class HomeController extends Controller
             ->where('galery.status', '1')
             ->latest()->get();
 
-        return view('frontend.home.galery', compact('title', 'description', 'galery'));
+        return TemplateService::view('galery', compact('title', 'description', 'galery'));
     }
 
     public function kontak(Request $request)
@@ -417,7 +418,7 @@ class HomeController extends Controller
         $title = "Kontak";
         $description = "Hubungi PP Asklin";
 
-        return view('frontend.home.kontak', compact('title', 'description'));
+        return TemplateService::view('kontak', compact('title', 'description'));
     }
 
     public function storeKontak(Request $request)

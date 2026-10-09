@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="c-top" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <linearGradient id="c-hero" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Canvas Frame -->
+  <rect width="800" height="500" rx="12" fill="#f8fafc"/>
+
+  <!-- Browser Chrome / Top Bar -->
+  <rect width="800" height="32" rx="12" fill="#0f172a"/>
+  <circle cx="24" cy="16" r="5" fill="#ef4444"/>
+  <circle cx="42" cy="16" r="5" fill="#f59e0b"/>
+  <circle cx="60" cy="16" r="5" fill="#10b981"/>
+  <rect x="250" y="8" width="300" height="16" rx="8" fill="#1e293b"/>
+  <text x="400" y="20" fill="#94a3b8" font-size="10" font-family="sans-serif" text-anchor="middle">asklin.org — Template 1: Canvas Classic</text>
+
+  <!-- Canvas Header -->
+  <rect y="32" width="800" height="56" fill="#ffffff" stroke="#e2e8f0"/>
+  <!-- Logo -->
+  <rect x="36" y="44" width="32" height="32" rx="6" fill="#059669"/>
+  <rect x="76" y="48" width="90" height="12" rx="3" fill="#0f172a"/>
+  <rect x="76" y="64" width="60" height="8" rx="2" fill="#94a3b8"/>
+  <!-- Menu Items -->
+  <rect x="340" y="54" width="40" height="10" rx="2" fill="#334155"/>
+  <rect x="395" y="54" width="65" height="10" rx="2" fill="#334155"/>
+  <rect x="475" y="54" width="45" height="10" rx="2" fill="#334155"/>
+  <rect x="535" y="54" width="40" height="10" rx="2" fill="#334155"/>
+  <rect x="590" y="54" width="45" height="10" rx="2" fill="#334155"/>
+  <rect x="680" y="44" width="84" height="30" rx="6" fill="#dc2626"/>
+  <text x="722" y="63" fill="#ffffff" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Portal</text>
+
+  <!-- Canvas Slider Element -->
+  <rect x="36" y="104" width="728" height="160" rx="8" fill="url(#c-hero)"/>
+  <circle cx="100" cy="184" r="32" fill="#10b981" opacity="0.15"/>
+  <rect x="80" y="140" width="320" height="22" rx="4" fill="#ffffff"/>
+  <rect x="80" y="170" width="260" height="12" rx="3" fill="#94a3b8"/>
+  <rect x="80" y="190" width="180" height="10" rx="3" fill="#64748b"/>
+  <rect x="80" y="215" width="120" height="28" rx="5" fill="#10b981"/>
+  <text x="140" y="233" fill="#ffffff" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">DAFTAR KLINIK</text>
+
+  <!-- Slider Carousel Dots -->
+  <circle cx="380" cy="252" r="4" fill="#10b981"/>
+  <circle cx="400" cy="252" r="4" fill="#64748b"/>
+  <circle cx="420" cy="252" r="4" fill="#64748b"/>
+
+  <!-- Welcome / Sticky Bar -->
+  <rect x="36" y="280" width="728" height="48" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="56" y="295" width="220" height="10" rx="2" fill="#0f172a"/>
+  <rect x="56" y="310" width="380" height="8" rx="2" fill="#64748b"/>
+  <rect x="650" y="290" width="94" height="28" rx="4" fill="#dc2626"/>
+  <text x="697" y="308" fill="#ffffff" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Pendaftaran</text>
+
+  <!-- News Section Header -->
+  <rect x="340" y="345" width="120" height="14" rx="3" fill="#0f172a"/>
+
+  <!-- 3 Column Cards -->
+  <rect x="36" y="375" width="226" height="105" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="46" y="385" width="206" height="45" rx="4" fill="#e2e8f0"/>
+  <rect x="46" y="440" width="140" height="10" rx="2" fill="#334155"/>
+  <rect x="46" y="455" width="190" height="8" rx="2" fill="#94a3b8"/>
+
+  <rect x="287" y="375" width="226" height="105" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="297" y="385" width="206" height="45" rx="4" fill="#e2e8f0"/>
+  <rect x="297" y="440" width="150" height="10" rx="2" fill="#334155"/>
+  <rect x="297" y="455" width="180" height="8" rx="2" fill="#94a3b8"/>
+
+  <rect x="538" y="375" width="226" height="105" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="548" y="385" width="206" height="45" rx="4" fill="#e2e8f0"/>
+  <rect x="548" y="440" width="130" height="10" rx="2" fill="#334155"/>
+  <rect x="548" y="455" width="170" height="8" rx="2" fill="#94a3b8"/>
+
+  <!-- Badge Label -->
+  <rect x="660" y="44" width="70" height="18" rx="4" fill="#e0e7ff"/>
+  <text x="695" y="56" fill="#3730a3" font-size="9" font-family="sans-serif" font-weight="bold" text-anchor="middle">Canvas</text>
+</svg>
+

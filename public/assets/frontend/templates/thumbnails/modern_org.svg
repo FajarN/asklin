@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="m-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#020617"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#2a0815"/>
+    </linearGradient>
+    <linearGradient id="m-glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#e11d48"/>
+    </linearGradient>
+    <linearGradient id="m-card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+  <!-- Main Canvas Dark Modern Frame -->
+  <rect width="800" height="500" rx="12" fill="#f1f5f9"/>
+
+  <!-- Browser Chrome -->
+  <rect width="800" height="32" rx="12" fill="#020617"/>
+  <circle cx="24" cy="16" r="5" fill="#f43f5e"/>
+  <circle cx="42" cy="16" r="5" fill="#eab308"/>
+  <circle cx="60" cy="16" r="5" fill="#22c55e"/>
+  <rect x="250" y="8" width="300" height="16" rx="8" fill="#0f172a"/>
+  <text x="400" y="20" fill="#fca5a5" font-size="10" font-family="sans-serif" text-anchor="middle">asklin.org — Template 3: Modern Organization (Dynamic)</text>
+
+  <!-- Modern Hero + Header Combined Canvas -->
+  <rect y="32" width="800" height="280" fill="url(#m-bg)"/>
+
+  <!-- Ambient Glow Orbs -->
+  <circle cx="700" cy="90" r="140" fill="#dc2626" opacity="0.18"/>
+  <circle cx="100" cy="260" r="100" fill="#e11d48" opacity="0.12"/>
+
+  <!-- Modern Floating Nav -->
+  <rect x="36" y="46" width="728" height="54" rx="27" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.15"/>
+  <!-- Modern Logo -->
+  <circle cx="64" cy="73" r="16" fill="url(#m-glow)"/>
+  <text x="64" y="77" fill="#ffffff" font-size="12" font-family="sans-serif" font-weight="900" text-anchor="middle">A</text>
+  <rect x="90" y="66" width="75" height="10" rx="2" fill="#ffffff"/>
+  <rect x="90" y="79" width="105" height="6" rx="2" fill="#94a3b8"/>
+
+  <!-- Nav links -->
+  <rect x="290" y="70" width="36" height="8" rx="4" fill="#dc2626"/>
+  <rect x="345" y="70" width="55" height="8" rx="4" fill="#cbd5e1"/>
+  <rect x="420" y="70" width="45" height="8" rx="4" fill="#cbd5e1"/>
+  <rect x="485" y="70" width="40" height="8" rx="4" fill="#cbd5e1"/>
+  <rect x="545" y="70" width="42" height="8" rx="4" fill="#cbd5e1"/>
+  <!-- CTA Button Modern Pill -->
+  <rect x="635" y="58" width="112" height="30" rx="15" fill="url(#m-glow)"/>
+  <text x="691" y="77" fill="#ffffff" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Portal Masuk →</text>
+
+  <!-- Modern Hero Content -->
+  <!-- Tag Pill -->
+  <rect x="60" y="125" width="180" height="24" rx="12" fill="#dc2626" fill-opacity="0.18" stroke="#dc2626" stroke-opacity="0.4"/>
+  <circle cx="75" cy="137" r="4" fill="#ef4444"/>
+  <text x="155" y="141" fill="#fca5a5" font-size="9" font-family="sans-serif" font-weight="bold" text-anchor="middle">Transformasi Klinik Indonesia</text>
+
+  <!-- Big Modern Heading -->
+  <rect x="60" y="160" width="390" height="26" rx="4" fill="#ffffff"/>
+  <rect x="60" y="192" width="280" height="22" rx="4" fill="url(#m-glow)"/>
+  <rect x="60" y="222" width="360" height="10" rx="2" fill="#94a3b8"/>
+  <rect x="60" y="238" width="310" height="10" rx="2" fill="#64748b"/>
+
+  <!-- Modern CTA Buttons -->
+  <rect x="60" y="260" width="130" height="34" rx="17" fill="url(#m-glow)"/>
+  <text x="125" y="281" fill="#ffffff" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Gabung ASKLIN</text>
+  <rect x="202" y="260" width="120" height="34" rx="17" fill="#ffffff" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.2"/>
+  <text x="262" y="281" fill="#ffffff" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Jelajahi Profil</text>
+
+  <!-- Modern Hero Right Visual: Glassmorphism Stat Cards -->
+  <rect x="490" y="125" width="250" height="165" rx="16" fill="url(#m-card)" stroke="#ffffff" stroke-opacity="0.15"/>
+  <circle cx="525" cy="155" r="16" fill="#dc2626" fill-opacity="0.3"/>
+  <rect x="550" y="148" width="100" height="12" rx="3" fill="#ffffff"/>
+  <rect x="550" y="164" width="70" height="8" rx="2" fill="#fca5a5"/>
+
+  <!-- Live Metric Counters -->
+  <rect x="510" y="190" width="100" height="50" rx="8" fill="#020617" fill-opacity="0.4" stroke="#dc2626" stroke-opacity="0.4"/>
+  <text x="560" y="214" fill="#f87171" font-size="14" font-family="sans-serif" font-weight="900" text-anchor="middle">1.460+</text>
+  <text x="560" y="228" fill="#94a3b8" font-size="8" font-family="sans-serif" text-anchor="middle">Klinik Terdaftar</text>
+
+  <rect x="620" y="190" width="105" height="50" rx="8" fill="#020617" fill-opacity="0.4" stroke="#e11d48" stroke-opacity="0.4"/>
+  <text x="672" y="214" fill="#fb7185" font-size="14" font-family="sans-serif" font-weight="900" text-anchor="middle">34 Prov</text>
+  <text x="672" y="228" fill="#94a3b8" font-size="8" font-family="sans-serif" text-anchor="middle">Seluruh Nusantara</text>
+
+  <rect x="510" y="250" width="215" height="26" rx="13" fill="#dc2626" fill-opacity="0.2"/>
+  <text x="617" y="266" fill="#fca5a5" font-size="9" font-family="sans-serif" font-weight="bold" text-anchor="middle">● Akreditasi &amp; Advokasi Siaga</text>
+
+  <!-- Modern White Body Cards Section (Split Layout) -->
+  <rect x="36" y="325" width="226" height="155" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="50" y="340" width="60" height="18" rx="9" fill="#fee2e2"/>
+  <text x="80" y="352" fill="#b91c1c" font-size="8" font-family="sans-serif" font-weight="bold" text-anchor="middle">AGENDA</text>
+  <rect x="50" y="366" width="170" height="13" rx="3" fill="#0f172a"/>
+  <rect x="50" y="385" width="190" height="8" rx="2" fill="#64748b"/>
+  <rect x="50" y="399" width="160" height="8" rx="2" fill="#64748b"/>
+  <rect x="50" y="445" width="198" height="22" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+
+  <rect x="287" y="325" width="226" height="155" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="301" y="340" width="60" height="18" rx="9" fill="#dbeafe"/>
+  <text x="331" y="352" fill="#1e40af" font-size="8" font-family="sans-serif" font-weight="bold" text-anchor="middle">BERITA</text>
+  <rect x="301" y="366" width="180" height="13" rx="3" fill="#0f172a"/>
+  <rect x="301" y="385" width="190" height="8" rx="2" fill="#64748b"/>
+  <rect x="301" y="399" width="150" height="8" rx="2" fill="#64748b"/>
+  <rect x="301" y="445" width="198" height="22" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+
+  <rect x="538" y="325" width="226" height="155" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="552" y="340" width="70" height="18" rx="9" fill="#fef3c7"/>
+  <text x="587" y="352" fill="#b45309" font-size="8" font-family="sans-serif" font-weight="bold" text-anchor="middle">PROGRAM</text>
+  <rect x="552" y="366" width="170" height="13" rx="3" fill="#0f172a"/>
+  <rect x="552" y="385" width="190" height="8" rx="2" fill="#64748b"/>
+  <rect x="552" y="399" width="140" height="8" rx="2" fill="#64748b"/>
+  <rect x="552" y="445" width="198" height="22" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+
+  <!-- Watermark Badge -->
+  <rect x="620" y="46" width="134" height="20" rx="4" fill="#dc2626"/>
+  <text x="687" y="60" fill="#ffffff" font-size="9" font-family="sans-serif" font-weight="bold" text-anchor="middle">Modern Org (Dynamic)</text>
+</svg>

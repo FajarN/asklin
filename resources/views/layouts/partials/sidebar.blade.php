@@ -398,6 +398,7 @@
                     <li><a href="{{ route('roles.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('roles.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Role & Group</a></li>
                     <li><a href="{{ route('permissions.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('permissions.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Hak Akses (Permission)</a></li>
                     <li><a href="{{ route('settings.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('settings.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Konfigurasi Aplikasi</a></li>
+                    <li><a href="{{ route('template_settings.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('template_settings.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }} flex items-center justify-between"><span>Pengaturan Template</span><span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-bold">Multi</span></a></li>
                 </ul>
             </div>
         @endcan

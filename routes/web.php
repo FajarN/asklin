@@ -139,6 +139,13 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
             Route::post('/delete', 'destroy')->name('permissions.delete');
         });
 
+        Route::prefix('template-settings')->controller(App\Http\Controllers\Backend\secret\TemplateSettingController::class)->group(function () {
+            Route::get('/', 'index')->name('template_settings.index');
+            Route::post('/update', 'update')->name('template_settings.update');
+            Route::get('/preview/{template}', 'preview')->name('template_settings.preview');
+            Route::get('/exit-preview', 'exitPreview')->name('template_settings.exit_preview');
+        });
+
         Route::prefix('slider')->controller(App\Http\Controllers\Backend\web\SliderController::class)->group(function () {
             Route::get('/', 'index')->name('slider.index');
             Route::get('/list', 'list')->name('slider.list');
