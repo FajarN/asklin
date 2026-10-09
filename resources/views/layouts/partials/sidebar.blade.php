@@ -146,56 +146,64 @@
             </div>
         @endcanany
 
-        <!-- Section: Ruang Pengurus (Struktur Organisasi & Persuratan) -->
-        @canany(['struktur-organisasi-list', 'jenis-surat-list', 'penomoran-surat-list', 'surat-keluar-list', 'surat-tugas-list', 'surat-undangan-list'])
-            <div class="sidebar-dropdown-group" data-group="pengurus">
+        <!-- Section: Struktur Organisasi (Tersendiri) -->
+        @can('struktur-organisasi-list')
+            <div>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="{{ route('struktur_organisasi.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ Request::url() == route('struktur_organisasi.index') || Str::contains(Request::url(), 'struktur_organisasi') ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60' }}">
+                            <i class="fas fa-sitemap text-sm {{ Request::url() == route('struktur_organisasi.index') || Str::contains(Request::url(), 'struktur_organisasi') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400' }}"></i>
+                            <span>Struktur Organisasi</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        @endcan
+
+        <!-- Section: Manajemen Persuratan (Tersendiri) -->
+        @canany(['jenis-surat-list', 'penomoran-surat-list', 'surat-keluar-list', 'surat-tugas-list', 'surat-undangan-list'])
+            <div class="sidebar-dropdown-group" data-group="surat">
                 <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
                     <div class="flex items-center gap-3">
-                        <i class="fas fa-sitemap text-sm text-slate-400 group-hover:text-emerald-600"></i>
-                        <span>Ruang Pengurus</span>
+                        <i class="fas fa-envelope-open-text text-sm text-slate-400 group-hover:text-emerald-600"></i>
+                        <span>Persuratan</span>
                     </div>
                     <i class="fas fa-chevron-right text-[10px] text-slate-400 transition-transform dropdown-arrow"></i>
                 </button>
                 <ul class="dropdown-submenu hidden pl-7 pr-1 mt-1 space-y-1">
-                    @can('struktur-organisasi-list')
-                        <li>
-                            <a href="{{ route('struktur_organisasi.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('struktur_organisasi.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
-                                <i class="fas fa-users-cog mr-1"></i> Struktur Organisasi
-                            </a>
-                        </li>
-                    @endcan
-                    @can('jenis-surat-list')
-                        <li>
-                            <a href="{{ route('jenis_surat.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('jenis_surat.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
-                                Jenis Surat
-                            </a>
-                        </li>
-                    @endcan
-                    @can('penomoran-surat-list')
-                        <li>
-                            <a href="{{ route('surat_penomoran.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('surat_penomoran.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
-                                Penomoran Surat
-                            </a>
-                        </li>
-                    @endcan
                     @can('surat-keluar-list')
                         <li>
-                            <a href="{{ route('surat_keluar.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('surat_keluar.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                            <a href="{{ route('surat_keluar.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Str::contains(Request::url(), 'surat_keluar') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
                                 Surat Keluar
                             </a>
                         </li>
                     @endcan
                     @can('surat-tugas-list')
                         <li>
-                            <a href="{{ route('surat_tugas.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('surat_tugas.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                            <a href="{{ route('surat_tugas.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Str::contains(Request::url(), 'surat_tugas') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
                                 Surat Tugas
                             </a>
                         </li>
                     @endcan
                     @can('surat-undangan-list')
                         <li>
-                            <a href="{{ route('surat_undangan.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('surat_undangan.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                            <a href="{{ route('surat_undangan.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Str::contains(Request::url(), 'surat_undangan') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
                                 Surat Undangan
+                            </a>
+                        </li>
+                    @endcan
+                    @can('penomoran-surat-list')
+                        <li>
+                            <a href="{{ route('surat_penomoran.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Str::contains(Request::url(), 'surat_penomoran') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Penomoran Surat
+                            </a>
+                        </li>
+                    @endcan
+                    @can('jenis-surat-list')
+                        <li>
+                            <a href="{{ route('jenis_surat.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Str::contains(Request::url(), 'jenis_surat') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Jenis Surat
                             </a>
                         </li>
                     @endcan
