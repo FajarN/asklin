@@ -1390,3 +1390,24 @@ div.nama-klinik,
     color: #cbd5e1 !important;
 }
 
+.dark .swal2-icon {
+    border-color: #334155 !important;
+}
+
+.dark .swal2-confirm {
+    font-weight: 600 !important;
+}
+
+.dark .swal2-cancel {
+    font-weight: 600 !important;
+}
+
+/* Ensure SweetAlert2 buttons are not broken by our .btn overrides */
+.swal2-confirm.swal2-styled,
+.swal2-cancel.swal2-styled {
+    display: inline-block !important;
+    font-size: 0.875rem !important;
+    padding: 0.5rem 1.25rem !important;
+    font-weight: 600 !important;
+}
+
