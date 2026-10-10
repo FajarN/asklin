@@ -6,16 +6,6 @@
             class="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
             <i class="fas fa-bars text-sm"></i>
         </button>
-
-        <!-- Dynamic Breadcrumb / Page Title -->
-        <div class="flex items-center gap-2">
-            <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60">
-                ASKLIN
-            </span>
-            <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-white line-clamp-1">
-                @yield('page_title', 'Dashboard')
-            </h1>
-        </div>
     </div>
 
     <!-- Right: Actions, Dark Mode Switcher & User Profile -->

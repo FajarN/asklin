@@ -442,19 +442,73 @@ div.nama-klinik,
 }
 
 /* --------------------------------------------------------------------------
-   A. Main Sidebar Dark Theme (100% Complete)
+   A. Main Sidebar Dark Theme with Futuristic Cyber Tech Animation
    -------------------------------------------------------------------------- */
 .dark #main-sidebar,
 .dark aside#main-sidebar {
     background-color: #0f172a !important; /* slate-900 */
     border-right-color: #1e293b !important; /* slate-800 */
+    position: fixed;
+    overflow: hidden;
 }
 
-/* Sidebar Brand Header */
+/* 1. Cyber Laser Beam traveling along sidebar edge */
+.dark #main-sidebar::after {
+    content: '';
+    position: absolute;
+    top: -150px;
+    right: 0px;
+    width: 2.5px;
+    height: 140px;
+    background: linear-gradient(180deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
+    box-shadow: 0 0 15px #10b981, 0 0 25px #06b6d4;
+    animation: sidebarCyberBeam 4.5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 60;
+}
+
+@keyframes sidebarCyberBeam {
+    0% {
+        top: -150px;
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        top: 100%;
+        opacity: 0;
+    }
+}
+
+/* Sidebar Brand Header with holographic circuit sweep */
 .dark #main-sidebar > div:first-child,
 .dark #main-sidebar .h-16 {
     background-color: #0f172a !important;
     border-bottom-color: #1e293b !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.dark #main-sidebar .h-16::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
+    background-size: 200% 100%;
+    animation: sidebarHeaderSweep 3.5s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes sidebarHeaderSweep {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 .dark #main-sidebar a .font-extrabold {
@@ -466,9 +520,28 @@ div.nama-klinik,
     color: #64748b !important;
 }
 
-/* Sidebar Section Headers */
+/* Sidebar Section Headers with Tech Radar indicator */
 .dark #main-sidebar .uppercase {
     color: #64748b !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dark #main-sidebar .uppercase::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    animation: techRadarPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes techRadarPulse {
+    0%, 100% { transform: scale(0.9); opacity: 0.5; }
+    50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 10px #38bdf8; }
 }
 
 /* Sidebar Links & Buttons */
@@ -478,10 +551,14 @@ div.nama-klinik,
     background-color: transparent !important;
 }
 
-.dark #main-sidebar nav a:hover,
+.dark #main-sidebar nav a:not(.font-semibold):hover,
 .dark #main-sidebar nav button:hover {
     color: #ffffff !important;
-    background-color: rgba(30, 41, 59, 0.7) !important; /* slate-800 */
+    background-color: rgba(30, 41, 59, 0.7) !important;
+    border-left: 2px solid #38bdf8 !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.15) !important;
+    transform: translateX(4px) !important;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .dark #main-sidebar nav a:hover i,
@@ -489,14 +566,46 @@ div.nama-klinik,
     color: #ffffff !important;
 }
 
-/* Sidebar Active Link (e.g. Dashboard, Verifikasi, Template Settings) */
+/* Sidebar Active Link (Holographic Cyber Glow & Scanning Ray) */
 .dark #main-sidebar nav a.bg-emerald-50,
 .dark #main-sidebar nav a[class*="bg-emerald-"],
 .dark #main-sidebar nav a[class*="text-emerald-"],
 .dark #main-sidebar nav a.font-semibold {
-    background-color: rgba(6, 78, 59, 0.5) !important; /* emerald-950/50 */
-    color: #34d399 !important; /* emerald-400 */
-    border: 1px solid rgba(16, 185, 129, 0.25) !important;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(6, 78, 59, 0.5) 0%, rgba(16, 185, 129, 0.25) 50%, rgba(6, 78, 59, 0.5) 100%) !important;
+    background-size: 200% 100% !important;
+    animation: cyberActivePulse 3.5s ease-in-out infinite !important;
+    color: #34d399 !important;
+    border: 1px solid rgba(16, 185, 129, 0.35) !important;
+    border-left: 3px solid #10b981 !important;
+    box-shadow: inset 0 0 16px rgba(16, 185, 129, 0.15), 0 0 14px rgba(16, 185, 129, 0.25) !important;
+}
+
+.dark #main-sidebar nav a.bg-emerald-50::after,
+.dark #main-sidebar nav a[class*="bg-emerald-"]::after,
+.dark #main-sidebar nav a[class*="text-emerald-"]::after,
+.dark #main-sidebar nav a.font-semibold::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.18), rgba(56, 189, 248, 0.3), transparent);
+    animation: cyberScanRay 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+}
+
+@keyframes cyberActivePulse {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes cyberScanRay {
+    0% { left: -100%; }
+    40%, 100% { left: 120%; }
 }
 
 .dark #main-sidebar nav a.bg-emerald-50 i,
