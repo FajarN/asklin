@@ -216,5 +216,78 @@
             }
         });
     </script>
+
+    <!-- Global Modal Resilience & Strict Dismissal Controller -->
+    <script>
+        (function() {
+            function initModalController() {
+                var $ = window.jQuery;
+                if (!$) return;
+
+                // 1. Force global defaults to static backdrop & no keyboard escape
+                if ($.fn && $.fn.modal && $.fn.modal.Constructor) {
+                    if ($.fn.modal.Constructor.Default) {
+                        $.fn.modal.Constructor.Default.backdrop = 'static';
+                        $.fn.modal.Constructor.Default.keyboard = false;
+                    }
+                    if ($.fn.modal.Constructor.DEFAULTS) {
+                        $.fn.modal.Constructor.DEFAULTS.backdrop = 'static';
+                        $.fn.modal.Constructor.DEFAULTS.keyboard = false;
+                    }
+                }
+
+                // 2. Lock every modal that opens to static backdrop (cannot close by clicking outside)
+                $(document).on('show.bs.modal', '.modal', function () {
+                    var $modal = $(this);
+                    $modal.attr('data-backdrop', 'static');
+                    $modal.attr('data-keyboard', 'false');
+                    $modal.attr('data-bs-backdrop', 'static');
+                    $modal.attr('data-bs-keyboard', 'false');
+
+                    var modalData = $modal.data('bs.modal');
+                    if (modalData && modalData._config) {
+                        modalData._config.backdrop = 'static';
+                        modalData._config.keyboard = false;
+                    }
+                });
+
+                // 3. Reliable Close & 'X' button handler
+                $(document).on('click', '[data-dismiss="modal"], [data-bs-dismiss="modal"], .modal .close, .modal .btn-close, .modal button[data-dismiss="modal"], .modal a[data-dismiss="modal"]', function (e) {
+                    e.preventDefault();
+                    var $modal = $(this).closest('.modal');
+                    if ($modal.length) {
+                        // Method A: Bootstrap 4 jQuery modal hide
+                        try {
+                            $modal.modal('hide');
+                        } catch (_) {}
+
+                        // Method B: Bootstrap 5 Vanilla instance hide
+                        try {
+                            if (window.bootstrap && window.bootstrap.Modal) {
+                                var bsInstance = window.bootstrap.Modal.getInstance($modal[0]);
+                                if (bsInstance) {
+                                    bsInstance.hide();
+                                }
+                            }
+                        } catch (_) {}
+
+                        // Method C: Clean up state & backdrop if stuck
+                        setTimeout(function () {
+                            if (!$modal.hasClass('show')) {
+                                $('.modal-backdrop').remove();
+                                $('body').removeClass('modal-open').css('padding-right', '');
+                            }
+                        }, 250);
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initModalController);
+            } else {
+                initModalController();
+            }
+        })();
+    </script>
 </body>
 </html>

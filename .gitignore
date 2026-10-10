@@ -30,3 +30,4 @@ yarn-error.log
 public/.user.ini
 /public/images/*
 /public/.well-known/*
+/docs

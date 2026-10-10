@@ -80,12 +80,13 @@
 
                 <!-- Modal for Add/Edit Struktur -->
                 <div class="modal fade" id="strukturModal" tabindex="-1" role="dialog"
-                    aria-labelledby="strukturModalLabel" aria-hidden="true">
+                    aria-labelledby="strukturModalLabel" aria-hidden="true"
+                    data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="strukturModalLabel">Tambah Struktur Organisasi</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
@@ -193,7 +194,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary"
-                                        data-dismiss="modal">Batal</button>
+                                        data-dismiss="modal" data-bs-dismiss="modal">Batal</button>
                                     <button type="submit" class="btn btn-primary" id="btnSave">Simpan</button>
                                 </div>
                             </form>
@@ -203,12 +204,13 @@
 
                 <!-- Delete Confirmation Modal -->
                 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
-                    aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    aria-labelledby="deleteModalLabel" aria-hidden="true"
+                    data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
@@ -218,7 +220,7 @@
                             </div>
                             <div class="modal-footer">
                                 <input type="hidden" id="delete_id" name="delete_id">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Batal</button>
                                 <button type="button" class="btn btn-danger" id="btnDelete">Hapus</button>
                             </div>
                         </div>

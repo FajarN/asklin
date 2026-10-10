@@ -3,6 +3,45 @@ window._ = _;
 
 import 'bootstrap';
 
+// Configure Bootstrap 5 Modal defaults globally to static backdrop
+if (typeof window !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.bootstrap && window.bootstrap.Modal && window.bootstrap.Modal.Default) {
+            window.bootstrap.Modal.Default.backdrop = 'static';
+            window.bootstrap.Modal.Default.keyboard = false;
+        }
+
+        // Global dismiss bridge for BS4 & BS5 compatibility
+        document.addEventListener('click', function (e) {
+            const dismissBtn = e.target.closest('[data-dismiss="modal"], [data-bs-dismiss="modal"], .modal .close, .modal .btn-close');
+            if (dismissBtn) {
+                const modalEl = dismissBtn.closest('.modal');
+                if (modalEl) {
+                    if (window.bootstrap && window.bootstrap.Modal) {
+                        try {
+                            const instance = window.bootstrap.Modal.getOrCreateInstance(modalEl, {
+                                backdrop: 'static',
+                                keyboard: false
+                            });
+                            if (instance) instance.hide();
+                        } catch (_) {}
+                    }
+                    if (window.$ && typeof window.$.fn.modal === 'function') {
+                        try { window.$(modalEl).modal('hide'); } catch (_) {}
+                    }
+                    setTimeout(() => {
+                        if (!modalEl.classList.contains('show')) {
+                            document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                            document.body.classList.remove('modal-open');
+                            document.body.style.removeProperty('padding-right');
+                        }
+                    }, 200);
+                }
+            }
+        });
+    });
+}
+
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the

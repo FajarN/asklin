@@ -61,12 +61,12 @@
     </div>
 </div>
     <!-- Modal -->
-    <div class="modal fade" tabindex="-1" role="dialog" id="tambah">
+    <div class="modal fade" tabindex="-1" role="dialog" id="tambah" data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -90,9 +90,10 @@
                             <label>Nomor Terakhir</label>
                             <input type="text" id="nomor_terakhir" name="nomor_terakhir" class="form-control form-control-sm">
                         </div>
-                        <div class="modal-footer bg-whitesmoke br">
-                            <button type="submit" id="btn-save" class="btn btn-primary">Simpan</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                    <div class="modal-footer bg-whitesmoke br">
+                        <button type="submit" id="btn-save" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
             </div>

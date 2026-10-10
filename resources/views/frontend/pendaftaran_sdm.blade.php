@@ -44,12 +44,13 @@
         </table>
 
         <!-- Modal Penanggung Jawab -->
-        <div class="modal fade" id="formPenanggungjawab" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal fade" id="formPenanggungjawab" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true"
+            data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" id="formModalLabel">Tambah Dokter Penanggungjawab</h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+						<button type="button" class="btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
                     <form id="form-pj" class="mb-4" novalidate="novalidate">
                         <div class="modal-body">
@@ -115,7 +116,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" id="btn-save-pj">Simpan</button>
                         </div>
                     </form>
@@ -156,12 +157,13 @@
         </table>
 
         <!-- Modal Dokter Praktek -->
-        <div class="modal fade" id="formDokterPraktek" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal fade" id="formDokterPraktek" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true"
+            data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" id="formModalLabel">Tambah Dokter Prakter</h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+						<button type="button" class="btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
                     <form id="form-dp" class="mb-4" novalidate="novalidate">
                         <div class="modal-body">
@@ -225,7 +227,7 @@
                             <!--</div>-->
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" id="btn-save-dp">Simpan</button>
                         </div>
                     </form>
@@ -265,12 +267,13 @@
         </table>
 
         <!-- Modal Tenaga Keperawatan -->
-        <div class="modal fade" id="formTenagaKeperawatan" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal fade" id="formTenagaKeperawatan" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true"
+            data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" id="formModalLabel">Tambah Tenaga Keperawatan</h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+						<button type="button" class="btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
                     <form id="form-tk" class="mb-4" novalidate="novalidate">
                         <div class="modal-body">
@@ -314,7 +317,7 @@
                             <!--</div>-->
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" id="btn-save-tk">Simpan</button>
                         </div>
                     </form>
@@ -356,12 +359,13 @@
         </table>
 
         <!-- Modal Tenaga Kesehatan -->
-        <div class="modal fade" id="formTenagaKesehatan" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal fade" id="formTenagaKesehatan" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true"
+            data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" id="formModalLabel">Tambah Tenaga Kesehatan</h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+						<button type="button" class="btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
                     <form id="form-tkl" class="mb-4" novalidate="novalidate">
                         <div class="modal-body">
@@ -411,7 +415,7 @@
                             <!--</div>-->
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" id="btn-save-tkl">Simpan</button>
                         </div>
                     </form>
@@ -449,12 +453,13 @@
         </table>
 
         <!-- Modal SDM LAIN -->
-        <div class="modal fade" id="formLain" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal fade" id="formLain" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true"
+            data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" id="formModalLabel">Tambah Tenaga Kesehatan</h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+						<button type="button" class="btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
                     <form id="form-lain" class="mb-4" novalidate="novalidate">
                         <div class="modal-body">
@@ -486,7 +491,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" id="btn-save-lain">Simpan</button>
                         </div>
                     </form>
@@ -525,12 +530,13 @@
         </table>
 
         <!-- Modal Rumah Sakit -->
-        <div class="modal fade" id="formRS" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal fade" id="formRS" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true"
+            data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" id="formModalLabel">Tambah Rumah Sakit</h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+						<button type="button" class="btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
                     <form id="form-rs" class="mb-4" novalidate="novalidate">
                         <div class="modal-body">
@@ -561,7 +567,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" id="btn-save-rs">Simpan</button>
                         </div>
                     </form>
@@ -600,12 +606,13 @@
         </table>
 
         <!-- Modal Asuransi -->
-        <div class="modal fade" id="formAS" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal fade" id="formAS" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true"
+            data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" id="formModalLabel">Tambah Asuransi</h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+						<button type="button" class="btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
                     <form id="form-as" class="mb-4" novalidate="novalidate">
                         <div class="modal-body">
@@ -643,7 +650,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" id="btn-save-as">Simpan</button>
                         </div>
                     </form>
@@ -681,12 +688,13 @@
         </table>
 
         <!-- Modal Foto Klinik -->
-        <div class="modal fade" id="formFoto" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal fade" id="formFoto" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true"
+            data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title" id="formModalLabel">Tambah Asuransi</h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="formModalLabel">Tambah Foto Klinik</h4>
+						<button type="button" class="btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
                     <form id="form-foto" class="mb-4" novalidate="novalidate">
                         <div class="modal-body">
@@ -716,7 +724,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" id="btn-save-foto">Simpan</button>
                         </div>
                     </form>

@@ -122,12 +122,13 @@
 </div>
 
 <!-- Modal for Add/Edit Pengurus -->
-<div class="modal fade" id="pengurusModal" tabindex="-1" role="dialog" aria-labelledby="pengurusModalLabel" aria-hidden="true">
+<div class="modal fade" id="pengurusModal" tabindex="-1" role="dialog" aria-labelledby="pengurusModalLabel" aria-hidden="true"
+    data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title font-bold text-slate-800 dark:text-white" id="pengurusModalLabel">Tambah Pengurus</h5>
-                <button type="button" class="close text-slate-400 hover:text-slate-600" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-slate-400 hover:text-slate-600" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -202,7 +203,7 @@
                     </div>
                 </div>
                 <div class="modal-footer flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" data-bs-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary btn-sm" id="btnSavePengurus">Simpan Data</button>
                 </div>
             </form>
@@ -211,12 +212,13 @@
 </div>
 
 <!-- Delete Pengurus Confirmation Modal -->
-<div class="modal fade" id="deletePengurusModal" tabindex="-1" role="dialog" aria-labelledby="deletePengurusModalLabel" aria-hidden="true">
+<div class="modal fade" id="deletePengurusModal" tabindex="-1" role="dialog" aria-labelledby="deletePengurusModalLabel" aria-hidden="true"
+    data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title font-bold text-slate-800 dark:text-white" id="deletePengurusModalLabel">Konfirmasi Hapus</h5>
-                <button type="button" class="close text-slate-400 hover:text-slate-600" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-slate-400 hover:text-slate-600" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -229,7 +231,7 @@
             </div>
             <div class="modal-footer flex items-center justify-center gap-2 border-t border-slate-100 dark:border-slate-800">
                 <input type="hidden" id="delete_pengurus_id" name="delete_pengurus_id">
-                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" data-bs-dismiss="modal">Batal</button>
                 <button type="button" class="btn btn-danger btn-sm" id="btnDeletePengurus">Hapus Sekarang</button>
             </div>
         </div>

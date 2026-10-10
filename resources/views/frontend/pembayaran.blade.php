@@ -32,12 +32,12 @@
     	</div>
     	
     	<!-- Modal -->
-        <div class="modal fade" tabindex="-1" role="dialog" id="tambah">
+        <div class="modal fade" tabindex="-1" role="dialog" id="tambah" data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                        <button type="button" class="btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <form id="form" class="form" action="javascript::void(0)">
                         <input type="hidden" name="id" id="id">
@@ -63,11 +63,11 @@
                                 <label>Bukti Transfer</label>
                                 <input type="file" id="bukti" name="bukti" class="form-control form-control-sm">
                             </div>
-                            <div class="modal-footer">
-        						<button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-        						<button type="submit" id="btn-save" class="btn btn-primary">Simpan</button>
-        					</div>
                         </div>
+                        <div class="modal-footer">
+        					<button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
+        					<button type="submit" id="btn-save" class="btn btn-primary">Simpan</button>
+        				</div>
                     </form>
                 </div>
             </div>

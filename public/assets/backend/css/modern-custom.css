@@ -331,6 +331,47 @@ label,
     border-top-color: #1e293b !important;
 }
 
+.modal-header .close,
+.modal-header .btn-close {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #64748b !important;
+    text-shadow: none !important;
+    opacity: 0.7 !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0.5rem 0.75rem !important;
+    margin: -0.5rem -0.5rem -0.5rem auto !important;
+    cursor: pointer !important;
+    border-radius: 0.5rem !important;
+    transition: all 0.15s ease-in-out !important;
+}
+
+.modal-header .close:hover,
+.modal-header .btn-close:hover {
+    color: #0f172a !important;
+    opacity: 1 !important;
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark .modal-header .close,
+.dark .modal-header .btn-close {
+    color: #cbd5e1 !important;
+}
+
+.dark .modal-header .close:hover,
+.dark .modal-header .btn-close:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .modal-footer.bg-whitesmoke,
+.dark .bg-whitesmoke {
+    background-color: #0f172a !important;
+    border-top-color: #1e293b !important;
+}
+
 /* ==========================================================================
    7. Modern Badges & Alerts
    ========================================================================== */
@@ -386,3 +427,299 @@ div.nama-klinik,
 .dark .table td.col-nama-klinik {
     color: #f87171 !important; /* Red 400 for dark mode */
 }
+
+/* ==========================================================================
+   9. Comprehensive Dark Mode Engine (Sidebar, Header, Layout & Bootstrap Overrides)
+   ========================================================================== */
+
+/* Main Layout & Body Background */
+.dark,
+.dark body,
+.dark .min-h-full,
+.dark .min-h-screen {
+    background-color: #020617 !important; /* deep slate-950 */
+    color: #f1f5f9 !important;
+}
+
+/* --------------------------------------------------------------------------
+   A. Main Sidebar Dark Theme (100% Complete)
+   -------------------------------------------------------------------------- */
+.dark #main-sidebar,
+.dark aside#main-sidebar {
+    background-color: #0f172a !important; /* slate-900 */
+    border-right-color: #1e293b !important; /* slate-800 */
+}
+
+/* Sidebar Brand Header */
+.dark #main-sidebar > div:first-child,
+.dark #main-sidebar .h-16 {
+    background-color: #0f172a !important;
+    border-bottom-color: #1e293b !important;
+}
+
+.dark #main-sidebar a .font-extrabold {
+    color: #ffffff !important;
+}
+
+.dark #main-sidebar a .text-slate-400,
+.dark #main-sidebar a .text-slate-500 {
+    color: #64748b !important;
+}
+
+/* Sidebar Section Headers */
+.dark #main-sidebar .uppercase {
+    color: #64748b !important;
+}
+
+/* Sidebar Links & Buttons */
+.dark #main-sidebar nav a,
+.dark #main-sidebar nav button {
+    color: #94a3b8 !important;
+    background-color: transparent !important;
+}
+
+.dark #main-sidebar nav a:hover,
+.dark #main-sidebar nav button:hover {
+    color: #ffffff !important;
+    background-color: rgba(30, 41, 59, 0.7) !important; /* slate-800 */
+}
+
+.dark #main-sidebar nav a:hover i,
+.dark #main-sidebar nav button:hover i {
+    color: #ffffff !important;
+}
+
+/* Sidebar Active Link (e.g. Dashboard, Verifikasi, Template Settings) */
+.dark #main-sidebar nav a.bg-emerald-50,
+.dark #main-sidebar nav a[class*="bg-emerald-"],
+.dark #main-sidebar nav a[class*="text-emerald-"],
+.dark #main-sidebar nav a.font-semibold {
+    background-color: rgba(6, 78, 59, 0.5) !important; /* emerald-950/50 */
+    color: #34d399 !important; /* emerald-400 */
+    border: 1px solid rgba(16, 185, 129, 0.25) !important;
+}
+
+.dark #main-sidebar nav a.bg-emerald-50 i,
+.dark #main-sidebar nav a[class*="bg-emerald-"] i,
+.dark #main-sidebar nav a.font-semibold i {
+    color: #34d399 !important;
+}
+
+/* Sidebar Dropdown Submenus */
+.dark #main-sidebar .dropdown-submenu {
+    border-left: 1px solid #1e293b !important;
+}
+
+.dark #main-sidebar .dropdown-submenu a {
+    color: #94a3b8 !important;
+}
+
+.dark #main-sidebar .dropdown-submenu a:hover {
+    color: #ffffff !important;
+    background-color: rgba(30, 41, 59, 0.6) !important;
+}
+
+.dark #main-sidebar .dropdown-submenu a[class*="text-emerald-"],
+.dark #main-sidebar .dropdown-submenu a.font-semibold {
+    color: #34d399 !important;
+}
+
+/* Sidebar Bottom: User Profile Card */
+.dark #main-sidebar > div:last-child {
+    background-color: rgba(15, 23, 42, 0.95) !important;
+    border-top-color: #1e293b !important;
+}
+
+.dark #main-sidebar > div:last-child > div {
+    background-color: rgba(30, 41, 59, 0.85) !important;
+    border-color: #334155 !important;
+}
+
+.dark #main-sidebar > div:last-child p.font-semibold {
+    color: #ffffff !important;
+}
+
+.dark #main-sidebar > div:last-child p.text-slate-400,
+.dark #main-sidebar > div:last-child p.text-slate-500 {
+    color: #94a3b8 !important;
+}
+
+.dark #main-sidebar > div:last-child a[title="Logout"] {
+    color: #94a3b8 !important;
+}
+
+.dark #main-sidebar > div:last-child a[title="Logout"]:hover {
+    color: #fb7185 !important;
+    background-color: rgba(51, 65, 85, 0.8) !important;
+}
+
+/* --------------------------------------------------------------------------
+   B. Top Navbar Dark Theme
+   -------------------------------------------------------------------------- */
+.dark header.sticky,
+.dark header[class*="border-b"],
+.dark header {
+    background-color: rgba(15, 23, 42, 0.85) !important;
+    border-bottom-color: #1e293b !important;
+}
+
+.dark header h1 {
+    color: #ffffff !important;
+}
+
+.dark header a,
+.dark header button {
+    color: #cbd5e1 !important;
+}
+
+.dark header a:hover,
+.dark header button:hover {
+    color: #ffffff !important;
+    background-color: rgba(30, 41, 59, 0.7) !important;
+}
+
+.dark header a[title="Kunjungi Website Publik"] {
+    color: #94a3b8 !important;
+}
+
+.dark header a[title="Kunjungi Website Publik"]:hover {
+    color: #34d399 !important;
+    background-color: rgba(30, 41, 59, 0.7) !important;
+}
+
+.dark #theme-toggle {
+    border-color: #1e293b !important;
+}
+
+.dark #theme-toggle:hover {
+    background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* User Menu Dropdown */
+.dark #user-menu-dropdown {
+    background-color: #0f172a !important;
+    border-color: #1e293b !important;
+    color: #cbd5e1 !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark #user-menu-dropdown div.border-b {
+    border-bottom-color: #1e293b !important;
+}
+
+.dark #user-menu-dropdown a {
+    color: #cbd5e1 !important;
+}
+
+.dark #user-menu-dropdown a:hover {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   C. Footer Dark Theme
+   -------------------------------------------------------------------------- */
+.dark footer {
+    background-color: rgba(15, 23, 42, 0.7) !important;
+    border-top-color: #1e293b !important;
+    color: #94a3b8 !important;
+}
+
+.dark footer span.font-semibold {
+    color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   D. Overriding Bootstrap 4 !important Utilities for Tailwind Elements
+   -------------------------------------------------------------------------- */
+.dark [class*="dark:bg-slate-900"] {
+    background-color: #0f172a !important;
+}
+
+.dark [class*="dark:bg-slate-800"] {
+    background-color: #1e293b !important;
+}
+
+.dark [class*="dark:bg-slate-950"] {
+    background-color: #020617 !important;
+}
+
+.dark [class*="dark:bg-emerald-950"] {
+    background-color: #022c22 !important;
+}
+
+.dark [class*="dark:bg-amber-950"] {
+    background-color: #451a03 !important;
+}
+
+.dark [class*="dark:border-slate-800"] {
+    border-color: #1e293b !important;
+}
+
+.dark [class*="dark:border-slate-700"] {
+    border-color: #334155 !important;
+}
+
+.dark [class*="dark:border-emerald-800"] {
+    border-color: #065f46 !important;
+}
+
+.dark [class*="dark:border-amber-800"] {
+    border-color: #92400e !important;
+}
+
+.dark [class*="dark:text-white"] {
+    color: #ffffff !important;
+}
+
+.dark [class*="dark:text-slate-100"] {
+    color: #f1f5f9 !important;
+}
+
+.dark [class*="dark:text-slate-200"] {
+    color: #e2e8f0 !important;
+}
+
+.dark [class*="dark:text-slate-300"] {
+    color: #cbd5e1 !important;
+}
+
+.dark [class*="dark:text-slate-400"] {
+    color: #94a3b8 !important;
+}
+
+.dark [class*="dark:text-slate-500"] {
+    color: #64748b !important;
+}
+
+.dark [class*="dark:text-emerald-300"] {
+    color: #6ee7b7 !important;
+}
+
+.dark [class*="dark:text-emerald-400"] {
+    color: #34d399 !important;
+}
+
+.dark [class*="dark:text-amber-200"] {
+    color: #fde68a !important;
+}
+
+.dark [class*="dark:text-amber-300"] {
+    color: #fcd34d !important;
+}
+
+/* SweetAlert2 Dark Mode Compatibility */
+.dark .swal2-popup {
+    background-color: #0f172a !important;
+    color: #f1f5f9 !important;
+    border: 1px solid #1e293b !important;
+}
+
+.dark .swal2-title {
+    color: #ffffff !important;
+}
+
+.dark .swal2-html-container {
+    color: #cbd5e1 !important;
+}
+

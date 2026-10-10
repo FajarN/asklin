@@ -60,12 +60,12 @@
 </div>
 
     <!-- Modal -->
-    <div class="modal fade" tabindex="-1" role="dialog" id="roleModal">
+    <div class="modal fade" tabindex="-1" role="dialog" id="roleModal" data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTitle"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -130,7 +130,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary" id="saveBtn">Simpan</button>
                     </div>
                 </form>

@@ -265,12 +265,12 @@
                 </div>
                 
                 <!-- Preview Modal -->
-                <div class="modal fade" id="previewModal" tabindex="-1">
+                <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title">Preview Event</h5>
-                                <button type="button" class="close" data-dismiss="modal">
+                                <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal">
                                     <span>&times;</span>
                                 </button>
                             </div>
@@ -278,7 +278,7 @@
                                 <div id="previewResult"></div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Tutup</button>
                             </div>
                         </div>
                     </div>

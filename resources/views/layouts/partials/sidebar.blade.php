@@ -361,22 +361,22 @@
                     </button>
                     <ul class="dropdown-submenu hidden pl-7 pr-1 mt-1 space-y-1">
                         @can('fasilitas-list')
-                            <li><a href="{{ route('fasilitas.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('fasilitas.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Fasilitas</a></li>
+                            <li><a href="{{ route('fasilitas.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('fasilitas.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Fasilitas</a></li>
                         @endcan
                         @can('fasilitas-klinik-list')
-                            <li><a href="{{ route('fasilitas_klinik.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('fasilitas_klinik.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Fasilitas Klinik</a></li>
+                            <li><a href="{{ route('fasilitas_klinik.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('fasilitas_klinik.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Fasilitas Klinik</a></li>
                         @endcan
                         @can('layanan-list')
-                            <li><a href="{{ route('layanan.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('layanan.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Layanan</a></li>
+                            <li><a href="{{ route('layanan.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('layanan.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Layanan</a></li>
                         @endcan
                         @can('kategori-berita-list')
-                            <li><a href="{{ route('berita_kategori.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('berita_kategori.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kategori Berita</a></li>
+                            <li><a href="{{ route('berita_kategori.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('berita_kategori.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kategori Berita</a></li>
                         @endcan
                         @can('kategori-event-list')
-                            <li><a href="{{ route('event_kategori.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('event_kategori.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kategori Event</a></li>
+                            <li><a href="{{ route('event_kategori.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('event_kategori.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kategori Event</a></li>
                         @endcan
                         @can('kategori-pembayaran-list')
-                            <li><a href="{{ route('kategori_pembayaran.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('kategori_pembayaran.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kategori Pembayaran</a></li>
+                            <li><a href="{{ route('kategori_pembayaran.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('kategori_pembayaran.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kategori Pembayaran</a></li>
                         @endcan
                     </ul>
                 </div>
@@ -394,11 +394,11 @@
                     <i class="fas fa-chevron-right text-[10px] text-slate-400 transition-transform dropdown-arrow"></i>
                 </button>
                 <ul class="dropdown-submenu hidden pl-7 pr-1 mt-1 space-y-1">
-                    <li><a href="{{ route('users.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('users.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kelola Pengguna</a></li>
-                    <li><a href="{{ route('roles.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('roles.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Role & Group</a></li>
-                    <li><a href="{{ route('permissions.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('permissions.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Hak Akses (Permission)</a></li>
-                    <li><a href="{{ route('settings.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('settings.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Konfigurasi Aplikasi</a></li>
-                    <li><a href="{{ route('template_settings.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('template_settings.index') ? 'text-emerald-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }} flex items-center justify-between"><span>Pengaturan Template</span><span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-bold">Multi</span></a></li>
+                    <li><a href="{{ route('users.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('users.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Kelola Pengguna</a></li>
+                    <li><a href="{{ route('roles.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('roles.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Role & Group</a></li>
+                    <li><a href="{{ route('permissions.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('permissions.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Hak Akses (Permission)</a></li>
+                    <li><a href="{{ route('settings.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('settings.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Konfigurasi Aplikasi</a></li>
+                    <li><a href="{{ route('template_settings.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('template_settings.index') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }} flex items-center justify-between"><span>Pengaturan Template</span><span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-bold">Multi</span></a></li>
                 </ul>
             </div>
         @endcan

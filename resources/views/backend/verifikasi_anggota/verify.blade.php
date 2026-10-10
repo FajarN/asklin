@@ -545,14 +545,15 @@
 
 <!-- Modal untuk Preview SIO -->
 @if($anggota->sio)
-<div class="modal fade" id="sioModal" tabindex="-1" role="dialog" aria-labelledby="sioModalLabel" aria-hidden="true">
+<div class="modal fade" id="sioModal" tabindex="-1" role="dialog" aria-labelledby="sioModalLabel" aria-hidden="true"
+    data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title font-bold text-sm text-slate-800 dark:text-white" id="sioModalLabel">
                     <i class="fas fa-file-pdf text-emerald-600 mr-2"></i> Surat Izin Operasional (SIO) — {{ $anggota->nama_klinik }}
                 </h5>
-                <button type="button" class="close text-slate-400 hover:text-slate-700 dark:hover:text-white" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-slate-400 hover:text-slate-700 dark:hover:text-white" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -586,7 +587,7 @@
                     <a href="{{ $filePath }}" target="_blank" class="btn btn-info btn-sm">
                         <i class="fas fa-external-link-alt"></i> Buka Tab Baru
                     </a>
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" data-bs-dismiss="modal">
                         Tutup
                     </button>
                 </div>
