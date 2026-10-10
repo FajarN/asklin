@@ -7,6 +7,8 @@ use App\Models\StrukturOrganisasi;
 use App\Models\StrukturKelompokPengurus;
 use App\Models\StrukturPengurus;
 use App\Models\TingkatanPengurus;
+use App\Models\SkPengurus;
+use App\Models\SkPengurusLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -262,8 +264,11 @@ class StrukturOrganisasiController extends Controller
             ->get();
 
         $kelompokPengurusList = StrukturKelompokPengurus::orderBy('urutan')->get();
+        $sk = $struktur->skPengurus;
+        $logs = $struktur->logs()->with('user')->get();
+        $totalPengurus = StrukturPengurus::where('id_struktur_organisasi', $id)->count();
 
-        return view('backend.struktur_organisasi.detail', compact('struktur', 'pengurus','kelompokPengurusList'));
+        return view('backend.struktur_organisasi.detail', compact('struktur', 'pengurus', 'kelompokPengurusList', 'sk', 'logs', 'totalPengurus'));
     }
 
     
@@ -480,5 +485,121 @@ class StrukturOrganisasiController extends Controller
                 
             return view('backend.struktur_organisasi.print', compact('struktur', 'pengurus'));
         }
+
+    /**
+     * Ajukan Struktur Organisasi untuk verifikasi dan pengesahan SK
+     */
+    public function ajukanSk(Request $request, $id)
+    {
+        $struktur = StrukturOrganisasi::findOrFail($id);
+
+        if (!$struktur->isAccessibleByCurrentUser()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki wewenang untuk mengajukan struktur wilayah ini!'
+            ], 403);
+        }
+
+        if ($struktur->is_locked && !in_array($struktur->status, ['draft', 'revisi'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Struktur ini sudah dalam proses pengajuan verifikasi!'
+            ], 422);
+        }
+
+        $totalPengurus = StrukturPengurus::where('id_struktur_organisasi', $id)->count();
+        if ($totalPengurus < 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Susunan pengurus masih kosong! Silakan tambahkan minimal 1 pengurus sebelum mengajukan pengesahan.'
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'file_berita_acara' => 'nullable|file|mimes:pdf,doc,docx,jpg,png,jpeg|max:5120',
+            'no_pengantar' => 'nullable|string|max:100',
+            'catatan_pengantar' => 'nullable|string|max:1000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Tentukan status dan tingkatan
+            $isCabang = ($struktur->id_tingkatan_pengurus == 3 || stripos($struktur->nama_struktur, 'cabang') !== false);
+            $isDaerah = ($struktur->id_tingkatan_pengurus == 2 || stripos($struktur->nama_struktur, 'daerah') !== false);
+
+            if ($isCabang) {
+                $newStatusStruktur = 'diajukan_daerah';
+                $newStatusSk = 'menunggu_daerah';
+                $tingkatSk = 'cabang';
+                $actionLog = 'submit_cabang';
+            } elseif ($isDaerah) {
+                $newStatusStruktur = 'diajukan_pusat';
+                $newStatusSk = 'menunggu_sekjen';
+                $tingkatSk = 'daerah';
+                $actionLog = 'submit_daerah';
+            } else {
+                $newStatusStruktur = 'diajukan_pusat';
+                $newStatusSk = 'menunggu_sekjen';
+                $tingkatSk = 'pusat';
+                $actionLog = 'submit_pusat';
+            }
+
+            // Simpan file berita acara jika diunggah
+            if ($request->hasFile('file_berita_acara')) {
+                if ($struktur->file_berita_acara && Storage::exists('public/berita_acara/' . $struktur->file_berita_acara)) {
+                    Storage::delete('public/berita_acara/' . $struktur->file_berita_acara);
+                }
+                $file = $request->file('file_berita_acara');
+                $filename = 'berita_acara_' . $struktur->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('public/berita_acara', $filename);
+                $struktur->file_berita_acara = $filename;
+            }
+
+            $struktur->status = $newStatusStruktur;
+            $struktur->is_locked = true;
+            $struktur->diajukan_at = now();
+            $struktur->catatan_revisi = null;
+            $struktur->save();
+
+            // Create or update SkPengurus draft
+            $sk = SkPengurus::firstOrNew(['id_struktur_organisasi' => $struktur->id]);
+            $sk->tingkatan = $tingkatSk;
+            $sk->status = $newStatusSk;
+            $sk->tgl_musyawarah = $struktur->tgl_muscab;
+            $sk->perihal = 'Pengesahan Susunan Pengurus ASKLIN ' . $struktur->nama_struktur . ' Periode ' . $struktur->periode;
+            if ($request->no_pengantar) {
+                $sk->no_rekomendasi_daerah = $request->no_pengantar;
+            }
+            $sk->created_by = Auth::id();
+            $sk->save();
+
+            // Record log
+            $userRole = Auth::user()->roles->first()->name ?? 'Pengurus';
+            SkPengurusLog::record(
+                $struktur->id,
+                $actionLog,
+                $userRole,
+                Auth::id(),
+                $request->catatan_pengantar ?: 'Pengajuan pengesahan struktur kepengurusan oleh ' . Auth::user()->name,
+                $sk->id
+            );
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Pengajuan pengesahan SK berhasil dikirim! Susunan pengurus saat ini terkunci selama proses verifikasi.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
 }

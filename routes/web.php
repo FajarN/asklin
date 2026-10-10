@@ -405,6 +405,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('struktur_organisasi.delete');
         Route::get('/detail/{id}', 'detail')->name('struktur_organisasi.detail');
         Route::get('/print/{id}', 'printDetail')->name('struktur_organisasi.print');
+        Route::post('/ajukan/{id}', 'ajukanSk')->name('struktur_organisasi.ajukan');
     });
 
     Route::prefix('pengurus')->controller(App\Http\Controllers\Backend\ruang_pengurus\StrukturOrganisasiController::class)->group(function () {

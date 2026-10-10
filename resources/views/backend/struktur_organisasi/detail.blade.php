@@ -13,40 +13,113 @@
             <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
                 <a href="{{ route('struktur_organisasi.index') }}" class="hover:underline">Struktur Organisasi</a>
                 <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
-                <span class="text-slate-500">Detail Bagan</span>
+                <span class="text-slate-500">Detail Bagan & Pengajuan SK</span>
             </div>
-            <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-white flex items-center gap-2">
+            <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-white flex items-center gap-2 flex-wrap">
                 <span>{{ $struktur->nama_struktur }}</span>
                 @php
                     $statusClass = [
-                        'draft' => 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30',
+                        'draft' => 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-500/30',
+                        'diajukan_daerah' => 'bg-sky-500/15 text-sky-700 dark:text-sky-400 border-sky-500/30',
+                        'diajukan_pusat' => 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-400 border-indigo-500/30',
+                        'disetujui' => 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30',
                         'aktif' => 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30',
-                        'selesai' => 'bg-sky-500/15 text-sky-700 dark:text-sky-400 border-sky-500/30',
+                        'selesai' => 'bg-slate-700/15 text-slate-700 dark:text-slate-400 border-slate-700/30',
+                        'revisi' => 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30',
+                        'ditolak' => 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30',
+                    ];
+                    $statusLabels = [
+                        'draft' => 'Draft',
+                        'diajukan_daerah' => 'Diajukan ke Daerah',
+                        'diajukan_pusat' => 'Diajukan ke Pusat',
+                        'disetujui' => 'SK Disahkan',
+                        'aktif' => 'Aktif',
+                        'selesai' => 'Selesai',
+                        'revisi' => 'Perlu Revisi',
+                        'ditolak' => 'Ditolak',
                     ];
                 @endphp
                 <span class="text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border {{ $statusClass[$struktur->status] ?? 'bg-slate-100 text-slate-600' }}">
-                    {{ ucfirst($struktur->status) }}
+                    {{ $statusLabels[$struktur->status] ?? ucfirst(str_replace('_', ' ', $struktur->status)) }}
                 </span>
+                @if($struktur->is_locked)
+                    <span class="text-xs px-2 py-0.5 rounded-full font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700">
+                        <i class="fas fa-lock mr-1"></i> Data Terkunci
+                    </span>
+                @endif
             </h2>
             <p class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400 mt-1">
                 Tingkatan: <strong class="text-slate-700 dark:text-slate-200">{{ $struktur->tingkatanPengurus->nama_tingkatan ?? '-' }}</strong> &bull;
                 Periode: <strong class="text-slate-700 dark:text-slate-200">{{ $struktur->periode }}</strong>
             </p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
+            @if(!$struktur->is_locked || in_array($struktur->status, ['draft', 'revisi']))
+                <button type="button" class="btn btn-success btn-sm" id="btnOpenModalAjukan">
+                    <i class="fas fa-paper-plane mr-1"></i>
+                    <span>Ajukan Pengesahan SK</span>
+                </button>
+            @endif
+
             <a href="{{ route('struktur_organisasi.print', $struktur->id) }}" class="btn btn-outline-primary btn-sm" target="_blank">
-                <i class="fas fa-print"></i>
-                <span>Cetak SK / Bagan</span>
+                <i class="fas fa-print mr-1"></i>
+                <span>Cetak Bagan</span>
             </a>
             <a href="{{ route('struktur_organisasi.index') }}" class="btn btn-secondary btn-sm">
-                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-left mr-1"></i>
                 <span>Kembali</span>
             </a>
         </div>
     </div>
 
+    <!-- Status Notification Alerts -->
+    @if($struktur->status == 'diajukan_daerah')
+        <div class="p-4 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-300 flex items-start gap-3 text-xs shadow-sm">
+            <i class="fas fa-hourglass-half text-base text-sky-500 mt-0.5"></i>
+            <div>
+                <strong class="font-bold">Pengajuan Sedang Diverifikasi oleh Pengurus Daerah</strong>
+                <p class="mt-0.5 text-slate-600 dark:text-slate-300">
+                    Susunan kepengurusan cabang telah diajukan dan sedang dalam proses pemeriksaan oleh Pengurus Daerah Provinsi {{ $struktur->provinsi_nama ?? '' }}. Selama proses verifikasi, pengeditan dan penambahan pengurus dinonaktifkan sementara demi kepastian data.
+                </p>
+            </div>
+        </div>
+    @elseif($struktur->status == 'diajukan_pusat')
+        <div class="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-300 flex items-start gap-3 text-xs shadow-sm">
+            <i class="fas fa-clipboard-check text-base text-indigo-500 mt-0.5"></i>
+            <div>
+                <strong class="font-bold">Pengajuan Sedang Dalam Pemeriksaan Pengurus Pusat</strong>
+                <p class="mt-0.5 text-slate-600 dark:text-slate-300">
+                    Berkas telah diteruskan ke Pengurus Pusat ASKLIN untuk penomoran SK resmi oleh Sekretaris Jenderal dan persetujuan pengesahan akhir oleh Ketua Umum.
+                </p>
+            </div>
+        </div>
+    @elseif($struktur->status == 'revisi')
+        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-300 flex items-start gap-3 text-xs shadow-sm">
+            <i class="fas fa-exclamation-triangle text-base text-amber-500 mt-0.5"></i>
+            <div>
+                <strong class="font-bold">Pengajuan Memerlukan Perbaikan / Revisi</strong>
+                <p class="mt-0.5 text-slate-700 dark:text-slate-300">
+                    Catatan Verifikator: <em>"{{ $struktur->catatan_revisi ?: 'Silakan periksa kembali kelengkapan pengurus dan berita acara Anda.' }}"</em>
+                </p>
+                <p class="mt-1 font-semibold text-amber-700 dark:text-amber-400">
+                    Kunci data telah dibuka kembali. Anda dapat menambahkan atau mengedit pengurus, lalu klik tombol "Ajukan Pengesahan SK" kembali setelah perbaikan selesai.
+                </p>
+            </div>
+        </div>
+    @elseif($struktur->status == 'disetujui' || $struktur->status == 'aktif')
+        <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 flex items-start gap-3 text-xs shadow-sm">
+            <i class="fas fa-check-circle text-base text-emerald-500 mt-0.5"></i>
+            <div>
+                <strong class="font-bold">Surat Keputusan (SK) Resmi Telah Terbit & Disahkan</strong>
+                <p class="mt-0.5 text-slate-600 dark:text-slate-300">
+                    Susunan kepengurusan ini telah resmi disahkan oleh Ketua Umum Pengurus Pusat ASKLIN. Dokumen SK resmi ber-QR Code telah diterbitkan dan tersimpan dalam arsip digital organisasi.
+                </p>
+            </div>
+        </div>
+    @endif
+
     <!-- Metadata Card -->
-    <div class="card">
+    <div class="card shadow-sm">
         <div class="card-header">
             <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 <i class="fas fa-info-circle text-emerald-600 mr-1.5"></i> Informasi Wilayah & Struktur
@@ -77,22 +150,36 @@
                     </span>
                 </div>
             </div>
+
+            @if($struktur->file_berita_acara)
+                <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                    <span class="text-slate-500">
+                        <i class="fas fa-file-pdf text-rose-500 mr-1.5"></i> Berkas Berita Acara / Surat Pengantar:
+                    </span>
+                    <a href="{{ asset('storage/berita_acara/' . $struktur->file_berita_acara) }}" target="_blank" class="text-emerald-600 hover:underline font-semibold flex items-center gap-1">
+                        <span>Lihat Dokumen Terlampir</span>
+                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                    </a>
+                </div>
+            @endif
         </div>
     </div>
 
     <!-- Tree Structure Card -->
-    <div class="card">
+    <div class="card shadow-sm">
         <div class="card-header flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
             <div>
                 <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                     <i class="fas fa-sitemap text-emerald-600 mr-1.5"></i> Susunan Dewan Pengurus
                 </h4>
-                <p class="text-xs text-slate-400 mt-0.5">Hirarki jabatan dan personil kepengurusan ASKLIN</p>
+                <p class="text-xs text-slate-400 mt-0.5">Total Personil: <strong class="text-slate-700 dark:text-slate-200">{{ $totalPengurus ?? count($pengurus) }} Pengurus</strong></p>
             </div>
+            @if(!$struktur->is_locked)
             <button type="button" class="btn btn-primary btn-sm" id="btnAddPengurus">
-                <i class="fas fa-plus"></i>
-                <span>Tambah Pengurus Tingkat Atas</span>
+                <i class="fas fa-plus mr-1"></i>
+                <span>Tambah Pengurus Pimpinan</span>
             </button>
+            @endif
         </div>
         <div class="card-body">
             <div class="org-chart space-y-4">
@@ -100,6 +187,7 @@
                     @foreach ($pengurus as $item)
                         @include('backend.struktur_organisasi.components.pengurus_card', [
                             'pengurus' => $item,
+                            'isLocked' => $struktur->is_locked
                         ])
                     @endforeach
                 @else
@@ -111,24 +199,110 @@
                         <p class="text-xs text-slate-400 max-w-sm mx-auto mb-4">
                             Struktur organisasi ini belum memiliki data pengurus. Silakan klik tombol di bawah untuk menambahkan pengurus pimpinan awal.
                         </p>
+                        @if(!$struktur->is_locked)
                         <button type="button" class="btn btn-primary btn-sm" onclick="$('#btnAddPengurus').click()">
                             <i class="fas fa-plus mr-1"></i> Tambah Pengurus Pertama
                         </button>
+                        @endif
                     </div>
                 @endif
             </div>
+        </div>
+    </div>
+
+    <!-- Timeline Audit Trail Card -->
+    @if(isset($logs) && count($logs) > 0)
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <i class="fas fa-history text-slate-500 mr-1.5"></i> Riwayat & Jejak Audit Pengajuan SK
+            </h4>
+        </div>
+        <div class="card-body p-4 sm:p-5">
+            <div class="space-y-4">
+                @foreach($logs as $log)
+                    <div class="flex items-start gap-3 text-xs pb-3 border-b border-slate-100 dark:border-slate-800 last:border-b-0 last:pb-0">
+                        <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <span class="font-bold text-slate-800 dark:text-slate-200">
+                                    {{ $log->user->name ?? 'Pengguna' }} ({{ $log->role_name }})
+                                </span>
+                                <span class="text-[11px] text-slate-400">
+                                    {{ $log->created_at ? $log->created_at->format('d M Y, H:i') : '-' }}
+                                </span>
+                            </div>
+                            <p class="text-slate-600 dark:text-slate-300 mt-1">
+                                <span class="badge badge-light border text-[10px] uppercase font-semibold mr-1">{{ str_replace('_', ' ', $log->action) }}</span>
+                                {{ $log->catatan }}
+                            </p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
+
+</div>
+
+<!-- Modal Ajukan Pengesahan SK -->
+<div class="modal fade" id="modalAjukanSk" tabindex="-1" role="dialog" aria-labelledby="modalAjukanSkLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title font-bold text-sm text-slate-800 dark:text-white" id="modalAjukanSkLabel">
+                    <i class="fas fa-paper-plane text-emerald-600 mr-1.5"></i> Ajukan Pengesahan SK Kepengurusan
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="formAjukanSk" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body text-xs space-y-3">
+                    <div class="p-3 bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300 rounded-lg border border-amber-200 dark:border-amber-800">
+                        <div class="font-bold mb-1"><i class="fas fa-lock mr-1"></i> Perhatian Penting:</div>
+                        Setelah diajukan, seluruh data susunan pengurus akan <b>terkunci</b> secara otomatis dan tidak dapat diubah hingga proses verifikasi oleh pihak berwenang selesai.
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="font-semibold text-slate-700 dark:text-slate-300">Nomor Surat Pengantar / Berita Acara (Opsional)</label>
+                        <input type="text" name="no_pengantar" id="no_pengantar" class="form-control text-xs" placeholder="Contoh: 012/PC-ASKLIN/BA-MUSCAB/X/2024">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="font-semibold text-slate-700 dark:text-slate-300">File Berita Acara Muscab / Surat Pengantar</label>
+                        <input type="file" name="file_berita_acara" id="file_berita_acara" class="form-control-file text-xs" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                        <small class="text-muted block mt-1">Format: PDF, Word (Doc/Docx), JPG/PNG. Maks: 5MB.</small>
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <label class="font-semibold text-slate-700 dark:text-slate-300">Catatan / Pengantar Tambahan</label>
+                        <textarea name="catatan_pengantar" id="catatan_pengantar" class="form-control text-xs" rows="3" placeholder="Tuliskan catatan permohonan pengesahan susunan pengurus..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer bg-slate-50 dark:bg-slate-800/50 py-2">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-success btn-sm" id="btnSubmitAjukan">
+                        <i class="fas fa-check mr-1"></i> Ya, Ajukan Pengesahan Sekarang
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <!-- Modal for Add/Edit Pengurus -->
 <div class="modal fade" id="pengurusModal" tabindex="-1" role="dialog" aria-labelledby="pengurusModalLabel" aria-hidden="true"
-    data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
+    data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title font-bold text-slate-800 dark:text-white" id="pengurusModalLabel">Tambah Pengurus</h5>
-                <button type="button" class="close text-slate-400 hover:text-slate-600" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-slate-400 hover:text-slate-600" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -203,7 +377,7 @@
                     </div>
                 </div>
                 <div class="modal-footer flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary btn-sm" id="btnSavePengurus">Simpan Data</button>
                 </div>
             </form>
@@ -213,12 +387,12 @@
 
 <!-- Delete Pengurus Confirmation Modal -->
 <div class="modal fade" id="deletePengurusModal" tabindex="-1" role="dialog" aria-labelledby="deletePengurusModalLabel" aria-hidden="true"
-    data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
+    data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title font-bold text-slate-800 dark:text-white" id="deletePengurusModalLabel">Konfirmasi Hapus</h5>
-                <button type="button" class="close text-slate-400 hover:text-slate-600" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-slate-400 hover:text-slate-600" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -231,7 +405,7 @@
             </div>
             <div class="modal-footer flex items-center justify-center gap-2 border-t border-slate-100 dark:border-slate-800">
                 <input type="hidden" id="delete_pengurus_id" name="delete_pengurus_id">
-                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
                 <button type="button" class="btn btn-danger btn-sm" id="btnDeletePengurus">Hapus Sekarang</button>
             </div>
         </div>
@@ -253,7 +427,72 @@
                 }
             });
 
-            // File input preview
+            // Buka Modal Ajukan SK
+            $('#btnOpenModalAjukan').click(function() {
+                $('#formAjukanSk')[0].reset();
+                $('#modalAjukanSk').modal('show');
+            });
+
+            // Submit Form Ajukan SK
+            $('#formAjukanSk').submit(function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+
+                $('#btnSubmitAjukan').attr('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Mengirim Pengajuan...');
+
+                $.ajax({
+                    url: "{{ route('struktur_organisasi.ajukan', $struktur->id) }}",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            iziToast.success({
+                                title: 'Sukses',
+                                message: response.message,
+                                position: 'topRight'
+                            });
+                            $('#modalAjukanSk').modal('hide');
+                            setTimeout(function() {
+                                location.reload();
+                            }, 800);
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            var errors = xhr.responseJSON.errors;
+                            if (errors) {
+                                for (var f in errors) {
+                                    iziToast.error({
+                                        title: 'Peringatan',
+                                        message: errors[f][0],
+                                        position: 'topRight'
+                                    });
+                                }
+                            } else {
+                                iziToast.error({
+                                    title: 'Peringatan',
+                                    message: xhr.responseJSON.message,
+                                    position: 'topRight'
+                                });
+                            }
+                        } else {
+                            var msg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Terjadi kesalahan sistem';
+                            iziToast.error({
+                                title: 'Error',
+                                message: msg,
+                                position: 'topRight'
+                            });
+                        }
+                    },
+                    complete: function() {
+                        $('#btnSubmitAjukan').attr('disabled', false).html('<i class="fas fa-check mr-1"></i> Ya, Ajukan Pengesahan Sekarang');
+                    }
+                });
+            });
+
+            // File input preview foto pengurus
             $('#foto_pengurus').change(function() {
                 let file = this.files[0];
                 if (file) {

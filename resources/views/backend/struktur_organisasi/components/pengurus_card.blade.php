@@ -56,20 +56,26 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100 dark:border-slate-800">
-                <button type="button" class="btn btn-sm btn-outline-success add-sub-btn" data-id="{{ $pengurus->id }}" title="Tambah Bawahan">
-                    <i class="fas fa-user-plus"></i>
-                    <span class="hidden md:inline text-xs ml-1">Bawahan</span>
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-primary edit-pengurus-btn" data-id="{{ $pengurus->id }}" title="Edit Pengurus">
-                    <i class="fas fa-edit"></i>
-                    <span class="hidden md:inline text-xs ml-1">Edit</span>
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-danger delete-pengurus-btn" data-id="{{ $pengurus->id }}" title="Hapus Pengurus">
-                    <i class="fas fa-trash"></i>
-                    <span class="hidden md:inline text-xs ml-1">Hapus</span>
-                </button>
-            </div>
+            @if(!empty($isLocked))
+                <span class="inline-flex items-center gap-1.5 text-xs text-slate-400 px-2.5 py-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <i class="fas fa-lock text-slate-400"></i> Terkunci
+                </span>
+            @else
+                <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100 dark:border-slate-800">
+                    <button type="button" class="btn btn-sm btn-outline-success add-sub-btn" data-id="{{ $pengurus->id }}" title="Tambah Bawahan">
+                        <i class="fas fa-user-plus"></i>
+                        <span class="hidden md:inline text-xs ml-1">Bawahan</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary edit-pengurus-btn" data-id="{{ $pengurus->id }}" title="Edit Pengurus">
+                        <i class="fas fa-edit"></i>
+                        <span class="hidden md:inline text-xs ml-1">Edit</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger delete-pengurus-btn" data-id="{{ $pengurus->id }}" title="Hapus Pengurus">
+                        <i class="fas fa-trash"></i>
+                        <span class="hidden md:inline text-xs ml-1">Hapus</span>
+                    </button>
+                </div>
+            @endif
         </div>
 
         @php
@@ -82,7 +88,7 @@
                     <i class="fas fa-level-down-alt"></i> Anggota Tim / Bawahan Langsung ({{ count($children) }})
                 </div>
                 @foreach ($children as $child)
-                    @include('backend.struktur_organisasi.components.pengurus_card', ['pengurus' => $child])
+                    @include('backend.struktur_organisasi.components.pengurus_card', ['pengurus' => $child, 'isLocked' => !empty($isLocked)])
                 @endforeach
             </div>
         @endif
