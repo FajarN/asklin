@@ -88,24 +88,38 @@
 
     <!-- Status Notification Alerts -->
     @if($struktur->status == 'diajukan_daerah')
-        <div class="p-4 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-300 flex items-start gap-3 text-xs shadow-sm">
-            <i class="fas fa-hourglass-half text-base text-sky-500 mt-0.5"></i>
-            <div>
-                <strong class="font-bold">Pengajuan Sedang Diverifikasi oleh Pengurus Daerah</strong>
-                <p class="mt-0.5 text-slate-600 dark:text-slate-300">
-                    Susunan kepengurusan cabang telah diajukan dan sedang dalam proses pemeriksaan oleh Pengurus Daerah Provinsi {{ $struktur->provinsi_nama ?? '' }}. Selama proses verifikasi, pengeditan dan penambahan pengurus dinonaktifkan sementara demi kepastian data.
-                </p>
+        <div class="p-4 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-sm">
+            <div class="flex items-start gap-3">
+                <i class="fas fa-hourglass-half text-base text-sky-500 mt-0.5"></i>
+                <div>
+                    <strong class="font-bold">Pengajuan Sedang Diverifikasi oleh Pengurus Daerah</strong>
+                    <p class="mt-0.5 text-slate-600 dark:text-slate-300">
+                        Susunan kepengurusan cabang telah diajukan dan sedang dalam proses pemeriksaan oleh Pengurus Daerah Provinsi {{ $struktur->provinsi_nama ?? '' }}. Selama proses verifikasi, pengeditan dan penambahan pengurus dinonaktifkan sementara demi kepastian data.
+                    </p>
+                </div>
             </div>
+            @if($sk)
+            <a href="{{ route('sk_pengurus.show', $sk->id) }}" class="btn btn-info btn-sm shrink-0 whitespace-nowrap">
+                <i class="fas fa-user-check mr-1"></i> Buka Verifikasi SK &rarr;
+            </a>
+            @endif
         </div>
     @elseif($struktur->status == 'diajukan_pusat')
-        <div class="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-300 flex items-start gap-3 text-xs shadow-sm">
-            <i class="fas fa-clipboard-check text-base text-indigo-500 mt-0.5"></i>
-            <div>
-                <strong class="font-bold">Pengajuan Sedang Dalam Pemeriksaan Pengurus Pusat</strong>
-                <p class="mt-0.5 text-slate-600 dark:text-slate-300">
-                    Berkas telah diteruskan ke Pengurus Pusat ASKLIN untuk penomoran SK resmi oleh Sekretaris Jenderal dan persetujuan pengesahan akhir oleh Ketua Umum.
-                </p>
+        <div class="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-sm">
+            <div class="flex items-start gap-3">
+                <i class="fas fa-clipboard-check text-base text-indigo-500 mt-0.5"></i>
+                <div>
+                    <strong class="font-bold">Pengajuan Sedang Dalam Pemeriksaan Pengurus Pusat</strong>
+                    <p class="mt-0.5 text-slate-600 dark:text-slate-300">
+                        Berkas telah diteruskan ke Pengurus Pusat ASKLIN untuk penomoran SK resmi oleh Sekretaris Jenderal dan persetujuan pengesahan akhir oleh Ketua Umum.
+                    </p>
+                </div>
             </div>
+            @if($sk)
+            <a href="{{ route('sk_pengurus.show', $sk->id) }}" class="btn btn-primary btn-sm shrink-0 whitespace-nowrap">
+                <i class="fas fa-stamp mr-1"></i> Buka Ruang Kerja SK &rarr;
+            </a>
+            @endif
         </div>
     @elseif($struktur->status == 'revisi')
         <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-300 flex items-start gap-3 text-xs shadow-sm">

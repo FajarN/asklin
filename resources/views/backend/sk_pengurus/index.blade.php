@@ -113,7 +113,7 @@
 </div>
 @endsection
 
-@push('scripts')
+@push('js')
 <script>
 $(document).ready(function() {
     var activeTab = 'semua';

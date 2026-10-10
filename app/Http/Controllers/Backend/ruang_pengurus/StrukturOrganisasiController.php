@@ -48,6 +48,7 @@ class StrukturOrganisasiController extends Controller
         $user = Auth::user();
 
         $query = StrukturOrganisasi::query()
+            ->with(['tingkatanPengurus', 'skPengurus'])
             ->select(
                 'a.*',
                 'd.name as kota',
@@ -80,19 +81,24 @@ class StrukturOrganisasiController extends Controller
             ->addColumn('tingkatan', function ($row) {
                 return $row->tingkatanPengurus ? $row->tingkatanPengurus->nama_tingkatan : '-';
             })
-            ->addColumn('action', function ($row) {
+            ->addColumn('action', function ($row) use ($user) {
                 $viewBtn = '<a href="' . route('struktur_organisasi.detail', $row->id) . '" class="btn btn-sm btn-info" title="Lihat Detail"><i class="fas fa-eye"></i> Detail</a>';
                 
-                // Jika data sedang terkunci, disable edit dan delete untuk Admin Cabang
-                if ($row->is_locked) {
-                    $editBtn = '<button class="btn btn-sm btn-secondary" disabled title="Terkunci dalam proses persetujuan"><i class="fas fa-lock"></i> Terkunci</button>';
-                    $deleteBtn = '';
-                } else {
-                    $editBtn = '<button class="btn btn-sm btn-primary edit-btn" data-id="' . $row->id . '"><i class="fas fa-edit"></i> Edit</button>';
-                    $deleteBtn = '<button class="btn btn-sm btn-danger delete-btn" data-id="' . $row->id . '"><i class="fas fa-trash"></i> Delete</button>';
+                $skBtn = '';
+                if ($row->skPengurus) {
+                    $skBtn = ' <a href="' . route('sk_pengurus.show', $row->skPengurus->id) . '" class="btn btn-sm btn-success" title="Ruang Kerja Persetujuan SK"><i class="fas fa-stamp"></i> Periksa SK</a>';
                 }
 
-                return '<div class="btn-group" role="group">' . $viewBtn . $editBtn . $deleteBtn . '</div>';
+                // Jika data sedang terkunci, disable edit dan delete kecuali untuk Superadmin
+                if ($row->is_locked && !$user->hasRole('Superadmin')) {
+                    $editBtn = ' <button class="btn btn-sm btn-secondary" disabled title="Terkunci dalam proses persetujuan"><i class="fas fa-lock"></i> Terkunci</button>';
+                    $deleteBtn = '';
+                } else {
+                    $editBtn = ' <button class="btn btn-sm btn-primary edit-btn" data-id="' . $row->id . '"><i class="fas fa-edit"></i> Edit</button>';
+                    $deleteBtn = ' <button class="btn btn-sm btn-danger delete-btn" data-id="' . $row->id . '"><i class="fas fa-trash"></i> Delete</button>';
+                }
+
+                return '<div class="btn-group" role="group">' . $viewBtn . $skBtn . $editBtn . $deleteBtn . '</div>';
             })
             ->editColumn('status', function ($row) {
                 $statusClasses = [

@@ -37,6 +37,7 @@ class MasterKetuaUmumController extends Controller
         $query = MasterKetuaUmum::query()->orderByRaw("CASE WHEN status = 'aktif' THEN 0 ELSE 1 END")->orderBy('periode_mulai', 'desc');
 
         return DataTables::of($query)
+            ->addIndexColumn()
             ->addColumn('periode', function ($row) {
                 return $row->periode_mulai . ' - ' . $row->periode_selesai;
             })

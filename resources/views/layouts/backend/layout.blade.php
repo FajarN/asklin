@@ -48,6 +48,11 @@
     <!-- Modern UI Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/backend/css/modern-custom.css') }}">
 
+    <!-- DataTables & Notification Styles -->
+    <link rel="stylesheet" href="{{ asset('assets/backend/modules/datatables/datatables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/backend/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+
     @stack('css')
 </head>
 <body class="h-full antialiased transition-colors duration-200">
@@ -93,6 +98,9 @@
     <script src="{{ asset('assets/backend/modules/bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('assets/backend/modules/nicescroll/jquery.nicescroll.min.js') }}"></script>
     <script src="{{ asset('assets/backend/modules/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/backend/modules/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('assets/backend/modules/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Core Layout Interactivity (Vanilla JS) -->
@@ -192,6 +200,7 @@
 
     <!-- Custom View JS -->
     @stack('js')
+    @stack('scripts')
 
     <!-- Global DataTable Clinic Name Auto-Highlighter -->
     <script>

@@ -89,6 +89,7 @@ class SkApprovalController extends Controller
         }
 
         return DataTables::of($query)
+            ->addIndexColumn()
             ->addColumn('no_sk_display', function ($row) {
                 return $row->no_sk ?: '<span class="text-muted italic">(Belum Dinomori)</span>';
             })
