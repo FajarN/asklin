@@ -45,6 +45,10 @@
                                 <li class="dropdown @if (Request::url() == route('kategori_pembayaran.index')) active @endif"><a class="nav-link"
                                         href="{{ route('kategori_pembayaran.index') }}">Kategori Pembayaran</a></li>
                             @endcan
+                            @if(auth()->check() && (auth()->user()->can('master-ketua-umum-list') || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Sekjen', 'Ketua Umum'])))
+                                <li class="dropdown @if (Request::url() == route('master_ketua_umum.index')) active @endif"><a class="nav-link"
+                                        href="{{ route('master_ketua_umum.index') }}">Master Ketua Umum</a></li>
+                            @endif
                         </ul>
                     </li>
                 @endcanany
@@ -156,26 +160,29 @@
             @endcanany
 
 
-            @canany(['jenis-surat-list', 'penomoran-pusat-list', 'surat-keluar-list', 'surat-tugas-list',
-                'surat-undangan-list', 'struktur-organisasi-list', 'master-ketua-umum-list', 'sk-pengurus-list'])
+            @if(auth()->check() && (auth()->user()->canany(['jenis-surat-list', 'penomoran-pusat-list', 'surat-keluar-list', 'surat-tugas-list', 'surat-undangan-list', 'struktur-organisasi-list', 'master-ketua-umum-list', 'sk-pengurus-list']) || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Admin Daerah', 'Admin Cabang', 'Sekjen', 'Ketua Umum'])))
                 <li class="menu-header">Ruang Pengurus</li>
-                @can('struktur-organisasi-list')
+                @if(auth()->user()->can('struktur-organisasi-list') || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Admin Daerah', 'Admin Cabang', 'Sekjen', 'Ketua Umum']))
                     <li class="dropdown @if (Request::url() == route('struktur_organisasi.index')) active @endif"><a class="nav-link"
                             href="{{ route('struktur_organisasi.index') }}"><i class="fas fa-user-md"></i> Struktur
                             Organisasi</a></li>
-                @endcan
-                @can('master-ketua-umum-list')
+                @endif
+                @if(auth()->user()->can('master-ketua-umum-list') || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Sekjen', 'Ketua Umum']))
                     <li class="dropdown @if (Request::url() == route('master_ketua_umum.index')) active @endif"><a class="nav-link"
                             href="{{ route('master_ketua_umum.index') }}"><i class="fas fa-user-tie"></i> Master Ketua Umum</a></li>
-                @endcan
-                @can('sk-pengurus-list')
+                @endif
+                @if(auth()->user()->can('sk-pengurus-list') || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Admin Daerah', 'Admin Cabang', 'Sekjen', 'Ketua Umum']))
                     <li class="dropdown @if (Request::url() == route('sk_pengurus.index')) active @endif"><a class="nav-link"
                             href="{{ route('sk_pengurus.index') }}"><i class="fas fa-file-signature"></i> Surat Keputusan (SK)</a></li>
-                @endcan
+                @endif
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="nav-link has-dropdown"><i class="fas fa-regular fa-envelope"></i>
                         <span>Surat</span></a>
                     <ul class="dropdown-menu">
+                        @if(auth()->user()->can('sk-pengurus-list') || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Admin Daerah', 'Admin Cabang', 'Sekjen', 'Ketua Umum']))
+                            <li class="dropdown @if (Request::url() == route('sk_pengurus.index')) active @endif"><a class="nav-link"
+                                    href="{{ route('sk_pengurus.index') }}">Surat Keputusan (SK)</a></li>
+                        @endif
                         @can('jenis-surat-list')
                             <li class="dropdown @if (Request::url() == route('jenis_surat.index')) active @endif"><a class="nav-link"
                                     href="{{ route('jenis_surat.index') }}">Jenis Surat</a></li>
@@ -198,7 +205,7 @@
                         @endcan
                     </ul>
                 </li>
-            @endcanany
+            @endif
 
             @canany(['laporan-pusat', 'laporan-daerah', 'laporan-cabang'])
                 <li class="menu-header">Laporan</li>
