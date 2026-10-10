@@ -423,6 +423,16 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('master_ketua_umum.delete');
     });
 
+    Route::prefix('sk_pengurus')->controller(App\Http\Controllers\Backend\ruang_pengurus\SkApprovalController::class)->group(function () {
+        Route::get('/', 'index')->name('sk_pengurus.index');
+        Route::get('/list', 'list')->name('sk_pengurus.list');
+        Route::get('/show/{id}', 'show')->name('sk_pengurus.show');
+        Route::post('/verifikasi-daerah/{id}', 'verifikasiDaerah')->name('sk_pengurus.verifikasi-daerah');
+        Route::post('/draft-sekjen/{id}', 'draftSekjen')->name('sk_pengurus.draft-sekjen');
+        Route::post('/approve-ketum/{id}', 'approveKetum')->name('sk_pengurus.approve-ketum');
+        Route::get('/print/{id}', 'print')->name('sk_pengurus.print');
+    });
+
     Route::group(['prefix' => 'expired-sio', 'as' => 'expired_sio.'], function () {
         Route::get('/', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'index'])->name('index');
         Route::get('/list', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'list'])->name('list');

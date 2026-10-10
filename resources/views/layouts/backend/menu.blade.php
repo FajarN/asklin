@@ -168,6 +168,10 @@
                     <li class="dropdown @if (Request::url() == route('master_ketua_umum.index')) active @endif"><a class="nav-link"
                             href="{{ route('master_ketua_umum.index') }}"><i class="fas fa-user-tie"></i> Master Ketua Umum</a></li>
                 @endcan
+                @can('sk-pengurus-list')
+                    <li class="dropdown @if (Request::url() == route('sk_pengurus.index')) active @endif"><a class="nav-link"
+                            href="{{ route('sk_pengurus.index') }}"><i class="fas fa-file-signature"></i> Surat Keputusan (SK)</a></li>
+                @endcan
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="nav-link has-dropdown"><i class="fas fa-regular fa-envelope"></i>
                         <span>Surat</span></a>
