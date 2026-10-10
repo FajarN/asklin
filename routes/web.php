@@ -22,6 +22,8 @@ Route::post('getKelurahan', [App\Http\Controllers\WilayahController::class, 'get
 
 Route::get('/cekqrcode/{id}', [App\Http\Controllers\CekQRCodeController::class, 'cekqrcode'])->name('cekqrcode');
 Route::get('/cekqrsertifikat/{id}', [App\Http\Controllers\CekQRSertifikatController::class, 'cekqrsertifikat'])->name('cekqrsertifikat');
+Route::get('/cek-sk/{token}', [App\Http\Controllers\PublicSkVerificationController::class, 'verify'])->name('sk_pengurus.public-verify');
+
 
 // Frontend
 Route::get('/', [App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('home');
@@ -430,7 +432,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/verifikasi-daerah/{id}', 'verifikasiDaerah')->name('sk_pengurus.verifikasi-daerah');
         Route::post('/draft-sekjen/{id}', 'draftSekjen')->name('sk_pengurus.draft-sekjen');
         Route::post('/approve-ketum/{id}', 'approveKetum')->name('sk_pengurus.approve-ketum');
-        Route::get('/print/{id}', 'print')->name('sk_pengurus.print');
+        Route::get('/print/{id}', [App\Http\Controllers\Backend\ruang_pengurus\SkDocumentController::class, 'print'])->name('sk_pengurus.print');
     });
 
     Route::group(['prefix' => 'expired-sio', 'as' => 'expired_sio.'], function () {

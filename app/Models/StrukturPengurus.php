@@ -34,6 +34,10 @@ class StrukturPengurus extends Model
         return $this->hasMany(StrukturPengurus::class, 'parent_id');
     }
 
+    public function kelompok(): BelongsTo
+    {
+        return $this->belongsTo(StrukturKelompokPengurus::class, 'id_kelompok');
+    }
 }
 
 
