@@ -6,6 +6,12 @@
 @section('content')
 <div class="space-y-6">
 
+    <!-- Responsive Standard Breadcrumb -->
+    <x-breadcrumb :items="[
+        ['label' => 'Pengaturan Sistem', 'url' => route('settings')],
+        ['label' => 'Template Frontend'],
+    ]" />
+
     <!-- Page Header Banner -->
     <div class="card flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
         <div>

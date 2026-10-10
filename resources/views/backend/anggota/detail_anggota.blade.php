@@ -6,6 +6,13 @@
 @section('content')
 <div class="space-y-6">
 
+    <!-- Responsive Standard Breadcrumb -->
+    <x-breadcrumb :items="[
+        ['label' => 'Data Anggota Klinik', 'url' => route('anggota.index')],
+        ['label' => $anggota->nama_klinik],
+        ['label' => 'Detail Profil Klinik'],
+    ]" />
+
     <!-- Top Header Banner & Navigation -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="space-y-1">

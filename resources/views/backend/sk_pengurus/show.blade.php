@@ -7,14 +7,16 @@
 @section('content')
 <div class="space-y-6">
 
+    <!-- Responsive Standard Breadcrumb -->
+    <x-breadcrumb :items="[
+        ['label' => 'Surat Keputusan (SK)', 'url' => route('sk_pengurus.index')],
+        ['label' => $struktur->nama_struktur, 'url' => route('struktur_organisasi.detail', $struktur->id)],
+        ['label' => 'Ruang Kerja Persetujuan SK'],
+    ]" />
+
     <!-- Header Banner -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
-                <a href="{{ route('sk_pengurus.index') }}" class="hover:underline">Surat Keputusan</a>
-                <i class="fas fa-chevron-right text-[9px] text-slate-400"></i>
-                <span class="text-slate-500">Pemeriksaan & Persetujuan</span>
-            </div>
             <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-white flex items-center gap-2 flex-wrap">
                 <span>{{ $sk->no_sk ?: 'Draft SK: ' . $struktur->nama_struktur }}</span>
                 @php

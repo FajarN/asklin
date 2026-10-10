@@ -66,21 +66,17 @@
             @include('layouts.partials.navbar')
 
             <!-- Main Content Slot -->
-            <main class="flex-1 w-full max-w-7xl mx-auto">
+            <main class="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
                 <!-- Flash Notification Banner -->
                 @if (session('success'))
-                    <div class="p-4 sm:p-6 pb-0">
-                        <x-alert variant="success" title="Berhasil">
-                            {{ session('success') }}
-                        </x-alert>
-                    </div>
+                    <x-alert variant="success" title="Berhasil">
+                        {{ session('success') }}
+                    </x-alert>
                 @endif
                 @if (session('error'))
-                    <div class="p-4 sm:p-6 pb-0">
-                        <x-alert variant="danger" title="Terjadi Kesalahan">
-                            {{ session('error') }}
-                        </x-alert>
-                    </div>
+                    <x-alert variant="danger" title="Terjadi Kesalahan">
+                        {{ session('error') }}
+                    </x-alert>
                 @endif
 
                 @yield('content')
