@@ -663,13 +663,48 @@ div.nama-klinik,
 }
 
 /* --------------------------------------------------------------------------
-   B. Top Navbar Dark Theme
+   B. Top Navbar Dark Theme with Cyber Laser Ray Sweep
    -------------------------------------------------------------------------- */
 .dark header.sticky,
 .dark header[class*="border-b"],
 .dark header {
-    background-color: rgba(15, 23, 42, 0.85) !important;
+    background-color: rgba(15, 23, 42, 0.88) !important;
     border-bottom-color: #1e293b !important;
+    position: sticky;
+    overflow: hidden;
+}
+
+/* Cyber Laser Beam running along the bottom border of Top Navbar */
+.dark header.sticky::after,
+.dark header::after {
+    content: '';
+    position: absolute;
+    bottom: 0px;
+    left: -220px;
+    width: 220px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #10b981 35%, #38bdf8 70%, transparent);
+    box-shadow: 0 0 16px #10b981, 0 0 25px #06b6d4;
+    animation: navbarLaserSweep 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+    z-index: 50;
+}
+
+@keyframes navbarLaserSweep {
+    0% {
+        left: -220px;
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
 }
 
 .dark header h1 {
@@ -723,6 +758,101 @@ div.nama-klinik,
 .dark #user-menu-dropdown a:hover {
     background-color: #1e293b !important;
     color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   B.1. Futuristic Cyber Tech Animations for All Index Pages (Dark Mode)
+   -------------------------------------------------------------------------- */
+
+/* Cyber Scanning Beam along Top Border of Every Card on Index Pages */
+.dark .card {
+    position: relative !important;
+    overflow: hidden !important;
+    border-color: #1e293b !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -200px;
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
+    box-shadow: 0 0 14px #10b981, 0 0 22px #06b6d4;
+    animation: cardCyberBeam 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes cardCyberBeam {
+    0% {
+        left: -200px;
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}
+
+/* Glowing Neon Header Line on Filter & Data Cards */
+.dark .card-header {
+    position: relative !important;
+    border-bottom: 1px solid #1e293b !important;
+}
+
+.dark .card-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, #10b981 0%, #06b6d4 40%, transparent 80%);
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Holographic Hover Rows on All Data Tables */
+.dark table tbody tr,
+.dark table.dataTable tbody tr {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.dark table tbody tr:hover,
+.dark table.dataTable tbody tr:hover {
+    background-color: rgba(16, 185, 129, 0.08) !important;
+    box-shadow: inset 3px 0 0 #10b981, 0 0 15px rgba(16, 185, 129, 0.08) !important;
+}
+
+/* Neon Focus Glow on Filter Inputs & Search Bars */
+.dark input.form-control:focus,
+.dark select.form-control:focus,
+.dark input[type="text"]:focus,
+.dark input[type="search"]:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25), 0 0 15px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Cyber Pulse Glow on Action & Filter Buttons */
+.dark .btn-primary,
+.dark .btn-success {
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.3) !important;
+    transition: all 0.25s ease !important;
+}
+
+.dark .btn-primary:hover,
+.dark .btn-success:hover {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5), 0 0 12px rgba(56, 189, 248, 0.4) !important;
+    transform: translateY(-1px) !important;
 }
 
 /* --------------------------------------------------------------------------
