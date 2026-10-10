@@ -161,6 +161,33 @@
             </div>
         @endcan
 
+        <!-- Section: Surat Keputusan (SK) -->
+        @if(auth()->check() && (auth()->user()->can('sk-pengurus-list') || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Admin Daerah', 'Admin Cabang', 'Sekjen', 'Ketua Umum'])))
+            <div>
+                <div class="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    Surat Keputusan
+                </div>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="{{ route('sk_pengurus.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ Str::contains(Request::url(), 'sk_pengurus') ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-400 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60' }}">
+                            <i class="fas fa-file-signature text-sm {{ Str::contains(Request::url(), 'sk_pengurus') ? 'text-red-600 dark:text-red-400' : 'text-slate-400' }}"></i>
+                            <span>Surat Keputusan (SK)</span>
+                        </a>
+                    </li>
+                    @if(auth()->user()->can('master-ketua-umum-list') || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Sekjen', 'Ketua Umum']))
+                    <li>
+                        <a href="{{ route('master_ketua_umum.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ Str::contains(Request::url(), 'master_ketua_umum') ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-400 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60' }}">
+                            <i class="fas fa-user-tie text-sm {{ Str::contains(Request::url(), 'master_ketua_umum') ? 'text-red-600 dark:text-red-400' : 'text-slate-400' }}"></i>
+                            <span>Master Ketua Umum</span>
+                        </a>
+                    </li>
+                    @endif
+                </ul>
+            </div>
+        @endif
+
         <!-- Section: Manajemen Persuratan (Tersendiri) -->
         @canany(['jenis-surat-list', 'penomoran-surat-list', 'surat-keluar-list', 'surat-tugas-list', 'surat-undangan-list'])
             <div class="sidebar-dropdown-group" data-group="surat">
