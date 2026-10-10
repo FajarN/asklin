@@ -209,7 +209,7 @@ class TemplateService
      */
     public static function view(string $viewKey, array $data = [], array $mergeData = [])
     {
-        $cleanedKey = str_replace('frontend.home.', '', $viewKey);
+        $cleanedKey = str_replace(['frontend.home.', 'frontend.', 'auth.'], '', $viewKey);
         $activeTemplate = self::getActiveTemplate();
 
         if ($activeTemplate === self::TEMPLATE_CUSTOM_ORG) {
@@ -228,6 +228,16 @@ class TemplateService
         $canvasView = "frontend.home.{$cleanedKey}";
         if (View::exists($canvasView)) {
             return view($canvasView, $data, $mergeData);
+        }
+
+        $frontendView = "frontend.{$cleanedKey}";
+        if (View::exists($frontendView)) {
+            return view($frontendView, $data, $mergeData);
+        }
+
+        $authView = "auth.{$cleanedKey}";
+        if (View::exists($authView)) {
+            return view($authView, $data, $mergeData);
         }
 
         return view($viewKey, $data, $mergeData);

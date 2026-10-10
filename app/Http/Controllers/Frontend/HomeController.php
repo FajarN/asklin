@@ -465,7 +465,7 @@ class HomeController extends Controller
             ->leftJoin('indonesia_districts', 'indonesia_districts.code', '=', 'anggota.id_kecamatan')
             ->leftJoin('indonesia_villages', 'indonesia_villages.code', '=', 'anggota.id_kelurahan')
             ->where('id_user', Auth::user()->id)->first();
-        return view('frontend.user_profile', compact('title', 'desc', 'anggota'));
+        return TemplateService::view('user_profile', compact('title', 'desc', 'anggota'));
     }
 
     public function createAnggota()

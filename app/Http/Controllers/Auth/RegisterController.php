@@ -42,6 +42,16 @@ class RegisterController extends Controller
     }
 
     /**
+     * Show the application registration form dynamically based on active template.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function showRegistrationForm()
+    {
+        return \App\Services\TemplateService::view('register');
+    }
+
+    /**
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data

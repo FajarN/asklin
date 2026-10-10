@@ -13,6 +13,7 @@ echo "=== START TEMPLATE ENGINE TEST ===" . PHP_EOL;
 
 $controller = new HomeController();
 $request = Request::create('/', 'GET');
+\Illuminate\Support\Facades\View::share('errors', new \Illuminate\Support\ViewErrorBag());
 
 $templates = ['canvas', 'custom_org', 'modern_org'];
 
@@ -85,6 +86,32 @@ foreach ($templates as $t) {
         $vEventDet = $controller->eventDetail($sampleEvent->path);
         echo "12. Event Detail View: " . $vEventDet->name() . " -> Content rendered: " . (strlen($vEventDet->render()) > 0 ? "YES (" . strlen($vEventDet->render()) . " bytes)" : "NO") . "\n";
     }
+
+    // Test Login View
+    $vLogin = TemplateService::view('login');
+    echo "13. Login View: " . $vLogin->name() . " -> Content rendered: " . (strlen($vLogin->render()) > 0 ? "YES (" . strlen($vLogin->render()) . " bytes)" : "NO") . "\n";
+
+    // Test Register View
+    $vRegister = TemplateService::view('register');
+    echo "14. Register View: " . $vRegister->name() . " -> Content rendered: " . (strlen($vRegister->render()) > 0 ? "YES (" . strlen($vRegister->render()) . " bytes)" : "NO") . "\n";
+
+    // Test User Profile View
+    $sampleAnggota = \App\Models\Anggota::first();
+    if (!$sampleAnggota) {
+        $sampleAnggota = new \App\Models\Anggota([
+            'id' => 999,
+            'id_user' => 1,
+            'nama_klinik' => 'Klinik Pratama Sehat Uji Coba',
+            'no_anggota' => 'ASKLIN-12345',
+            'status' => 'approved',
+            'verifikasi_cabang' => 'Diverifikasi Cabang',
+            'verifikasi_pusat' => 'Diverifikasi Pusat',
+            'rt' => '01',
+            'rw' => '02',
+        ]);
+    }
+    $vProfile = TemplateService::view('user_profile', ['title' => 'Profile', 'desc' => '', 'anggota' => $sampleAnggota]);
+    echo "15. User Profile View: " . $vProfile->name() . " -> Content rendered: " . (strlen($vProfile->render()) > 0 ? "YES (" . strlen($vProfile->render()) . " bytes)" : "NO") . "\n";
 }
 
 // Reset back to canvas
