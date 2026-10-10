@@ -460,8 +460,8 @@ div.nama-klinik,
     right: 0px;
     width: 2.5px;
     height: 140px;
-    background: linear-gradient(180deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
-    box-shadow: 0 0 15px #10b981, 0 0 25px #06b6d4;
+    background: linear-gradient(180deg, transparent, #e11d48 35%, #10b981 75%, transparent);
+    box-shadow: 0 0 15px #e11d48, 0 0 20px rgba(16, 185, 129, 0.3);
     animation: sidebarCyberBeam 4.5s ease-in-out infinite;
     pointer-events: none;
     z-index: 60;
@@ -500,7 +500,7 @@ div.nama-klinik,
     left: 0;
     width: 100%;
     height: 1.5px;
-    background: linear-gradient(90deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
+    background: linear-gradient(90deg, transparent, #e11d48 35%, #10b981 75%, transparent);
     background-size: 200% 100%;
     animation: sidebarHeaderSweep 3.5s linear infinite;
     pointer-events: none;
@@ -534,14 +534,14 @@ div.nama-klinik,
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background-color: #10b981;
-    box-shadow: 0 0 8px #10b981;
+    background-color: #e11d48;
+    box-shadow: 0 0 8px #e11d48;
     animation: techRadarPulse 2.5s ease-in-out infinite;
 }
 
 @keyframes techRadarPulse {
     0%, 100% { transform: scale(0.9); opacity: 0.5; }
-    50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 10px #38bdf8; }
+    50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
 }
 
 /* Sidebar Links & Buttons */
@@ -555,8 +555,8 @@ div.nama-klinik,
 .dark #main-sidebar nav button:hover {
     color: #ffffff !important;
     background-color: rgba(30, 41, 59, 0.7) !important;
-    border-left: 2px solid #38bdf8 !important;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.15) !important;
+    border-left: 2px solid #e11d48 !important;
+    box-shadow: 0 0 10px rgba(225, 29, 72, 0.18) !important;
     transform: translateX(4px) !important;
     transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
@@ -566,25 +566,25 @@ div.nama-klinik,
     color: #ffffff !important;
 }
 
-/* Sidebar Active Link (Holographic Cyber Glow & Scanning Ray) */
-.dark #main-sidebar nav a.bg-emerald-50,
-.dark #main-sidebar nav a[class*="bg-emerald-"],
-.dark #main-sidebar nav a[class*="text-emerald-"],
+/* Sidebar Active Link (Holographic Cyber Glow & Scanning Ray - Red Dominant) */
+.dark #main-sidebar nav a.bg-red-50,
+.dark #main-sidebar nav a[class*="bg-red-"],
+.dark #main-sidebar nav a[class*="text-red-"],
 .dark #main-sidebar nav a.font-semibold {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(90deg, rgba(6, 78, 59, 0.5) 0%, rgba(16, 185, 129, 0.25) 50%, rgba(6, 78, 59, 0.5) 100%) !important;
+    background: linear-gradient(90deg, rgba(136, 19, 55, 0.55) 0%, rgba(225, 29, 72, 0.28) 50%, rgba(136, 19, 55, 0.55) 100%) !important;
     background-size: 200% 100% !important;
     animation: cyberActivePulse 3.5s ease-in-out infinite !important;
-    color: #34d399 !important;
-    border: 1px solid rgba(16, 185, 129, 0.35) !important;
-    border-left: 3px solid #10b981 !important;
-    box-shadow: inset 0 0 16px rgba(16, 185, 129, 0.15), 0 0 14px rgba(16, 185, 129, 0.25) !important;
+    color: #fda4af !important;
+    border: 1px solid rgba(225, 29, 72, 0.4) !important;
+    border-left: 3px solid #e11d48 !important;
+    box-shadow: inset 0 0 16px rgba(225, 29, 72, 0.2), 0 0 16px rgba(225, 29, 72, 0.3) !important;
 }
 
-.dark #main-sidebar nav a.bg-emerald-50::after,
-.dark #main-sidebar nav a[class*="bg-emerald-"]::after,
-.dark #main-sidebar nav a[class*="text-emerald-"]::after,
+.dark #main-sidebar nav a.bg-red-50::after,
+.dark #main-sidebar nav a[class*="bg-red-"]::after,
+.dark #main-sidebar nav a[class*="text-red-"]::after,
 .dark #main-sidebar nav a.font-semibold::after {
     content: '';
     position: absolute;
@@ -592,7 +592,7 @@ div.nama-klinik,
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.18), rgba(56, 189, 248, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(225, 29, 72, 0.25), rgba(16, 185, 129, 0.2), transparent);
     animation: cyberScanRay 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     pointer-events: none;
 }
@@ -608,10 +608,10 @@ div.nama-klinik,
     40%, 100% { left: 120%; }
 }
 
-.dark #main-sidebar nav a.bg-emerald-50 i,
-.dark #main-sidebar nav a[class*="bg-emerald-"] i,
+.dark #main-sidebar nav a.bg-red-50 i,
+.dark #main-sidebar nav a[class*="bg-red-"] i,
 .dark #main-sidebar nav a.font-semibold i {
-    color: #34d399 !important;
+    color: #fb7185 !important;
 }
 
 /* Sidebar Dropdown Submenus */
@@ -683,8 +683,8 @@ div.nama-klinik,
     left: -220px;
     width: 220px;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #10b981 35%, #38bdf8 70%, transparent);
-    box-shadow: 0 0 16px #10b981, 0 0 25px #06b6d4;
+    background: linear-gradient(90deg, transparent, #e11d48 35%, #10b981 70%, transparent);
+    box-shadow: 0 0 16px #e11d48, 0 0 22px rgba(16, 185, 129, 0.35);
     animation: navbarLaserSweep 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     pointer-events: none;
     z-index: 50;
@@ -727,7 +727,7 @@ div.nama-klinik,
 }
 
 .dark header a[title="Kunjungi Website Publik"]:hover {
-    color: #34d399 !important;
+    color: #fda4af !important;
     background-color: rgba(30, 41, 59, 0.7) !important;
 }
 
@@ -779,8 +779,8 @@ div.nama-klinik,
     left: -200px;
     width: 200px;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
-    box-shadow: 0 0 14px #10b981, 0 0 22px #06b6d4;
+    background: linear-gradient(90deg, transparent, #e11d48 35%, #10b981 70%, transparent);
+    box-shadow: 0 0 14px #e11d48, 0 0 20px rgba(16, 185, 129, 0.35);
     animation: cardCyberBeam 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     pointer-events: none;
     z-index: 10;
@@ -816,7 +816,7 @@ div.nama-klinik,
     left: 0;
     width: 100%;
     height: 1px;
-    background: linear-gradient(90deg, #10b981 0%, #06b6d4 40%, transparent 80%);
+    background: linear-gradient(90deg, #e11d48 0%, #10b981 40%, transparent 80%);
     opacity: 0.7;
     pointer-events: none;
 }
@@ -829,8 +829,8 @@ div.nama-klinik,
 
 .dark table tbody tr:hover,
 .dark table.dataTable tbody tr:hover {
-    background-color: rgba(16, 185, 129, 0.08) !important;
-    box-shadow: inset 3px 0 0 #10b981, 0 0 15px rgba(16, 185, 129, 0.08) !important;
+    background-color: rgba(225, 29, 72, 0.07) !important;
+    box-shadow: inset 3px 0 0 #e11d48, 0 0 15px rgba(225, 29, 72, 0.08) !important;
 }
 
 /* Neon Focus Glow on Filter Inputs & Search Bars */
@@ -838,20 +838,30 @@ div.nama-klinik,
 .dark select.form-control:focus,
 .dark input[type="text"]:focus,
 .dark input[type="search"]:focus {
-    border-color: #10b981 !important;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25), 0 0 15px rgba(16, 185, 129, 0.2) !important;
+    border-color: #e11d48 !important;
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.25), 0 0 15px rgba(225, 29, 72, 0.2) !important;
 }
 
 /* Cyber Pulse Glow on Action & Filter Buttons */
-.dark .btn-primary,
-.dark .btn-success {
-    box-shadow: 0 0 12px rgba(16, 185, 129, 0.3) !important;
+.dark .btn-primary {
+    background-color: #dc2626 !important;
+    border-color: #b91c1c !important;
+    box-shadow: 0 0 12px rgba(225, 29, 72, 0.35) !important;
     transition: all 0.25s ease !important;
 }
 
-.dark .btn-primary:hover,
+.dark .btn-success {
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.35) !important;
+    transition: all 0.25s ease !important;
+}
+
+.dark .btn-primary:hover {
+    box-shadow: 0 0 20px rgba(225, 29, 72, 0.55), 0 0 12px rgba(16, 185, 129, 0.3) !important;
+    transform: translateY(-1px) !important;
+}
+
 .dark .btn-success:hover {
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5), 0 0 12px rgba(56, 189, 248, 0.4) !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5), 0 0 12px rgba(225, 29, 72, 0.4) !important;
     transform: translateY(-1px) !important;
 }
 
@@ -862,13 +872,13 @@ div.nama-klinik,
 /* 1. Dashboard Welcome Banner Cyber Effect */
 .dark .dashboard-welcome-banner {
     position: relative !important;
-    background-color: #064e3b !important;
+    background-color: #881337 !important;
     background-image: 
-        radial-gradient(rgba(16, 185, 129, 0.22) 1.5px, transparent 1.5px),
-        linear-gradient(135deg, rgba(6, 78, 59, 0.95) 0%, rgba(15, 23, 42, 0.92) 50%, rgba(4, 120, 87, 0.88) 100%) !important;
+        radial-gradient(rgba(225, 29, 72, 0.22) 1.5px, transparent 1.5px),
+        linear-gradient(135deg, rgba(136, 19, 55, 0.95) 0%, rgba(15, 23, 42, 0.94) 50%, rgba(159, 18, 57, 0.88) 100%) !important;
     background-size: 24px 24px, 100% 100% !important;
-    border: 1px solid rgba(16, 185, 129, 0.35) !important;
-    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 25px rgba(16, 185, 129, 0.25), inset 0 0 20px rgba(6, 182, 212, 0.1) !important;
+    border: 1px solid rgba(225, 29, 72, 0.4) !important;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 25px rgba(225, 29, 72, 0.3), inset 0 0 20px rgba(16, 185, 129, 0.08) !important;
     overflow: hidden !important;
 }
 
@@ -880,8 +890,8 @@ div.nama-klinik,
     left: -250px;
     width: 250px;
     height: 3px;
-    background: linear-gradient(90deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
-    box-shadow: 0 0 16px #10b981, 0 0 30px #06b6d4;
+    background: linear-gradient(90deg, transparent, #e11d48 35%, #10b981 70%, transparent);
+    box-shadow: 0 0 16px #e11d48, 0 0 25px rgba(16, 185, 129, 0.35);
     animation: bannerLaserSweep 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     pointer-events: none;
     z-index: 20;
@@ -922,8 +932,8 @@ div.nama-klinik,
     left: -160px;
     width: 160px;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
-    box-shadow: 0 0 12px #10b981, 0 0 20px #06b6d4;
+    background: linear-gradient(90deg, transparent, #e11d48 35%, #10b981 70%, transparent);
+    box-shadow: 0 0 12px #e11d48, 0 0 18px rgba(16, 185, 129, 0.3);
     animation: statLaserScan 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     pointer-events: none;
     z-index: 10;
@@ -958,27 +968,27 @@ div.nama-klinik,
 
 /* Neon Digital Text Glow on Metric Numbers */
 .dark .stat-card span.text-3xl {
-    text-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+    text-shadow: 0 0 12px rgba(225, 29, 72, 0.35);
     letter-spacing: -0.02em;
 }
 
 /* Breathing Glow on Stat Card Icons */
 .dark .stat-card .rounded-xl {
     position: relative;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+    box-shadow: 0 0 10px rgba(225, 29, 72, 0.15);
     transition: all 0.3s ease;
 }
 
 .dark .stat-card:hover .rounded-xl {
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 10px rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 20px rgba(225, 29, 72, 0.45), 0 0 10px rgba(16, 185, 129, 0.3);
     transform: scale(1.12);
 }
 
 /* Interactive Card Elevation & Holographic Aura on Hover */
 .dark .stat-card:hover {
     transform: translateY(-4px) !important;
-    border-color: rgba(16, 185, 129, 0.5) !important;
-    box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.7), 0 0 20px rgba(16, 185, 129, 0.25), inset 0 0 0 1px rgba(16, 185, 129, 0.3) !important;
+    border-color: rgba(225, 29, 72, 0.5) !important;
+    box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.7), 0 0 20px rgba(225, 29, 72, 0.3), inset 0 0 0 1px rgba(225, 29, 72, 0.35) !important;
 }
 
 /* 3. Analytics & Chart Cards in Dashboard */
@@ -999,8 +1009,8 @@ div.nama-klinik,
     left: -200px;
     width: 200px;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
-    box-shadow: 0 0 14px #10b981, 0 0 22px #06b6d4;
+    background: linear-gradient(90deg, transparent, #e11d48 35%, #10b981 70%, transparent);
+    box-shadow: 0 0 14px #e11d48, 0 0 20px rgba(16, 185, 129, 0.35);
     animation: cardCyberBeam 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     pointer-events: none;
     z-index: 10;
@@ -1021,7 +1031,7 @@ div.nama-klinik,
     left: 0;
     width: 100%;
     height: 1px;
-    background: linear-gradient(90deg, #10b981 0%, #06b6d4 40%, transparent 80%);
+    background: linear-gradient(90deg, #e11d48 0%, #10b981 40%, transparent 80%);
     opacity: 0.6;
     pointer-events: none;
 }
@@ -1030,7 +1040,7 @@ div.nama-klinik,
 .dark div[style*="width:"][class*="bg-gradient-to-r"] {
     position: relative !important;
     overflow: hidden !important;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 10px rgba(225, 29, 72, 0.35);
 }
 
 .dark div[style*="width:"][class*="bg-gradient-to-r"]::after {
@@ -1061,20 +1071,20 @@ div.nama-klinik,
 
 /* 5. Recent Activity Timeline Interactive Cyber Rows */
 .dark .divide-y > div:hover {
-    background-color: rgba(16, 185, 129, 0.06) !important;
-    box-shadow: inset 3px 0 0 #10b981, 0 0 15px rgba(16, 185, 129, 0.06) !important;
+    background-color: rgba(225, 29, 72, 0.06) !important;
+    box-shadow: inset 3px 0 0 #e11d48, 0 0 15px rgba(225, 29, 72, 0.06) !important;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 /* Activity Clinic Icon Box Radar Ping */
 .dark .divide-y .w-10.h-10.rounded-xl {
     position: relative;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 10px rgba(225, 29, 72, 0.2);
     transition: all 0.25s ease;
 }
 
 .dark .divide-y > div:hover .w-10.h-10.rounded-xl {
-    box-shadow: 0 0 16px rgba(16, 185, 129, 0.4), 0 0 10px rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 16px rgba(225, 29, 72, 0.45), 0 0 10px rgba(16, 185, 129, 0.3);
     transform: scale(1.08);
 }
 
@@ -1082,7 +1092,7 @@ div.nama-klinik,
 .dark .badge-dot,
 .dark [class*="animate-pulse"],
 .dark [class*="animate-ping"] {
-    filter: drop-shadow(0 0 4px #10b981);
+    filter: drop-shadow(0 0 4px #e11d48);
 }
 
 /* --------------------------------------------------------------------------

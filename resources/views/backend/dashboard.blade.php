@@ -7,17 +7,17 @@
 <div class="space-y-6">
 
     <!-- Welcome Greeting Header Banner -->
-    <div class="dashboard-welcome-banner relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 p-6 sm:p-8 text-white shadow-lg">
+    <div class="dashboard-welcome-banner relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-red-700 p-6 sm:p-8 text-white shadow-lg">
         <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="space-y-1.5">
                 <div class="flex items-center gap-2">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-sm border border-white/30">
                         {{ Auth::user()->roles->pluck('name')->first() ?? 'Pengurus' }}
                     </span>
-                    <span class="text-xs text-emerald-100 font-medium">
+                    <span class="text-xs text-rose-100 font-medium">
                         {{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y') }}
                     </span>
-                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/25 text-emerald-300 border border-emerald-400/30 backdrop-blur-sm">
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/25 text-rose-200 border border-rose-400/30 backdrop-blur-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span>LIVE MONITOR</span>
                     </span>
@@ -25,7 +25,7 @@
                 <h2 class="text-lg sm:text-xl font-bold tracking-tight text-white">
                     Selamat Datang, {{ Auth::user()->name }}!
                 </h2>
-                <p class="text-xs text-emerald-100 max-w-2xl leading-relaxed">
+                <p class="text-xs text-rose-100 max-w-2xl leading-relaxed">
                     Sistem Manajemen Keanggotaan Asosiasi Klinik Indonesia. Pantau status registrasi, verifikasi berkas faskes, dan laporan persebaran klinik nasional.
                 </p>
             </div>
@@ -33,14 +33,14 @@
             <div class="flex items-center gap-3 shrink-0">
                 @can('verifikasi-anggota')
                     <a href="{{ route('verifikasi_anggota.index') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-emerald-800 hover:bg-emerald-50 font-bold text-xs shadow-sm transition hover:scale-105">
-                        <i class="fas fa-clipboard-check text-emerald-600"></i>
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-red-800 hover:bg-rose-50 font-bold text-xs shadow-sm transition hover:scale-105">
+                        <i class="fas fa-clipboard-check text-red-600"></i>
                         <span>Antrean Verifikasi</span>
                     </a>
                 @endcan
                 @can('data-anggota')
                     <a href="{{ route('anggota.index') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-700/80 hover:bg-emerald-700 text-white font-semibold text-xs border border-white/20 transition">
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-800/80 hover:bg-red-800 text-white font-semibold text-xs border border-white/20 transition">
                         <i class="fas fa-clinic-medical"></i>
                         <span>Direktori Anggota</span>
                     </a>
@@ -149,7 +149,7 @@
                         <!-- Dropdown Provinsi -->
                         <div class="relative">
                             <select id="filter-provinsi"
-                                class="w-40 sm:w-48 text-xs rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 py-1.5 pl-3 pr-8 focus:ring-emerald-500 focus:border-emerald-500">
+                                class="w-40 sm:w-48 text-xs rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 py-1.5 pl-3 pr-8 focus:ring-red-500 focus:border-red-500">
                                 <option value="">Semua Provinsi</option>
                                 @foreach ($provinsi as $p)
                                     <option value="{{ $p->code }}">{{ $p->name }}</option>
@@ -160,7 +160,7 @@
                         <!-- Dropdown Kota -->
                         <div class="relative">
                             <select id="filter-kota"
-                                class="w-40 sm:w-48 text-xs rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 py-1.5 pl-3 pr-8 focus:ring-emerald-500 focus:border-emerald-500">
+                                class="w-40 sm:w-48 text-xs rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 py-1.5 pl-3 pr-8 focus:ring-red-500 focus:border-red-500">
                                 <option value="">Pilih Kota/Kab</option>
                             </select>
                         </div>
@@ -255,7 +255,7 @@
         <x-slot:action>
             @can('verifikasi-anggota')
                 <a href="{{ route('verifikasi_anggota.index') }}"
-                    class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
+                    class="text-xs font-semibold text-red-600 dark:text-red-400 hover:underline flex items-center gap-1">
                     <span>Lihat Semua Antrean</span>
                     <i class="fas fa-chevron-right text-[10px]"></i>
                 </a>
@@ -266,7 +266,7 @@
             @forelse ($recent as $item)
                 <div class="px-6 py-4 flex items-center justify-between gap-4 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition">
                     <div class="flex items-center gap-3.5 min-w-0">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/50 dark:border-emerald-800/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-950/60 border border-red-200/50 dark:border-red-800/50 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-sm shrink-0">
                             <i class="fas fa-clinic-medical"></i>
                         </div>
                         <div class="min-w-0">
