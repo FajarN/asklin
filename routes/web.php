@@ -408,6 +408,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/detail/{id}', 'detail')->name('struktur_organisasi.detail');
         Route::get('/print/{id}', 'printDetail')->name('struktur_organisasi.print');
         Route::post('/ajukan/{id}', 'ajukanSk')->name('struktur_organisasi.ajukan');
+        Route::post('/reset-testing/{id}', 'resetTesting')->name('struktur_organisasi.reset-testing');
     });
 
     Route::prefix('pengurus')->controller(App\Http\Controllers\Backend\ruang_pengurus\StrukturOrganisasiController::class)->group(function () {
@@ -432,6 +433,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/verifikasi-daerah/{id}', 'verifikasiDaerah')->name('sk_pengurus.verifikasi-daerah');
         Route::post('/draft-sekjen/{id}', 'draftSekjen')->name('sk_pengurus.draft-sekjen');
         Route::post('/approve-ketum/{id}', 'approveKetum')->name('sk_pengurus.approve-ketum');
+        Route::post('/reset/{id}', 'resetSk')->name('sk_pengurus.reset');
         Route::get('/print/{id}', [App\Http\Controllers\Backend\ruang_pengurus\SkDocumentController::class, 'print'])->name('sk_pengurus.print');
     });
 

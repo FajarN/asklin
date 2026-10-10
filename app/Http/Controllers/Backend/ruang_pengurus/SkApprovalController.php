@@ -454,4 +454,54 @@ class SkApprovalController extends Controller
         $sk = SkPengurus::findOrFail($id);
         return redirect()->route('sk_pengurus.show', $id);
     }
+
+    /**
+     * Reset alur SK untuk keperluan pengujian oleh Superadmin
+     */
+    public function resetSk($id)
+    {
+        $user = Auth::user();
+        if (!$user->hasRole('Superadmin')) {
+            return response()->json(['success' => false, 'message' => 'Hanya Superadmin yang berhak mereset alur SK!'], 403);
+        }
+
+        $sk = SkPengurus::with('strukturOrganisasi')->findOrFail($id);
+        $struktur = $sk->strukturOrganisasi;
+
+        DB::beginTransaction();
+        try {
+            $sk->status = 'menunggu_daerah';
+            $sk->no_sk = null;
+            $sk->id_ketua_umum = null;
+            $sk->save();
+
+            if ($struktur) {
+                $struktur->status = 'diajukan_daerah';
+                $struktur->is_locked = true;
+                $struktur->disetujui_pusat_at = null;
+                $struktur->disetujui_pusat_by = null;
+                $struktur->diverifikasi_daerah_at = null;
+                $struktur->diverifikasi_daerah_by = null;
+                $struktur->save();
+
+                SkPengurusLog::record(
+                    $struktur->id,
+                    'reset_testing',
+                    'Superadmin',
+                    $user->id,
+                    'Alur approval SK di-reset kembali ke tahap awal (Menunggu Daerah) oleh Superadmin untuk pengujian.',
+                    $sk->id
+                );
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Alur SK berhasil di-reset ke tahap awal (Menunggu Daerah) untuk pengujian!'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
 }

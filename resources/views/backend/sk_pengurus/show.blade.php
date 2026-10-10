@@ -44,7 +44,20 @@
                     <i class="fas fa-file-pdf mr-1"></i>
                     <span>Cetak SK Resmi (PDF)</span>
                 </a>
+            @elseif(auth()->user()->hasRole('Superadmin'))
+                <a href="{{ route('sk_pengurus.print', $sk->id) }}" target="_blank" class="btn btn-outline-info btn-sm">
+                    <i class="fas fa-file-pdf mr-1"></i>
+                    <span>Pratinjau Draf PDF</span>
+                </a>
             @endif
+
+            @if(auth()->user()->hasRole('Superadmin'))
+                <button type="button" class="btn btn-warning btn-sm" onclick="resetTestingSk({{ $sk->id }})">
+                    <i class="fas fa-undo mr-1"></i>
+                    <span>Reset Alur SK (Superadmin)</span>
+                </button>
+            @endif
+
             <a href="{{ route('struktur_organisasi.detail', $struktur->id) }}" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-sitemap mr-1"></i>
                 <span>Lihat Bagan Organisasi</span>
@@ -55,6 +68,23 @@
             </a>
         </div>
     </div>
+
+    @if(auth()->user()->hasRole('Superadmin'))
+    <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-xs">
+        <div class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div>
+                <strong class="font-bold">Mode Pengujian Superadmin Aktif:</strong>
+                <span class="opacity-90">Anda memiliki wewenang penuh untuk memproses semua tahapan persetujuan (Verifikasi Daerah, Draf Sekjen, & Pengesahan Ketum) secara langsung tanpa perlu berganti akun.</span>
+            </div>
+        </div>
+        <button type="button" class="btn btn-warning btn-xs shrink-0" onclick="resetTestingSk({{ $sk->id }})">
+            <i class="fas fa-sync-alt mr-1"></i> Reset ke Tahap Awal
+        </button>
+    </div>
+    @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -454,6 +484,48 @@ function submitApproveKetum(actionType) {
         error: function(xhr) {
             var msg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Gagal memproses persetujuan';
             iziToast.error({ title: 'Error', message: msg, position: 'topRight' });
+        }
+    });
+}
+
+function resetTestingSk(id) {
+    Swal.fire({
+        title: 'Reset Alur SK untuk Pengujian?',
+        text: 'Status SK dan Struktur akan dikembalikan ke tahap awal (Menunggu Verifikasi Daerah) sehingga Anda dapat menguji kembali langkah persetujuan ini.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d97706',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: '<i class="fas fa-undo mr-1"></i> Ya, Reset Alur',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "{{ route('sk_pengurus.reset', $sk->id) }}",
+                type: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function(res) {
+                    if (res.success) {
+                        iziToast.success({
+                            title: 'Berhasil',
+                            message: res.message,
+                            position: 'topRight'
+                        });
+                        setTimeout(function() {
+                            location.reload();
+                        }, 600);
+                    }
+                },
+                error: function(err) {
+                    iziToast.error({
+                        title: 'Gagal',
+                        message: err.responseJSON ? err.responseJSON.message : 'Terjadi kesalahan sistem',
+                        position: 'topRight'
+                    });
+                }
+            });
         }
     });
 }

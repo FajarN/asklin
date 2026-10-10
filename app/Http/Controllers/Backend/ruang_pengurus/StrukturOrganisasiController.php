@@ -186,7 +186,7 @@ class StrukturOrganisasiController extends Controller
 
         if ($request->has('id') && $request->id) {
             $existing = StrukturOrganisasi::findOrFail($request->id);
-            if ($existing->is_locked) {
+            if ($existing->is_locked && !Auth::user()->hasRole('Superadmin')) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Struktur organisasi terkunci karena sedang dalam proses pengajuan SK!'
@@ -294,7 +294,7 @@ class StrukturOrganisasiController extends Controller
         }
 
         $struktur = StrukturOrganisasi::findOrFail($request->id_struktur_organisasi);
-        if ($struktur->is_locked) {
+        if ($struktur->is_locked && !Auth::user()->hasRole('Superadmin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data pengurus terkunci karena struktur organisasi sedang dalam proses pengajuan SK!'
@@ -387,7 +387,7 @@ class StrukturOrganisasiController extends Controller
             $pengurus = StrukturPengurus::findOrFail($request->id);
             $struktur = StrukturOrganisasi::findOrFail($pengurus->id_struktur_organisasi);
 
-            if ($struktur->is_locked) {
+            if ($struktur->is_locked && !Auth::user()->hasRole('Superadmin')) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Data pengurus terkunci karena struktur organisasi sedang dalam proses pengajuan SK!'
@@ -431,7 +431,7 @@ class StrukturOrganisasiController extends Controller
         try {
             $struktur = StrukturOrganisasi::findOrFail($request->id);
 
-            if ($struktur->is_locked) {
+            if ($struktur->is_locked && !Auth::user()->hasRole('Superadmin')) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Tidak dapat menghapus struktur yang sedang terkunci dalam proses pengajuan SK!'
@@ -500,7 +500,7 @@ class StrukturOrganisasiController extends Controller
             ], 403);
         }
 
-        if ($struktur->is_locked && !in_array($struktur->status, ['draft', 'revisi'])) {
+        if ($struktur->is_locked && !in_array($struktur->status, ['draft', 'revisi']) && !Auth::user()->hasRole('Superadmin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Struktur ini sudah dalam proses pengajuan verifikasi!'
@@ -591,7 +591,9 @@ class StrukturOrganisasiController extends Controller
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => 'Pengajuan pengesahan SK berhasil dikirim! Susunan pengurus saat ini terkunci selama proses verifikasi.'
+                'message' => 'Pengajuan pengesahan SK berhasil dikirim! Susunan pengurus saat ini terkunci selama proses verifikasi.',
+                'sk_id' => $sk->id,
+                'sk_url' => route('sk_pengurus.show', $sk->id),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -602,4 +604,41 @@ class StrukturOrganisasiController extends Controller
         }
     }
 
+    /**
+     * Reset status pengajuan untuk keperluan testing oleh Superadmin
+     */
+    public function resetTesting($id)
+    {
+        if (!Auth::user()->hasRole('Superadmin')) {
+            return response()->json(['success' => false, 'message' => 'Hanya Superadmin yang dapat melakukan reset pengujian!'], 403);
+        }
+
+        $struktur = StrukturOrganisasi::findOrFail($id);
+        $struktur->status = 'draft';
+        $struktur->is_locked = false;
+        $struktur->diajukan_at = null;
+        $struktur->diverifikasi_daerah_at = null;
+        $struktur->diverifikasi_daerah_by = null;
+        $struktur->disetujui_pusat_at = null;
+        $struktur->disetujui_pusat_by = null;
+        $struktur->catatan_revisi = null;
+        $struktur->save();
+
+        if ($struktur->skPengurus) {
+            $struktur->skPengurus->delete();
+        }
+
+        SkPengurusLog::record(
+            $struktur->id,
+            'reset_superadmin',
+            'Superadmin',
+            Auth::id(),
+            'Pengajuan di-reset kembali ke status Draft oleh Superadmin untuk keperluan pengujian alur.'
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status struktur dan SK berhasil di-reset ke Draft. Anda dapat menguji proses pengajuan dari awal!'
+        ]);
+    }
 }

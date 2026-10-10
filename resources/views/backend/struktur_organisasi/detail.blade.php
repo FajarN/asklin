@@ -54,10 +54,24 @@
             </p>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
-            @if(!$struktur->is_locked || in_array($struktur->status, ['draft', 'revisi']))
+            @if(!$struktur->is_locked || in_array($struktur->status, ['draft', 'revisi']) || auth()->user()->hasRole('Superadmin'))
                 <button type="button" class="btn btn-success btn-sm" id="btnOpenModalAjukan">
                     <i class="fas fa-paper-plane mr-1"></i>
                     <span>Ajukan Pengesahan SK</span>
+                </button>
+            @endif
+
+            @if($sk)
+                <a href="{{ route('sk_pengurus.show', $sk->id) }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-stamp mr-1"></i>
+                    <span>Ruang Kerja SK & Persetujuan</span>
+                </a>
+            @endif
+
+            @if(auth()->user()->hasRole('Superadmin') && ($struktur->is_locked || $sk))
+                <button type="button" class="btn btn-warning btn-sm" onclick="resetTestingStruktur({{ $struktur->id }})">
+                    <i class="fas fa-undo mr-1"></i>
+                    <span>Reset Uji (Superadmin)</span>
                 </button>
             @endif
 
@@ -174,7 +188,7 @@
                 </h4>
                 <p class="text-xs text-slate-400 mt-0.5">Total Personil: <strong class="text-slate-700 dark:text-slate-200">{{ $totalPengurus ?? count($pengurus) }} Pengurus</strong></p>
             </div>
-            @if(!$struktur->is_locked)
+            @if(!$struktur->is_locked || auth()->user()->hasRole('Superadmin'))
             <button type="button" class="btn btn-primary btn-sm" id="btnAddPengurus">
                 <i class="fas fa-plus mr-1"></i>
                 <span>Tambah Pengurus Pimpinan</span>
@@ -187,7 +201,7 @@
                     @foreach ($pengurus as $item)
                         @include('backend.struktur_organisasi.components.pengurus_card', [
                             'pengurus' => $item,
-                            'isLocked' => $struktur->is_locked
+                            'isLocked' => $struktur->is_locked && !auth()->user()->hasRole('Superadmin')
                         ])
                     @endforeach
                 @else
@@ -199,7 +213,7 @@
                         <p class="text-xs text-slate-400 max-w-sm mx-auto mb-4">
                             Struktur organisasi ini belum memiliki data pengurus. Silakan klik tombol di bawah untuk menambahkan pengurus pimpinan awal.
                         </p>
-                        @if(!$struktur->is_locked)
+                        @if(!$struktur->is_locked || auth()->user()->hasRole('Superadmin'))
                         <button type="button" class="btn btn-primary btn-sm" onclick="$('#btnAddPengurus').click()">
                             <i class="fas fa-plus mr-1"></i> Tambah Pengurus Pertama
                         </button>
@@ -448,15 +462,23 @@
                     contentType: false,
                     success: function(response) {
                         if (response.success) {
-                            iziToast.success({
-                                title: 'Sukses',
-                                message: response.message,
-                                position: 'topRight'
-                            });
                             $('#modalAjukanSk').modal('hide');
-                            setTimeout(function() {
-                                location.reload();
-                            }, 800);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Pengajuan SK Berhasil!',
+                                text: response.message,
+                                showCancelButton: true,
+                                confirmButtonColor: '#059669',
+                                cancelButtonColor: '#64748b',
+                                confirmButtonText: '<i class="fas fa-stamp mr-1"></i> Buka Ruang Kerja SK Sekarang',
+                                cancelButtonText: 'Tetap di Halaman Ini'
+                            }).then((result) => {
+                                if (result.isConfirmed && response.sk_url) {
+                                    window.location.href = response.sk_url;
+                                } else {
+                                    location.reload();
+                                }
+                            });
                         }
                     },
                     error: function(xhr) {
@@ -663,5 +685,47 @@
                 });
             });
         });
+
+        function resetTestingStruktur(id) {
+            Swal.fire({
+                title: 'Reset Pengujian Struktur & SK?',
+                text: 'Status struktur dan SK terkait akan dikembalikan ke status Draft awal sehingga Anda dapat menguji kembali proses pengajuan dari awal.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d97706',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: '<i class="fas fa-undo mr-1"></i> Ya, Reset ke Draft',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('struktur_organisasi.reset-testing', ':id') }}".replace(':id', id),
+                        type: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(res) {
+                            if (res.success) {
+                                iziToast.success({
+                                    title: 'Berhasil',
+                                    message: res.message,
+                                    position: 'topRight'
+                                });
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 600);
+                            }
+                        },
+                        error: function(err) {
+                            iziToast.error({
+                                title: 'Gagal',
+                                message: err.responseJSON ? err.responseJSON.message : 'Terjadi kesalahan sistem',
+                                position: 'topRight'
+                            });
+                        }
+                    });
+                }
+            });
+        }
     </script>
 @endpush
