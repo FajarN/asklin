@@ -92,14 +92,14 @@ class SkDocumentController extends Controller
             $kopBase64 = 'data:image/jpeg;base64,' . base64_encode($kopBytes);
         }
 
-        // Generate QR Code SVG jika show_qr aktif
+        // Generate QR Code PNG (Base64) tanpa echo/output headers
         $qrCodeSvg = null;
         if ($sk->show_qr) {
             $verifyUrl = url('/cek-sk/' . ($sk->qr_token ?: $sk->id));
             try {
                 $barcode = new TCPDF2DBarcode($verifyUrl, 'QRCODE,H');
-                $svgRaw = $barcode->getBarcodeSVG(2.5, 2.5, 'black');
-                $qrCodeSvg = 'data:image/svg+xml;base64,' . base64_encode($svgRaw);
+                $pngRaw = $barcode->getBarcodePngData(4, 4);
+                $qrCodeSvg = 'data:image/png;base64,' . base64_encode($pngRaw);
             } catch (\Exception $e) {
                 $qrCodeSvg = null;
             }
@@ -166,6 +166,10 @@ class SkDocumentController extends Controller
             ->setOption(['isRemoteEnabled' => true, 'isHtml5ParserEnabled' => true]);
 
         $safeFilename = 'SK_ASKLIN_' . Str::slug($sk->no_sk ?: ('pengurus_' . $struktur->nama_struktur)) . '.pdf';
+
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
 
         return $pdf->stream($safeFilename);
     }

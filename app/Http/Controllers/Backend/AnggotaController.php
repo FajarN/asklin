@@ -478,14 +478,16 @@ class AnggotaController extends Controller
         $created_on = Carbon::createFromTimestamp($anggota->created_on)->format('Y');
 
         try {
-            ob_start();
-            $content = view('backend.anggota.printsk', compact('anggota', 'created_on'));
+            if (ob_get_length()) {
+                ob_end_clean();
+            }
+            $content = view('backend.anggota.printsk', compact('anggota', 'created_on'))->render();
 
             $html2pdf = new Html2Pdf('P', 'F4', 'fr', true, 'UTF-8', 1);
             $html2pdf->pdf->SetDisplayMode('fullpage');
             $html2pdf->pdf->SetTitle('SK Anggota ASKLIN');
             $html2pdf->writeHTML($content);
-            $html2pdf->output('sk_anggota.pdf');
+            $html2pdf->output('sk_anggota.pdf', 'I');
         } catch (Html2PdfException $e) {
             $html2pdf->clean();
 
