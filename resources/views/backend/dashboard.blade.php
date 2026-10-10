@@ -7,7 +7,8 @@
 <div class="space-y-6">
 
     <!-- Welcome Greeting Header Banner -->
-    <div class="dashboard-welcome-banner relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-red-700 p-6 sm:p-8 text-white shadow-lg">
+    <div class="dashboard-welcome-banner relative overflow-hidden rounded-2xl p-6 sm:p-8 text-white shadow-lg"
+         style="background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #991b1b 100%);">
         <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="space-y-1.5">
                 <div class="flex items-center gap-2">
@@ -33,14 +34,16 @@
             <div class="flex items-center gap-3 shrink-0">
                 @can('verifikasi-anggota')
                     <a href="{{ route('verifikasi_anggota.index') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-red-800 hover:bg-rose-50 font-bold text-xs shadow-sm transition hover:scale-105">
-                        <i class="fas fa-clipboard-check text-red-600"></i>
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs shadow-md transition hover:scale-105"
+                        style="background-color: #ffffff !important; color: #991b1b !important;">
+                        <i class="fas fa-clipboard-check" style="color: #dc2626 !important;"></i>
                         <span>Antrean Verifikasi</span>
                     </a>
                 @endcan
                 @can('data-anggota')
                     <a href="{{ route('anggota.index') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-800/80 hover:bg-red-800 text-white font-semibold text-xs border border-white/20 transition">
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-white font-semibold text-xs border border-white/30 transition hover:scale-105"
+                        style="background-color: rgba(127, 29, 29, 0.85) !important; color: #ffffff !important;">
                         <i class="fas fa-clinic-medical"></i>
                         <span>Direktori Anggota</span>
                     </a>

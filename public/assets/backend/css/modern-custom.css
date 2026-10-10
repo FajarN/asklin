@@ -566,6 +566,23 @@ div.nama-klinik,
     color: #ffffff !important;
 }
 
+/* Sidebar Active Link (Light Mode) */
+#main-sidebar nav a.bg-red-50,
+#main-sidebar nav a[class*="bg-red-"],
+#main-sidebar nav a[class*="text-red-"] {
+    background-color: #fef2f2 !important;
+    color: #b91c1c !important;
+    font-weight: 600 !important;
+    border-left: 3px solid #dc2626 !important;
+    box-shadow: 0 1px 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+#main-sidebar nav a.bg-red-50 i,
+#main-sidebar nav a[class*="bg-red-"] i,
+#main-sidebar nav a[class*="text-red-"] i {
+    color: #dc2626 !important;
+}
+
 /* Sidebar Active Link (Holographic Cyber Glow & Scanning Ray - Red Dominant) */
 .dark #main-sidebar nav a.bg-red-50,
 .dark #main-sidebar nav a[class*="bg-red-"],
@@ -869,7 +886,23 @@ div.nama-klinik,
    B.2. Futuristic Cyber Tech Animations for Dashboard (Dark Mode)
    -------------------------------------------------------------------------- */
 
-/* 1. Dashboard Welcome Banner Cyber Effect */
+/* 1. Dashboard Welcome Banner (Light Mode & Dark Mode) */
+.dashboard-welcome-banner {
+    position: relative !important;
+    background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #991b1b 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(185, 28, 28, 0.3) !important;
+    box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.35), 0 8px 10px -6px rgba(220, 38, 38, 0.2) !important;
+}
+
+.dashboard-welcome-banner h2 {
+    color: #ffffff !important;
+}
+
+.dashboard-welcome-banner p {
+    color: #ffe4e6 !important;
+}
+
 .dark .dashboard-welcome-banner {
     position: relative !important;
     background-color: #881337 !important;
