@@ -7,7 +7,7 @@
 <div class="space-y-6">
 
     <!-- Welcome Greeting Header Banner -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 p-6 sm:p-8 text-white shadow-lg">
+    <div class="dashboard-welcome-banner relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 p-6 sm:p-8 text-white shadow-lg">
         <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="space-y-1.5">
                 <div class="flex items-center gap-2">
@@ -16,6 +16,10 @@
                     </span>
                     <span class="text-xs text-emerald-100 font-medium">
                         {{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y') }}
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/25 text-emerald-300 border border-emerald-400/30 backdrop-blur-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>LIVE MONITOR</span>
                     </span>
                 </div>
                 <h2 class="text-lg sm:text-xl font-bold tracking-tight text-white">

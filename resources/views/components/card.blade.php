@@ -6,7 +6,7 @@
     'class' => '',
 ])
 
-<div {{ $attributes->merge(['class' => 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-card transition-all duration-200 ' . $class]) }}>
+<div {{ $attributes->merge(['class' => 'analytics-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-card transition-all duration-200 ' . $class]) }}>
     @if ($title || $subtitle || isset($header) || $headerAction)
         <div class="px-6 py-4.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
             <div>

@@ -856,6 +856,236 @@ div.nama-klinik,
 }
 
 /* --------------------------------------------------------------------------
+   B.2. Futuristic Cyber Tech Animations for Dashboard (Dark Mode)
+   -------------------------------------------------------------------------- */
+
+/* 1. Dashboard Welcome Banner Cyber Effect */
+.dark .dashboard-welcome-banner {
+    position: relative !important;
+    background-color: #064e3b !important;
+    background-image: 
+        radial-gradient(rgba(16, 185, 129, 0.22) 1.5px, transparent 1.5px),
+        linear-gradient(135deg, rgba(6, 78, 59, 0.95) 0%, rgba(15, 23, 42, 0.92) 50%, rgba(4, 120, 87, 0.88) 100%) !important;
+    background-size: 24px 24px, 100% 100% !important;
+    border: 1px solid rgba(16, 185, 129, 0.35) !important;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 25px rgba(16, 185, 129, 0.25), inset 0 0 20px rgba(6, 182, 212, 0.1) !important;
+    overflow: hidden !important;
+}
+
+/* Cyber Scanning Laser Line along Welcome Banner Bottom Edge */
+.dark .dashboard-welcome-banner::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -250px;
+    width: 250px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
+    box-shadow: 0 0 16px #10b981, 0 0 30px #06b6d4;
+    animation: bannerLaserSweep 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+    z-index: 20;
+}
+
+@keyframes bannerLaserSweep {
+    0% {
+        left: -250px;
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}
+
+/* 2. Dashboard Stat Cards Cyber Tech Animations */
+.dark .stat-card {
+    position: relative !important;
+    overflow: hidden !important;
+    background-color: #0f172a !important;
+    border-color: #1e293b !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.03) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Ambient Cyber Beam running along top edge of stat card */
+.dark .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -160px;
+    width: 160px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
+    box-shadow: 0 0 12px #10b981, 0 0 20px #06b6d4;
+    animation: statLaserScan 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Sequential Staggered Delays for 8 Stat Cards */
+.dark .grid > .stat-card:nth-child(1)::before { animation-delay: 0s; }
+.dark .grid > .stat-card:nth-child(2)::before { animation-delay: 0.6s; }
+.dark .grid > .stat-card:nth-child(3)::before { animation-delay: 1.2s; }
+.dark .grid > .stat-card:nth-child(4)::before { animation-delay: 1.8s; }
+.dark .grid > .stat-card:nth-child(5)::before { animation-delay: 2.4s; }
+.dark .grid > .stat-card:nth-child(6)::before { animation-delay: 3.0s; }
+.dark .grid > .stat-card:nth-child(7)::before { animation-delay: 3.6s; }
+.dark .grid > .stat-card:nth-child(8)::before { animation-delay: 4.2s; }
+
+@keyframes statLaserScan {
+    0% {
+        left: -160px;
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}
+
+/* Neon Digital Text Glow on Metric Numbers */
+.dark .stat-card span.text-3xl {
+    text-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+    letter-spacing: -0.02em;
+}
+
+/* Breathing Glow on Stat Card Icons */
+.dark .stat-card .rounded-xl {
+    position: relative;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+    transition: all 0.3s ease;
+}
+
+.dark .stat-card:hover .rounded-xl {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 10px rgba(56, 189, 248, 0.3);
+    transform: scale(1.12);
+}
+
+/* Interactive Card Elevation & Holographic Aura on Hover */
+.dark .stat-card:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(16, 185, 129, 0.5) !important;
+    box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.7), 0 0 20px rgba(16, 185, 129, 0.25), inset 0 0 0 1px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* 3. Analytics & Chart Cards in Dashboard */
+.dark .analytics-card,
+.dark .shadow-card {
+    position: relative !important;
+    overflow: hidden !important;
+    background-color: #0f172a !important;
+    border-color: #1e293b !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Subtle Laser Scan Beam on Analytics Cards */
+.dark .analytics-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -200px;
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #10b981 30%, #38bdf8 70%, transparent);
+    box-shadow: 0 0 14px #10b981, 0 0 22px #06b6d4;
+    animation: cardCyberBeam 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Holographic divider under Analytics Card Header */
+.dark .analytics-card .border-b,
+.dark .shadow-card .border-b {
+    position: relative !important;
+    border-bottom: 1px solid #1e293b !important;
+}
+
+.dark .analytics-card .border-b::after,
+.dark .shadow-card .border-b::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, #10b981 0%, #06b6d4 40%, transparent 80%);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* 4. Demographics Energy Flow Shimmer on Progress Bars */
+.dark div[style*="width:"][class*="bg-gradient-to-r"] {
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+.dark div[style*="width:"][class*="bg-gradient-to-r"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    animation: cyberEnergyShimmer 2.8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes cyberEnergyShimmer {
+    0% {
+        left: -100%;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}
+
+/* 5. Recent Activity Timeline Interactive Cyber Rows */
+.dark .divide-y > div:hover {
+    background-color: rgba(16, 185, 129, 0.06) !important;
+    box-shadow: inset 3px 0 0 #10b981, 0 0 15px rgba(16, 185, 129, 0.06) !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Activity Clinic Icon Box Radar Ping */
+.dark .divide-y .w-10.h-10.rounded-xl {
+    position: relative;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+    transition: all 0.25s ease;
+}
+
+.dark .divide-y > div:hover .w-10.h-10.rounded-xl {
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.4), 0 0 10px rgba(56, 189, 248, 0.3);
+    transform: scale(1.08);
+}
+
+/* Live Telemetry Status Dot Pulse */
+.dark .badge-dot,
+.dark [class*="animate-pulse"],
+.dark [class*="animate-ping"] {
+    filter: drop-shadow(0 0 4px #10b981);
+}
+
+/* --------------------------------------------------------------------------
    C. Footer Dark Theme
    -------------------------------------------------------------------------- */
 .dark footer {

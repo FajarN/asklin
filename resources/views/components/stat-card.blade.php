@@ -55,7 +55,7 @@ $tag = $href ? 'a' : 'div';
 @endphp
 
 <{{ $tag }} @if($href) href="{{ $href }}" @endif
-    {{ $attributes->merge(['class' => 'group relative block bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-all duration-300 ' . $style['accent_border']]) }}>
+    {{ $attributes->merge(['class' => 'stat-card group relative block bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-all duration-300 ' . $style['accent_border']]) }}>
     <div class="flex items-center justify-between">
         <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {{ $title }}
