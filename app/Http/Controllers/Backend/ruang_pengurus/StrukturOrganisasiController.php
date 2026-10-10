@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Laravolt\Indonesia\Models\City;
 use Laravolt\Indonesia\Models\Province;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class StrukturOrganisasiController extends Controller
 {
@@ -42,6 +43,8 @@ class StrukturOrganisasiController extends Controller
 
      public function list(Request $request)
     {
+        $user = Auth::user();
+
         $query = StrukturOrganisasi::query()
             ->select(
                 'a.*',
@@ -51,6 +54,13 @@ class StrukturOrganisasiController extends Controller
             ->from('struktur_organisasi as a')
             ->leftJoin('indonesia_cities as d', 'd.code', '=', 'a.id_kota')
             ->leftJoin('indonesia_provinces as e', 'e.code', '=', 'a.id_provinsi');
+
+        // Regional Data Scoping
+        if ($user->hasRole('Admin Cabang') && !empty($user->kota)) {
+            $query->where('a.id_kota', $user->kota);
+        } elseif ($user->hasRole('Admin Daerah') && !empty($user->provinsi)) {
+            $query->where('a.id_provinsi', $user->provinsi);
+        }
 
         if ($request->has('tingkatan_id') && $request->tingkatan_id) {
             $query->where('a.id_tingkatan_pengurus', $request->tingkatan_id);
@@ -69,20 +79,51 @@ class StrukturOrganisasiController extends Controller
                 return $row->tingkatanPengurus ? $row->tingkatanPengurus->nama_tingkatan : '-';
             })
             ->addColumn('action', function ($row) {
-                $viewBtn = '<a href="' . route('struktur_organisasi.detail', $row->id) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Detail</a>';
-                $editBtn = '<button class="btn btn-sm btn-primary edit-btn" data-id="' . $row->id . '"><i class="fas fa-edit"></i> Edit</button>';
-                $deleteBtn = '<button class="btn btn-sm btn-danger delete-btn" data-id="' . $row->id . '"><i class="fas fa-trash"></i> Delete</button>';
+                $viewBtn = '<a href="' . route('struktur_organisasi.detail', $row->id) . '" class="btn btn-sm btn-info" title="Lihat Detail"><i class="fas fa-eye"></i> Detail</a>';
+                
+                // Jika data sedang terkunci, disable edit dan delete untuk Admin Cabang
+                if ($row->is_locked) {
+                    $editBtn = '<button class="btn btn-sm btn-secondary" disabled title="Terkunci dalam proses persetujuan"><i class="fas fa-lock"></i> Terkunci</button>';
+                    $deleteBtn = '';
+                } else {
+                    $editBtn = '<button class="btn btn-sm btn-primary edit-btn" data-id="' . $row->id . '"><i class="fas fa-edit"></i> Edit</button>';
+                    $deleteBtn = '<button class="btn btn-sm btn-danger delete-btn" data-id="' . $row->id . '"><i class="fas fa-trash"></i> Delete</button>';
+                }
 
                 return '<div class="btn-group" role="group">' . $viewBtn . $editBtn . $deleteBtn . '</div>';
             })
             ->editColumn('status', function ($row) {
                 $statusClasses = [
-                    'draft' => 'badge-warning',
+                    'draft' => 'badge-secondary',
+                    'diajukan_daerah' => 'badge-info',
+                    'diajukan_pusat' => 'badge-primary',
+                    'disetujui' => 'badge-success',
                     'aktif' => 'badge-success',
-                    'selesai' => 'badge-info'
+                    'selesai' => 'badge-dark',
+                    'revisi' => 'badge-warning',
+                    'ditolak' => 'badge-danger',
                 ];
 
-                return '<span class="badge ' . ($statusClasses[$row->status] ?? 'badge-secondary') . '">' . ucfirst($row->status) . '</span>';
+                $labels = [
+                    'draft' => 'Draft',
+                    'diajukan_daerah' => 'Diajukan ke Daerah',
+                    'diajukan_pusat' => 'Diajukan ke Pusat',
+                    'disetujui' => 'Disetujui',
+                    'aktif' => 'Aktif',
+                    'selesai' => 'Selesai',
+                    'revisi' => 'Perlu Revisi',
+                    'ditolak' => 'Ditolak',
+                ];
+
+                $label = $labels[$row->status] ?? ucfirst(str_replace('_', ' ', $row->status));
+                $badgeClass = $statusClasses[$row->status] ?? 'badge-secondary';
+
+                $html = '<span class="badge ' . $badgeClass . '">' . $label . '</span>';
+                if ($row->is_locked) {
+                    $html .= ' <span class="badge badge-light text-muted" title="Data terkunci"><i class="fas fa-lock"></i></span>';
+                }
+
+                return $html;
             })
             ->editColumn('tgl_muscab', function ($row) {
                 return $row->tgl_muscab ? date('d-m-Y', strtotime($row->tgl_muscab)) : '-';
@@ -113,26 +154,56 @@ class StrukturOrganisasiController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+
+        // Enforce wilayah untuk Admin Cabang & Admin Daerah
+        if ($user->hasRole('Admin Cabang') && !empty($user->kota)) {
+            $request->merge([
+                'id_provinsi' => $user->provinsi,
+                'id_kota' => $user->kota,
+            ]);
+        } elseif ($user->hasRole('Admin Daerah') && !empty($user->provinsi)) {
+            $request->merge([
+                'id_provinsi' => $user->provinsi,
+            ]);
+        }
+
         $validator = Validator::make($request->all(), [
             'nama_struktur' => 'required|string|max:255',
             'tingkatan_pengurus' => 'required|exists:tingkatan_pengurus,id',
             'periode' => 'required|string|max:20',
             'tgl_muscab' => 'required|date',
-            'status' => 'required|in:draft,aktif,selesai',
-            'id_provinsi' => 'nullable|exists:indonesia_provinces,code', // Perhatikan field code
-            'id_kota' => 'nullable|exists:indonesia_cities,code', // Perhatikan field code
+            'status' => 'required|string|max:50',
+            'id_provinsi' => 'nullable|exists:indonesia_provinces,code',
+            'id_kota' => 'nullable|exists:indonesia_cities,code',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        if ($request->has('id') && $request->id) {
+            $existing = StrukturOrganisasi::findOrFail($request->id);
+            if ($existing->is_locked) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Struktur organisasi terkunci karena sedang dalam proses pengajuan SK!'
+                ], 422);
+            }
+            if (!$existing->isAccessibleByCurrentUser()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak memiliki wewenang untuk mengubah struktur wilayah ini!'
+                ], 403);
+            }
+        }
+
         DB::beginTransaction();
         try {
             $data = [
                 'id_tingkatan_pengurus' => $request->tingkatan_pengurus,
-                'id_provinsi' => $request->id_provinsi, // Sesuaikan dengan name di form
-                'id_kota' => $request->id_kota, // Sesuaikan dengan name di form
+                'id_provinsi' => $request->id_provinsi,
+                'id_kota' => $request->id_kota,
                 'nama_struktur' => $request->nama_struktur,
                 'periode' => $request->periode,
                 'tgl_muscab' => $request->tgl_muscab,
@@ -147,6 +218,7 @@ class StrukturOrganisasiController extends Controller
                 $struktur->update($data);
                 $message = 'Struktur organisasi berhasil diperbarui!';
             } else {
+                $data['created_by'] = $user->id;
                 StrukturOrganisasi::create($data);
                 $message = 'Struktur organisasi berhasil ditambahkan!';
             }
@@ -180,6 +252,10 @@ class StrukturOrganisasiController extends Controller
             ->where('a.id', $id)
             ->firstOrFail();
 
+        if (!$struktur->isAccessibleByCurrentUser()) {
+            abort(403, 'Akses ditolak: Anda tidak memiliki wewenang pada data struktur wilayah ini.');
+        }
+
         $pengurus = StrukturPengurus::where('id_struktur_organisasi', $id)
             ->whereNull('parent_id')
             ->orderBy('urutan', 'asc')
@@ -187,7 +263,6 @@ class StrukturOrganisasiController extends Controller
 
         $kelompokPengurusList = StrukturKelompokPengurus::orderBy('urutan')->get();
 
-            
         return view('backend.struktur_organisasi.detail', compact('struktur', 'pengurus','kelompokPengurusList'));
     }
 
@@ -211,6 +286,21 @@ class StrukturOrganisasiController extends Controller
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $struktur = StrukturOrganisasi::findOrFail($request->id_struktur_organisasi);
+        if ($struktur->is_locked) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengurus terkunci karena struktur organisasi sedang dalam proses pengajuan SK!'
+            ], 422);
+        }
+
+        if (!$struktur->isAccessibleByCurrentUser()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki wewenang untuk mengelola pengurus pada struktur ini!'
+            ], 403);
         }
 
         DB::beginTransaction();
@@ -290,6 +380,21 @@ class StrukturOrganisasiController extends Controller
     {
         try {
             $pengurus = StrukturPengurus::findOrFail($request->id);
+            $struktur = StrukturOrganisasi::findOrFail($pengurus->id_struktur_organisasi);
+
+            if ($struktur->is_locked) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data pengurus terkunci karena struktur organisasi sedang dalam proses pengajuan SK!'
+                ], 422);
+            }
+
+            if (!$struktur->isAccessibleByCurrentUser()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak memiliki wewenang untuk menghapus pengurus pada struktur ini!'
+                ], 403);
+            }
             
             // Check if has children
             $hasChildren = StrukturPengurus::where('parent_id', $pengurus->id)->exists();
@@ -320,6 +425,20 @@ class StrukturOrganisasiController extends Controller
     {
         try {
             $struktur = StrukturOrganisasi::findOrFail($request->id);
+
+            if ($struktur->is_locked) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak dapat menghapus struktur yang sedang terkunci dalam proses pengajuan SK!'
+                ], 422);
+            }
+
+            if (!$struktur->isAccessibleByCurrentUser()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak memiliki wewenang untuk menghapus struktur wilayah ini!'
+                ], 403);
+            }
             
             // Check if structure has members
             $hasMembers = StrukturPengurus::where('id_struktur_organisasi', $struktur->id)->exists();
