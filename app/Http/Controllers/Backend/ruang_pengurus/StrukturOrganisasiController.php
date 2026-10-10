@@ -594,6 +594,15 @@ class StrukturOrganisasiController extends Controller
                 $sk->id
             );
 
+            // Kirim notifikasi sistem terpusat dan email approval
+            if ($isCabang) {
+                \App\Services\NotificationService::notifySkActionRequired($sk, 'Verifikasi Daerah', 'Admin Daerah');
+            } else {
+                \App\Services\NotificationService::notifySkActionRequired($sk, 'Pemeriksaan Sekjen', 'Sekjen');
+                \App\Services\EmailNotificationService::sendSkApprovalRequest($sk, 'sekjen');
+            }
+            \App\Services\NotificationService::notifySkActionRequired($sk, 'Pengajuan Baru', 'Superadmin');
+
             DB::commit();
             return response()->json([
                 'success' => true,

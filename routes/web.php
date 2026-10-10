@@ -23,6 +23,8 @@ Route::post('getKelurahan', [App\Http\Controllers\WilayahController::class, 'get
 Route::get('/cekqrcode/{id}', [App\Http\Controllers\CekQRCodeController::class, 'cekqrcode'])->name('cekqrcode');
 Route::get('/cekqrsertifikat/{id}', [App\Http\Controllers\CekQRSertifikatController::class, 'cekqrsertifikat'])->name('cekqrsertifikat');
 Route::get('/cek-sk/{token}', [App\Http\Controllers\PublicSkVerificationController::class, 'verify'])->name('sk_pengurus.public-verify');
+Route::get('/approve-sk-email/{token}', [App\Http\Controllers\Backend\ruang_pengurus\SkApprovalController::class, 'approveViaEmailToken'])->name('sk_pengurus.approve-email');
+Route::post('/approve-sk-email/{token}/process', [App\Http\Controllers\Backend\ruang_pengurus\SkApprovalController::class, 'processEmailApproval'])->name('sk_pengurus.approve-email.process');
 
 
 // Frontend
@@ -426,10 +428,18 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('master_ketua_umum.delete');
     });
 
+    Route::prefix('notifications')->controller(App\Http\Controllers\Backend\NotificationController::class)->group(function () {
+        Route::get('/', 'index')->name('notifications.index');
+        Route::get('/navbar', 'getNavbarData')->name('notifications.navbar');
+        Route::get('/read/{id}', 'markAsRead')->name('notifications.read');
+        Route::post('/mark-all-read', 'markAllAsRead')->name('notifications.mark-all-read');
+    });
+
     Route::prefix('sk_pengurus')->controller(App\Http\Controllers\Backend\ruang_pengurus\SkApprovalController::class)->group(function () {
         Route::get('/', 'index')->name('sk_pengurus.index');
         Route::get('/list', 'list')->name('sk_pengurus.list');
         Route::get('/show/{id}', 'show')->name('sk_pengurus.show');
+        Route::get('/timeline/{id}', 'timeline')->name('sk_pengurus.timeline');
         Route::post('/verifikasi-daerah/{id}', 'verifikasiDaerah')->name('sk_pengurus.verifikasi-daerah');
         Route::post('/draft-sekjen/{id}', 'draftSekjen')->name('sk_pengurus.draft-sekjen');
         Route::post('/approve-ketum/{id}', 'approveKetum')->name('sk_pengurus.approve-ketum');
@@ -440,6 +450,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     Route::group(['prefix' => 'expired-sio', 'as' => 'expired_sio.'], function () {
         Route::get('/', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'index'])->name('index');
         Route::get('/list', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'list'])->name('list');
+        Route::post('/send-warning/{id}', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'sendWarningEmail'])->name('send_warning');
         Route::get('/export/excel', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'exportExcel'])->name('export.excel');
         Route::get('/export/pdf', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'exportPdf'])->name('export.pdf');
     });

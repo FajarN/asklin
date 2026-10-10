@@ -23,6 +23,8 @@ use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Services\TemplateService;
+use App\Services\EmailNotificationService;
+use App\Services\NotificationService;
 
 
 class HomeController extends Controller
@@ -560,6 +562,11 @@ class HomeController extends Controller
     
         try {
             Anggota::where('id', $anggotaLama->id)->where('id_user', Auth::user()->id)->update($updateData);
+
+            $freshAnggota = Anggota::find($anggotaLama->id);
+            if ($freshAnggota) {
+                EmailNotificationService::sendAnggotaRegistered($freshAnggota);
+            }
             
             $message = 'Data anggota berhasil diperbarui';
             if ($request->hasFile('sio')) {
@@ -1179,9 +1186,25 @@ class HomeController extends Controller
 
     public function submitAkhir()
     {
-        Anggota::where('id_user', Auth::user()->id)->update([
-            'status' => 'waiting'
-        ]);
+        $anggota = Anggota::where('id_user', Auth::user()->id)->first();
+        if ($anggota) {
+            $anggota->update([
+                'status' => 'waiting'
+            ]);
+
+            // Kirim notifikasi email perkembangan registrasi lengkap
+            EmailNotificationService::sendAnggotaRegistered($anggota);
+
+            // Kirim system notification ke admin cabang / pusat
+            NotificationService::send(
+                'Pendaftaran Anggota Baru: ' . ($anggota->nama_klinik ?? $anggota->name),
+                'Klinik ' . ($anggota->nama_klinik ?? $anggota->name) . ' telah melengkapi berkas pendaftaran dan menunggu verifikasi.',
+                'anggota',
+                route('verifikasi_anggota.index'),
+                null,
+                'Admin Cabang'
+            );
+        }
 
         return redirect()->route('user.profile');
     }

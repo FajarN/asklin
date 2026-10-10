@@ -42,6 +42,37 @@ return [
                     'preview_style' => 'height:40px'
                 ]
             ]
+        ],
+        'email' => [
+            'title' => 'Pengaturan Email & Notifikasi',
+            'descriptions' => 'Konfigurasi alamat email resmi PP ASKLIN, Sekjen, dan Ketum untuk approval & notifikasi otomatis sistem.',
+            'icon' => 'fa fa-envelope',
+            'inputs' => [
+                [
+                    'name' => 'email_pp_asklin',
+                    'type' => 'email',
+                    'label' => 'Email Resmi PP ASKLIN (Pengirim)',
+                    'hint' => 'Email pengirim notifikasi resmi sistem (Default: pp_asklin@asklin.org)',
+                    'rules' => 'nullable|email',
+                    'value' => 'pp_asklin@asklin.org'
+                ],
+                [
+                    'name' => 'email_sekjen',
+                    'type' => 'email',
+                    'label' => 'Email Sekretaris Jenderal PP ASKLIN',
+                    'hint' => 'Alamat email Sekjen untuk penerimaan permohonan persetujuan & token SK 7 Hari',
+                    'rules' => 'nullable|email',
+                    'value' => 'sekjen@asklin.org'
+                ],
+                [
+                    'name' => 'email_ketum',
+                    'type' => 'email',
+                    'label' => 'Email Ketua Umum PP ASKLIN',
+                    'hint' => 'Alamat email Ketua Umum untuk penerimaan pengesahan & approval token SK 7 Hari',
+                    'rules' => 'nullable|email',
+                    'value' => 'ketum@asklin.org'
+                ]
+            ]
         ]
     ],
 

@@ -8,6 +8,8 @@ use App\Models\SkPengurus;
 use App\Models\SkPengurusLog;
 use App\Models\StrukturOrganisasi;
 use App\Models\StrukturPengurus;
+use App\Services\NotificationService;
+use App\Services\EmailNotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +21,7 @@ class SkApprovalController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:sk-pengurus-list', ['only' => ['index', 'list', 'show']]);
+        $this->middleware('permission:sk-pengurus-list', ['only' => ['index', 'list', 'show', 'timeline']]);
     }
 
     /**
@@ -125,7 +127,9 @@ class SkApprovalController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $showUrl = route('sk_pengurus.show', $row->id);
-                $btn = '<a href="' . $showUrl . '" class="btn btn-sm btn-info" title="Periksa / Detail"><i class="fas fa-eye"></i> Periksa</a>';
+                $timelineUrl = route('sk_pengurus.timeline', $row->id);
+                $btn = '<a href="' . $showUrl . '" class="btn btn-sm btn-info" title="Ruang Kerja SK"><i class="fas fa-eye"></i> Periksa</a>';
+                $btn .= ' <a href="' . $timelineUrl . '" class="btn btn-sm btn-outline-primary" title="Pelacak Alur & Riwayat SK"><i class="fas fa-stream"></i> Timeline</a>';
 
                 if ($row->status === 'terbit') {
                     $printUrl = route('sk_pengurus.print', $row->id);
@@ -218,6 +222,11 @@ class SkApprovalController extends Controller
                     $request->catatan ?: 'Rekomendasi disetujui oleh Pengurus Daerah dan diteruskan ke Pengurus Pusat.',
                     $sk->id
                 );
+
+                // Kirim notifikasi sistem terpusat dan permohonan email ke Sekjen
+                NotificationService::notifySkActionRequired($sk, 'Pemeriksaan Sekjen', 'Sekjen');
+                NotificationService::notifySkActionRequired($sk, 'Pemeriksaan Sekjen', 'Superadmin');
+                EmailNotificationService::sendSkApprovalRequest($sk, 'sekjen');
 
                 $msg = 'Pengajuan cabang berhasil diverifikasi dan diteruskan ke Pengurus Pusat!';
             } elseif ($request->action === 'revisi') {
@@ -313,6 +322,11 @@ class SkApprovalController extends Controller
                     $sk->id
                 );
 
+                // Kirim notifikasi sistem terpusat dan permohonan email ke Ketua Umum
+                NotificationService::notifySkActionRequired($sk, 'Pengesahan Ketum', 'Ketua Umum');
+                NotificationService::notifySkActionRequired($sk, 'Pengesahan Ketum', 'Superadmin');
+                EmailNotificationService::sendSkApprovalRequest($sk, 'ketum');
+
                 $msg = 'Draft SK berhasil disiapkan dan diteruskan ke Ketua Umum!';
             } else {
                 $sk->status = 'draft';
@@ -386,6 +400,9 @@ class SkApprovalController extends Controller
                     $request->catatan ?: 'Surat Keputusan resmi telah disetujui dan disahkan oleh Ketua Umum PP ASKLIN.',
                     $sk->id
                 );
+
+                // Kirim notifikasi sistem terpusat bahwa SK telah resmi terbit
+                NotificationService::notifySkIssued($sk);
 
                 $msg = 'Surat Keputusan berhasil disahkan secara resmi oleh Ketua Umum!';
             } else {
@@ -502,6 +519,131 @@ class SkApprovalController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Halaman Khusus Pelacak Alur & Riwayat Step-by-Step Approval SK
+     */
+    public function timeline($id)
+    {
+        $sk = SkPengurus::with(['strukturOrganisasi', 'ketuaUmum'])->findOrFail($id);
+        $struktur = $sk->strukturOrganisasi;
+
+        if (!$struktur->isAccessibleByCurrentUser() && !Auth::user()->hasRole(['Sekjen', 'Ketua Umum', 'Superadmin', 'Admin Pusat'])) {
+            abort(403, 'Anda tidak memiliki wewenang pada dokumen SK ini.');
+        }
+
+        $logs = SkPengurusLog::with('user')
+            ->where(function ($q) use ($struktur, $sk) {
+                $q->where('id_struktur_organisasi', $struktur->id)
+                  ->orWhere('id_sk_pengurus', $sk->id);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('backend.sk_pengurus.timeline', compact('sk', 'struktur', 'logs'));
+    }
+
+    /**
+     * Tampilan Konfirmasi Persetujuan SK via Email Token Publik (Aktif 7 Hari)
+     */
+    public function approveViaEmailToken($token)
+    {
+        $sk = SkPengurus::with('strukturOrganisasi')->where('email_token', $token)->first();
+
+        if (!$sk) {
+            return view('backend.sk_pengurus.email_approval_expired', [
+                'errorMessage' => 'Token persetujuan tidak ditemukan atau tidak valid.'
+            ]);
+        }
+
+        if ($sk->email_token_used_at) {
+            return view('backend.sk_pengurus.email_approval_expired', [
+                'errorMessage' => 'Tautan persetujuan ini sudah pernah digunakan sebelumnya pada ' . $sk->email_token_used_at->isoFormat('D MMMM Y, HH:mm') . ' WIB.'
+            ]);
+        }
+
+        if ($sk->email_token_expires_at && $sk->email_token_expires_at->isPast()) {
+            return view('backend.sk_pengurus.email_approval_expired', [
+                'errorMessage' => 'Masa berlaku tautan persetujuan telah kedaluwarsa (> 7 hari). Silakan masuk ke Dashboard ASKLIN untuk memeriksa dokumen secara manual.'
+            ]);
+        }
+
+        return view('backend.sk_pengurus.email_approval', compact('sk'));
+    }
+
+    /**
+     * Proses Eksekusi Persetujuan SK via Email Token
+     */
+    public function processEmailApproval(Request $request, $token)
+    {
+        $sk = SkPengurus::with('strukturOrganisasi')->where('email_token', $token)->firstOrFail();
+
+        if ($sk->email_token_used_at || ($sk->email_token_expires_at && $sk->email_token_expires_at->isPast())) {
+            return redirect()->route('sk_pengurus.approve-email', $token);
+        }
+
+        $struktur = $sk->strukturOrganisasi;
+        $role = $sk->email_token_role;
+        $catatan = $request->input('catatan');
+
+        DB::beginTransaction();
+        try {
+            if ($role === 'sekjen') {
+                $sk->status = 'menunggu_ketum';
+                if (!$sk->no_sk) {
+                    $sk->no_sk = $this->generateNomorSk($sk->tingkatan);
+                }
+                $sk->tgl_penetapan = now();
+                $sk->email_token_used_at = now();
+                $sk->save();
+
+                $struktur->status = 'menunggu_ketum';
+                $struktur->save();
+
+                SkPengurusLog::record(
+                    $struktur->id,
+                    'approve_sekjen_email',
+                    'Sekjen',
+                    null,
+                    $catatan ?: 'Disetujui oleh Sekjen melalui verifikasi aman email (Token 7 Hari). Diteruskan ke Ketua Umum.',
+                    $sk->id
+                );
+
+                NotificationService::notifySkActionRequired($sk, 'Pengesahan Ketum', 'Ketua Umum');
+                NotificationService::notifySkActionRequired($sk, 'Pengesahan Ketum', 'Superadmin');
+                EmailNotificationService::sendSkApprovalRequest($sk, 'ketum');
+            } elseif ($role === 'ketum') {
+                $ketumAktif = MasterKetuaUmum::getAktif();
+                if ($ketumAktif) {
+                    $sk->id_ketua_umum = $ketumAktif->id;
+                }
+                $sk->status = 'terbit';
+                $sk->email_token_used_at = now();
+                $sk->save();
+
+                $struktur->status = 'disetujui';
+                $struktur->disetujui_pusat_at = now();
+                $struktur->save();
+
+                SkPengurusLog::record(
+                    $struktur->id,
+                    'approve_ketum_email',
+                    'Ketua Umum',
+                    null,
+                    $catatan ?: 'Disahkan resmi oleh Ketua Umum melalui verifikasi aman email (Token 7 Hari). SK Resmi Terbit.',
+                    $sk->id
+                );
+
+                NotificationService::notifySkIssued($sk);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Persetujuan resmi berhasil dicatat ke sistem!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 }

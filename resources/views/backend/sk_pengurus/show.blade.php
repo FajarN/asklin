@@ -60,7 +60,12 @@
                 </button>
             @endif
 
-            <a href="{{ route('struktur_organisasi.detail', $struktur->id) }}" class="btn btn-outline-primary btn-sm">
+            <a href="{{ route('sk_pengurus.timeline', $sk->id) }}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-stream mr-1"></i>
+                <span>Alur & Timeline SK</span>
+            </a>
+
+            <a href="{{ route('struktur_organisasi.detail', $struktur->id) }}" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-sitemap mr-1"></i>
                 <span>Lihat Bagan Organisasi</span>
             </a>

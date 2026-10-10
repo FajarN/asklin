@@ -30,6 +30,10 @@ class SkPengurus extends Model
         'qr_token',
         'file_pdf',
         'status',
+        'email_token',
+        'email_token_role',
+        'email_token_expires_at',
+        'email_token_used_at',
         'created_by',
         'updated_by',
     ];
@@ -40,7 +44,14 @@ class SkPengurus extends Model
         'tgl_musyawarah' => 'date',
         'tgl_penetapan' => 'date',
         'tgl_pelantikan' => 'date',
+        'email_token_expires_at' => 'datetime',
+        'email_token_used_at' => 'datetime',
     ];
+
+    public function histories(): HasMany
+    {
+        return $this->hasMany(SkApprovalHistory::class, 'id_sk_pengurus')->orderBy('created_at', 'asc');
+    }
 
     /**
      * Scope query SK berdasarkan hak akses wilayah login

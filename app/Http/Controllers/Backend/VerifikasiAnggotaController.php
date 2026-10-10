@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\{Anggota, SDM, RumahSakit, Asuransi, FotoKlinik, Sertifikat, Pembayaran};
+use App\Services\EmailNotificationService;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 use DataTables;
 use Illuminate\Support\Str;
@@ -234,8 +236,22 @@ class VerifikasiAnggotaController extends Controller
             'keterangan' => $request->keterangan,
             'verifikasi_cabang' => $verifikasi_cabang,
             'verifikasi_pusat' => $verifikasi_pusat
-
         ]);
+
+        if ($request->status == 'approved') {
+            $approvedAnggota = Anggota::find($id);
+            if ($approvedAnggota) {
+                EmailNotificationService::sendAnggotaApproved($approvedAnggota);
+                NotificationService::send(
+                    'Keanggotaan Disetujui: ' . ($approvedAnggota->nama_klinik ?? $approvedAnggota->name),
+                    'Klinik ' . ($approvedAnggota->nama_klinik ?? $approvedAnggota->name) . ' telah resmi disetujui sebagai Anggota ASKLIN dengan Nomor Anggota: ' . $approvedAnggota->no_anggota,
+                    'anggota',
+                    route('anggota.index'),
+                    $approvedAnggota->user_id,
+                    'Super Admin'
+                );
+            }
+        }
 
         return redirect()->route('verifikasi_anggota.verify', $id)->with('success', 'Anggota berhasil diperbarui');
     }

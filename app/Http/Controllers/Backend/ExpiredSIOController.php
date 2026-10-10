@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\{Anggota, SDM, RumahSakit, Asuransi, FotoKlinik, Sertifikat};
+use App\Services\EmailNotificationService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -19,7 +21,7 @@ class ExpiredSIOController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:expired-sio', ['only' => ['index', 'list', 'exportExcel', 'exportPdf']]);
+        $this->middleware('permission:expired-sio', ['only' => ['index', 'list', 'exportExcel', 'exportPdf', 'sendWarningEmail']]);
     }
 
     public function index()
@@ -460,5 +462,52 @@ public function exportPdf(Request $request)
             'sebulan' => $sebulan,
             'aman' => $aman
         ];
+    }
+
+    /**
+     * Kirim email peringatan masa berlaku SIO habis secara manual ke faskes klinik
+     */
+    public function sendWarningEmail($id)
+    {
+        try {
+            $anggota = Anggota::findOrFail($id);
+
+            if (empty($anggota->email)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Klinik ' . ($anggota->nama_klinik ?? $anggota->name) . ' belum memiliki data email yang tersimpan.'
+                ], 422);
+            }
+
+            $success = EmailNotificationService::sendExpiredSioWarning($anggota);
+
+            if (!$success) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Gagal mengirim email peringatan. Pastikan konfigurasi SMTP aktif.'
+                ], 500);
+            }
+
+            // Catat ke system notification juga
+            NotificationService::send(
+                'Peringatan SIO Terkirim: ' . ($anggota->nama_klinik ?? $anggota->name),
+                'Email peringatan masa berlaku SIO telah dikirim ke ' . $anggota->email . ' (Masa berlaku s/d: ' . ($anggota->tgl_akhir_ijin ? date('d-m-Y', strtotime($anggota->tgl_akhir_ijin)) : '-') . ').',
+                'sio',
+                route('expired_sio.index'),
+                $anggota->user_id,
+                'Super Admin'
+            );
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Email peringatan masa berlaku SIO berhasil dikirimkan ke ' . $anggota->email
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Error sendWarningEmail SIO: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

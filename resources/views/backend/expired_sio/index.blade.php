@@ -423,9 +423,11 @@
                         searchable: false,
                         className: 'text-center',
                         render: function(data, type, row) {
-                            return '<button class="btn btn-sm btn-outline-primary" onclick="viewDetail(' +
-                                row.id + ')" title="Lihat Detail">' +
-                                '<i class="fas fa-eye"></i></button>';
+                            var safeName = (row.nama_klinik || '').replace(/'/g, "\\'");
+                            return '<div class="btn-group btn-group-sm">' +
+                                '<button class="btn btn-sm btn-outline-primary" onclick="viewDetail(' + row.id + ')" title="Lihat Detail"><i class="fas fa-eye"></i></button>' +
+                                '<button class="btn btn-sm btn-outline-danger" onclick="sendWarningEmail(' + row.id + ', \'' + safeName + '\', \'' + (row.email || '') + '\')" title="Kirim Email Peringatan SIO"><i class="fas fa-envelope"></i></button>' +
+                                '</div>';
                         }
                     }
                 ],
@@ -608,6 +610,62 @@
         function viewDetail(id) {
             // Implementasi untuk melihat detail
             window.open('{{ route('verifikasi_anggota.verify', ':id') }}'.replace(':id', id), '_blank');
+        }
+
+        function sendWarningEmail(id, clinicName, email) {
+            if (!email) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Email Belum Tersedia',
+                        text: 'Klinik ' + (clinicName || '') + ' belum memiliki alamat email yang tersimpan di sistem.'
+                    });
+                } else {
+                    alert('Klinik belum memiliki alamat email yang tersimpan di sistem.');
+                }
+                return;
+            }
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Kirim Email Peringatan SIO?',
+                    html: 'Kirimkan surat peringatan masa berlaku SIO habis secara resmi ke: <br><strong class="text-danger">' + clinicName + '</strong> (' + email + ')',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e74a3b',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="fas fa-paper-plane mr-1"></i> Ya, Kirim Sekarang',
+                    cancelButtonText: 'Batal',
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                        return $.ajax({
+                            url: "{{ route('expired_sio.send_warning', ':id') }}".replace(':id', id),
+                            type: 'POST',
+                            dataType: 'json'
+                        }).catch(error => {
+                            let msg = error.responseJSON ? error.responseJSON.message : 'Gagal mengirim email';
+                            Swal.showValidationMessage(msg);
+                        });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                    if (result.isConfirmed && result.value) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil Terkirim!',
+                            text: result.value.message || 'Email peringatan berhasil dikirim.'
+                        });
+                    }
+                });
+            } else {
+                if (confirm('Kirimkan email peringatan SIO ke ' + clinicName + ' (' + email + ')?')) {
+                    $.post("{{ route('expired_sio.send_warning', ':id') }}".replace(':id', id), function(res) {
+                        alert(res.message || 'Email berhasil dikirim');
+                    }).fail(function(err) {
+                        alert('Gagal: ' + (err.responseJSON ? err.responseJSON.message : 'Terjadi kesalahan'));
+                    });
+                }
+            }
         }
 
         function showNotification(type, message) {

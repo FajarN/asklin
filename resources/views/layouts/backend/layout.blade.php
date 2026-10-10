@@ -184,12 +184,95 @@
                 userMenuBtn.addEventListener('click', function (e) {
                     e.stopPropagation();
                     userMenuDropdown.classList.toggle('hidden');
+                    const notifDropdown = document.getElementById('notification-dropdown');
+                    if (notifDropdown) notifDropdown.classList.add('hidden');
                 });
                 document.addEventListener('click', function (e) {
                     if (!userMenuDropdown.contains(e.target) && !userMenuBtn.contains(e.target)) {
                         userMenuDropdown.classList.add('hidden');
                     }
                 });
+            }
+
+            // Notification Bell Menu & Realtime Fetch
+            const notifBtn = document.getElementById('notification-toggle-btn');
+            const notifDropdown = document.getElementById('notification-dropdown');
+            const notifBadge = document.getElementById('nav-notif-badge');
+            const notifList = document.getElementById('nav-notif-list');
+
+            function loadNavNotifications() {
+                fetch('{{ route('notifications.navbar') }}')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (data.unread_count > 0) {
+                                if (notifBadge) {
+                                    notifBadge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+                                    notifBadge.classList.remove('hidden');
+                                    notifBadge.classList.add('flex');
+                                }
+                            } else {
+                                if (notifBadge) {
+                                    notifBadge.classList.add('hidden');
+                                    notifBadge.classList.remove('flex');
+                                }
+                            }
+
+                            if (!notifList) return;
+                            if (data.notifications && data.notifications.length > 0) {
+                                let html = '';
+                                data.notifications.forEach(item => {
+                                    let icon = 'fa-bell text-slate-500';
+                                    if (item.type === 'sk_pengurus') icon = 'fa-stamp text-sky-500';
+                                    else if (item.type === 'anggota') icon = 'fa-user-check text-emerald-500';
+                                    else if (item.type === 'expired_sio') icon = 'fa-exclamation-triangle text-amber-500';
+
+                                    let unreadDot = !item.is_read ? '<span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>' : '';
+                                    let bg = !item.is_read ? 'bg-emerald-50/40 dark:bg-emerald-950/30' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50';
+
+                                    html += `
+                                        <a href="${item.read_url}" class="p-3 block transition-colors ${bg}">
+                                            <div class="flex items-start gap-2.5">
+                                                <i class="fas ${icon} mt-0.5 text-xs shrink-0"></i>
+                                                <div class="space-y-0.5 flex-1 min-w-0">
+                                                    <div class="flex items-center justify-between gap-1">
+                                                        <p class="font-bold text-slate-800 dark:text-white truncate text-[11px]">${item.title}</p>
+                                                        ${unreadDot}
+                                                    </div>
+                                                    <p class="text-slate-500 dark:text-slate-400 line-clamp-2 text-[10px] leading-tight">${item.message}</p>
+                                                    <span class="text-[9px] text-slate-400 block pt-0.5">${item.time_ago}</span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    `;
+                                });
+                                notifList.innerHTML = html;
+                            } else {
+                                notifList.innerHTML = `
+                                    <div class="p-6 text-center text-slate-400">
+                                        <i class="fas fa-check-circle text-emerald-500 text-lg mb-1 block"></i>
+                                        <p class="text-xs font-semibold">Tidak ada notifikasi baru</p>
+                                    </div>
+                                `;
+                            }
+                        }
+                    })
+                    .catch(() => {});
+            }
+
+            if (notifBtn && notifDropdown) {
+                notifBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    notifDropdown.classList.toggle('hidden');
+                    if (userMenuDropdown) userMenuDropdown.classList.add('hidden');
+                    loadNavNotifications();
+                });
+                document.addEventListener('click', function (e) {
+                    if (!notifDropdown.contains(e.target) && !notifBtn.contains(e.target)) {
+                        notifDropdown.classList.add('hidden');
+                    }
+                });
+                loadNavNotifications();
             }
         });
     </script>

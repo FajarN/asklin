@@ -17,6 +17,42 @@
             <span>Lihat Website</span>
         </a>
 
+        <!-- Notification Bell Dropdown Button -->
+        <div class="relative" id="notification-menu-container">
+            <button type="button" id="notification-toggle-btn" aria-label="Lihat Notifikasi"
+                class="relative inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                <i class="fas fa-bell text-sm"></i>
+                <span id="nav-notif-badge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-black bg-rose-500 text-white flex items-center justify-center shadow-xs border-2 border-white dark:border-slate-900 leading-none">
+                    0
+                </span>
+            </button>
+
+            <!-- Dropdown Preview Panel -->
+            <div id="notification-dropdown"
+                class="hidden absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-2xl py-2 text-xs text-slate-700 dark:text-slate-300 z-50 animate-in fade-in zoom-in-95 duration-100">
+                <div class="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <span class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                        <i class="fas fa-bell text-emerald-600 text-xs"></i> Notifikasi Masuk
+                    </span>
+                    <a href="{{ route('notifications.index') }}" class="text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline font-semibold">
+                        Lihat Semua
+                    </a>
+                </div>
+
+                <div id="nav-notif-list" class="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/80">
+                    <div class="p-6 text-center text-slate-400">
+                        <i class="fas fa-spinner fa-spin mr-1"></i> Memuat notifikasi...
+                    </div>
+                </div>
+
+                <div class="px-3 pt-2 pb-1 border-t border-slate-100 dark:border-slate-800 text-center">
+                    <a href="{{ route('notifications.index') }}" class="btn btn-outline-primary btn-sm w-full text-xs py-1.5">
+                        Buka Pusat Notifikasi Lengkap
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Dark Mode Toggle Button -->
         <button type="button" id="theme-toggle" aria-label="Ganti Tema Gelap / Terang"
             class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition focus:outline-none focus:ring-2 focus:ring-red-500/30">
