@@ -8,7 +8,7 @@
             <div class="mod-breadcrumbs">
                 <a href="{{ route('home') }}">Beranda</a>
                 <span>/</span>
-                <a href="{{ route('berita') }}">Warta &amp; Opini</a>
+                <a href="{{ route('berita') }}">Berita</a>
                 <span>/</span>
                 <span style="color: #fff; font-weight: 700;">Detail Artikel</span>
             </div>

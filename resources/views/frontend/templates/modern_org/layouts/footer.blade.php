@@ -44,8 +44,8 @@
                 <h4 class="mod-footer-title">Portal &amp; Media</h4>
                 <ul class="mod-footer-links">
                     <li><a href="{{ route('register') }}"><i class="fas fa-chevron-right text-[10px] text-red-400"></i> Registrasi Keanggotaan</a></li>
-                    <li><a href="{{ route('berita') }}"><i class="fas fa-chevron-right text-[10px] text-red-400"></i> Publikasi &amp; Kabar</a></li>
-                    <li><a href="{{ route('event_asklin') }}"><i class="fas fa-chevron-right text-[10px] text-red-400"></i> Pelatihan &amp; Workshop</a></li>
+                    <li><a href="{{ route('berita') }}"><i class="fas fa-chevron-right text-[10px] text-red-400"></i> Berita Terbaru</a></li>
+                    <li><a href="{{ route('event_asklin') }}"><i class="fas fa-chevron-right text-[10px] text-red-400"></i> Event &amp; Pelatihan</a></li>
                     <li><a href="{{ route('galery') }}"><i class="fas fa-chevron-right text-[10px] text-red-400"></i> Dokumentasi Foto</a></li>
                     <li><a href="{{ route('login') }}"><i class="fas fa-chevron-right text-[10px] text-red-400"></i> Portal Masuk Pengurus</a></li>
                 </ul>

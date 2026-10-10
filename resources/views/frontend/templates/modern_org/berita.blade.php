@@ -8,9 +8,9 @@
             <div class="mod-breadcrumbs">
                 <a href="{{ route('home') }}">Beranda</a>
                 <span>/</span>
-                <span style="color: #fff; font-weight: 700;">Warta &amp; Opini</span>
+                <span style="color: #fff; font-weight: 700;">Berita</span>
             </div>
-            <h1 class="mod-inner-title">Warta &amp; Berita ASKLIN</h1>
+            <h1 class="mod-inner-title">Berita ASKLIN</h1>
             <p class="mod-inner-sub">Kanal Informasi Resmi Terkait Kebijakan Pelayanan, Kegiatan Organisasi &amp; Transformasi Fasilitas Klinik</p>
         </div>
     </div>

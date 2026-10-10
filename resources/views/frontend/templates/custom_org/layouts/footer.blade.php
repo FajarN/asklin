@@ -45,7 +45,7 @@
                 <ul class="org-footer-links">
                     <li><a href="{{ route('register') }}"><i class="fas fa-angle-right"></i> Registrasi Anggota Baru</a></li>
                     <li><a href="{{ route('syarat.ketentuan') }}"><i class="fas fa-angle-right"></i> Pedoman &amp; Ketentuan</a></li>
-                    <li><a href="{{ route('berita') }}"><i class="fas fa-angle-right"></i> Warta &amp; Berita Terbaru</a></li>
+                    <li><a href="{{ route('berita') }}"><i class="fas fa-angle-right"></i> Berita Terbaru</a></li>
                     <li><a href="{{ route('event_asklin') }}"><i class="fas fa-angle-right"></i> Agenda Pelatihan / Seminar</a></li>
                     <li><a href="{{ route('galery') }}"><i class="fas fa-angle-right"></i> Dokumentasi Kegiatan</a></li>
                 </ul>

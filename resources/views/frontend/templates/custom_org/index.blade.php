@@ -240,7 +240,7 @@
         <div class="custom-org-container">
             <div class="org-section-header">
                 <span class="org-section-eyebrow">Informasi &amp; Publikasi</span>
-                <h2 class="org-section-title">Warta &amp; Kabar Terbaru ASKLIN</h2>
+                <h2 class="org-section-title">Berita Terbaru ASKLIN</h2>
                 <p class="org-section-desc">
                     Ikuti perkembangan terkini kebijakan kesehatan, kegiatan organisasi pengurus pusat &amp; daerah, serta informasi seputar fasilitas klinik.
                 </p>

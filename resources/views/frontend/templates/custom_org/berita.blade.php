@@ -8,9 +8,9 @@
             <div class="org-breadcrumbs">
                 <a href="{{ route('home') }}">Beranda</a>
                 <span>/</span>
-                <span style="color: #ffffff; font-weight: 700;">Warta &amp; Berita</span>
+                <span style="color: #ffffff; font-weight: 700;">Berita</span>
             </div>
-            <h1 class="org-page-title">Warta &amp; Berita ASKLIN</h1>
+            <h1 class="org-page-title">Berita ASKLIN</h1>
             <p class="org-page-subtitle">Publikasi Resmi Kegiatan Organisasi, Regulasi Pelayanan Kesehatan &amp; Kabar Fasilitas Klinik</p>
         </div>
     </div>

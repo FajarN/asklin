@@ -8,7 +8,7 @@
             <div class="org-breadcrumbs">
                 <a href="{{ route('home') }}">Beranda</a>
                 <span>/</span>
-                <a href="{{ route('event_asklin') }}">Agenda &amp; Event</a>
+                <a href="{{ route('event_asklin') }}">Event</a>
                 <span>/</span>
                 <span style="color: #ffffff; font-weight: 700;">Detail Agenda</span>
             </div>

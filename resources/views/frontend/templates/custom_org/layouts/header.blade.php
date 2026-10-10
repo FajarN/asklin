@@ -65,24 +65,24 @@
                     </li>
                     <li class="org-nav-item {{ request()->is('sejarah*', 'visi_misi*', 'latar_belakang*', 'pengurus_pusat*') ? 'active' : '' }}">
                         <a href="#" class="org-nav-link">
-                            <span>Profil Organisasi</span>
+                            <span>Tentang Kami</span>
                             <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
                         </a>
                         <ul class="org-nav-dropdown">
-                            <li><a href="{{ route('sejarah') }}" class="org-nav-dropdown-link"><i class="fas fa-history text-xs text-red-600"></i> Sejarah ASKLIN</a></li>
+                            <li><a href="{{ route('sejarah') }}" class="org-nav-dropdown-link"><i class="fas fa-history text-xs text-red-600"></i> Sejarah</a></li>
                             <li><a href="{{ route('visimisi') }}" class="org-nav-dropdown-link"><i class="fas fa-bullseye text-xs text-red-600"></i> Visi &amp; Misi</a></li>
                             <li><a href="{{ route('latarbelakang') }}" class="org-nav-dropdown-link"><i class="fas fa-landmark text-xs text-red-600"></i> Latar Belakang</a></li>
-                            <li><a href="{{ route('penguruspusat') }}" class="org-nav-dropdown-link"><i class="fas fa-sitemap text-xs text-red-600"></i> Struktur Pengurus</a></li>
+                            <li><a href="{{ route('penguruspusat') }}" class="org-nav-dropdown-link"><i class="fas fa-sitemap text-xs text-red-600"></i> Pengurus Pusat</a></li>
                         </ul>
                     </li>
                     <li class="org-nav-item {{ request()->routeIs('berita*') ? 'active' : '' }}">
                         <a href="{{ route('berita') }}" class="org-nav-link">
-                            <span>Berita &amp; Opini</span>
+                            <span>Berita</span>
                         </a>
                     </li>
                     <li class="org-nav-item {{ request()->is('event*') ? 'active' : '' }}">
                         <a href="{{ route('event_asklin') }}" class="org-nav-link">
-                            <span>Agenda &amp; Event</span>
+                            <span>Event</span>
                         </a>
                     </li>
                     <li class="org-nav-item {{ request()->routeIs('galery*') ? 'active' : '' }}">
@@ -110,11 +110,11 @@
                     @guest
                         <a href="{{ route('login') }}" class="org-btn org-btn-outline">
                             <i class="fas fa-sign-in-alt text-xs"></i>
-                            <span>Masuk</span>
+                            <span>Login</span>
                         </a>
                         <a href="{{ route('register') }}" class="org-btn org-btn-primary">
                             <i class="fas fa-user-plus text-xs"></i>
-                            <span>Daftar Anggota</span>
+                            <span>Daftar</span>
                         </a>
                     @else
                         @hasrole('Superadmin|Admin Cabang|Admin Daerah|Admin Pusat|Sekjen|Ketua Umum|Bendahara|Admin Konas')

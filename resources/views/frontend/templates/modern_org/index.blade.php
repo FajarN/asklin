@@ -302,7 +302,7 @@
         <div class="modern-org-container">
             <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;">
                 <div>
-                    <span class="mod-section-badge">Warta &amp; Publikasi</span>
+                    <span class="mod-section-badge">Berita Terbaru</span>
                     <h2 class="mod-section-title" style="margin: 0;">Kabar Terkini &amp; Agenda Organisasi</h2>
                 </div>
                 <a href="{{ route('berita') }}" class="mod-btn mod-btn-glass" style="font-size: 13px;">

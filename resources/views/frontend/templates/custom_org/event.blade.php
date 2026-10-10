@@ -8,9 +8,9 @@
             <div class="org-breadcrumbs">
                 <a href="{{ route('home') }}">Beranda</a>
                 <span>/</span>
-                <span style="color: #ffffff; font-weight: 700;">Agenda &amp; Event</span>
+                <span style="color: #ffffff; font-weight: 700;">Event</span>
             </div>
-            <h1 class="org-page-title">Agenda &amp; Event ASKLIN</h1>
+            <h1 class="org-page-title">Event ASKLIN</h1>
             <p class="org-page-subtitle">Jadwal Seminar Ilmiah, Lokakarya Akreditasi, Musyawarah Kerja &amp; Pelatihan Manajemen Klinik</p>
         </div>
     </div>

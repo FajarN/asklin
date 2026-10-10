@@ -8,9 +8,9 @@
             <div class="mod-breadcrumbs">
                 <a href="{{ route('home') }}">Beranda</a>
                 <span>/</span>
-                <span style="color: #fff; font-weight: 700;">Agenda &amp; Pelatihan</span>
+                <span style="color: #fff; font-weight: 700;">Event</span>
             </div>
-            <h1 class="mod-inner-title">Agenda &amp; Event ASKLIN</h1>
+            <h1 class="mod-inner-title">Event ASKLIN</h1>
             <p class="mod-inner-sub">Jadwal Kongres, Seminar Ilmiah Kedokteran, Workshop Tata Kelola &amp; Pelatihan Akreditasi Klinik</p>
         </div>
     </div>

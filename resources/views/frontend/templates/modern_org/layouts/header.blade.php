@@ -13,13 +13,7 @@
                     <div class="mod-brand-badge">A</div>
                 @endif
                 <div class="mod-brand-text">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="mod-brand-title">ASKLIN</span>
-                        <span class="mod-brand-badge">
-                            <span class="mod-pulse-dot" style="width: 6px; height: 6px;"></span>
-                            Portal Faskes
-                        </span>
-                    </div>
+                    <span class="mod-brand-title">ASKLIN</span>
                     <span class="mod-brand-sub">Asosiasi Klinik Indonesia</span>
                 </div>
             </a>
@@ -40,24 +34,24 @@
                     </li>
                     <li class="mod-nav-item {{ request()->is('sejarah*', 'visi_misi*', 'latar_belakang*', 'pengurus_pusat*') ? 'active' : '' }}">
                         <a href="#" class="mod-nav-link">
-                            <span>Tentang ASKLIN</span>
+                            <span>Tentang Kami</span>
                             <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
                         </a>
                         <ul class="mod-nav-dropdown">
-                            <li><a href="{{ route('sejarah') }}" class="mod-dropdown-link"><i class="fas fa-history text-red-500 text-xs"></i> Sejarah Pendirian</a></li>
+                            <li><a href="{{ route('sejarah') }}" class="mod-dropdown-link"><i class="fas fa-history text-red-500 text-xs"></i> Sejarah</a></li>
                             <li><a href="{{ route('visimisi') }}" class="mod-dropdown-link"><i class="fas fa-bullseye text-red-500 text-xs"></i> Visi &amp; Misi</a></li>
-                            <li><a href="{{ route('latarbelakang') }}" class="mod-dropdown-link"><i class="fas fa-landmark text-red-500 text-xs"></i> Landasan Regulasi</a></li>
-                            <li><a href="{{ route('penguruspusat') }}" class="mod-dropdown-link"><i class="fas fa-sitemap text-red-500 text-xs"></i> Struktur Pengurus Pusat</a></li>
+                            <li><a href="{{ route('latarbelakang') }}" class="mod-dropdown-link"><i class="fas fa-landmark text-red-500 text-xs"></i> Latar Belakang</a></li>
+                            <li><a href="{{ route('penguruspusat') }}" class="mod-dropdown-link"><i class="fas fa-sitemap text-red-500 text-xs"></i> Pengurus Pusat</a></li>
                         </ul>
                     </li>
                     <li class="mod-nav-item {{ request()->routeIs('berita*') ? 'active' : '' }}">
                         <a href="{{ route('berita') }}" class="mod-nav-link">
-                            <span>Warta &amp; Opini</span>
+                            <span>Berita</span>
                         </a>
                     </li>
                     <li class="mod-nav-item {{ request()->is('event*') ? 'active' : '' }}">
                         <a href="{{ route('event_asklin') }}" class="mod-nav-link">
-                            <span>Agenda &amp; Diklat</span>
+                            <span>Event</span>
                         </a>
                     </li>
                     <li class="mod-nav-item {{ request()->routeIs('galery*') ? 'active' : '' }}">
@@ -87,11 +81,11 @@
                     @guest
                         <a href="{{ route('login') }}" class="mod-btn mod-btn-glass" style="padding: 8px 16px; font-size: 12.5px;">
                             <i class="fas fa-sign-in-alt text-xs"></i>
-                            <span>Masuk</span>
+                            <span>Login</span>
                         </a>
                         <a href="{{ route('register') }}" class="mod-btn mod-btn-primary" style="padding: 8px 18px; font-size: 12.5px;">
                             <i class="fas fa-user-plus text-xs"></i>
-                            <span>Gabung Faskes</span>
+                            <span>Daftar</span>
                         </a>
                     @else
                         @hasrole('Superadmin|Admin Cabang|Admin Daerah|Admin Pusat|Sekjen|Ketua Umum|Bendahara|Admin Konas')
