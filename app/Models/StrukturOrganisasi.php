@@ -64,11 +64,6 @@ class StrukturOrganisasi extends Model
         return $this->hasOne(SkPengurus::class, 'id_struktur_organisasi');
     }
 
-    public function kelompokPengurus(): HasMany
-    {
-        return $this->hasMany(StrukturKelompokPengurus::class, 'id_struktur_organisasi')->orderBy('urutan', 'asc');
-    }
-
     public function pengurus(): HasMany
     {
         return $this->hasMany(StrukturPengurus::class, 'id_struktur_organisasi')->orderBy('urutan', 'asc');

@@ -147,7 +147,6 @@ class SkApprovalController extends Controller
             'strukturOrganisasi.provinsi',
             'strukturOrganisasi.kota',
             'strukturOrganisasi.tingkatanPengurus',
-            'strukturOrganisasi.kelompokPengurus',
             'ketuaUmum',
             'logs.user'
         ])->findOrFail($id);
