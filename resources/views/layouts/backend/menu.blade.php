@@ -157,12 +157,16 @@
 
 
             @canany(['jenis-surat-list', 'penomoran-pusat-list', 'surat-keluar-list', 'surat-tugas-list',
-                'surat-undangan-list'])
+                'surat-undangan-list', 'struktur-organisasi-list', 'master-ketua-umum-list', 'sk-pengurus-list'])
                 <li class="menu-header">Ruang Pengurus</li>
                 @can('struktur-organisasi-list')
                     <li class="dropdown @if (Request::url() == route('struktur_organisasi.index')) active @endif"><a class="nav-link"
-                            href="{{ route('struktur_organisasi.index') }}"><i class="fas fa-user-md"></i></i> Struktur
+                            href="{{ route('struktur_organisasi.index') }}"><i class="fas fa-user-md"></i> Struktur
                             Organisasi</a></li>
+                @endcan
+                @can('master-ketua-umum-list')
+                    <li class="dropdown @if (Request::url() == route('master_ketua_umum.index')) active @endif"><a class="nav-link"
+                            href="{{ route('master_ketua_umum.index') }}"><i class="fas fa-user-tie"></i> Master Ketua Umum</a></li>
                 @endcan
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="nav-link has-dropdown"><i class="fas fa-regular fa-envelope"></i>

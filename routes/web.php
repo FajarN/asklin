@@ -413,6 +413,15 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroyPengurus')->name('pengurus.delete');
     });
 
+    Route::prefix('master_ketua_umum')->controller(App\Http\Controllers\Backend\ruang_pengurus\MasterKetuaUmumController::class)->group(function () {
+        Route::get('/', 'index')->name('master_ketua_umum.index');
+        Route::get('/list', 'list')->name('master_ketua_umum.list');
+        Route::get('/edit/{id}', 'edit')->name('master_ketua_umum.edit');
+        Route::post('/store', 'store')->name('master_ketua_umum.store');
+        Route::post('/set-aktif/{id}', 'setAktif')->name('master_ketua_umum.set-aktif');
+        Route::post('/delete', 'destroy')->name('master_ketua_umum.delete');
+    });
+
     Route::group(['prefix' => 'expired-sio', 'as' => 'expired_sio.'], function () {
         Route::get('/', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'index'])->name('index');
         Route::get('/list', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'list'])->name('list');
