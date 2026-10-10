@@ -1,5 +1,5 @@
 <!-- Modern Organization Footer -->
-<footer class="mod-footer">
+<footer class="mod-footer-v3">
     <div class="modern-org-container">
         <div class="mod-footer-grid">
 

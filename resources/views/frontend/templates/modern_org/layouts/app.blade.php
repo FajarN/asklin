@@ -20,6 +20,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&display=swap" rel="stylesheet">
 
+    <!-- Instant Dark Mode Init (Zero FOUC) -->
+    <script>
+        (function () {
+            try {
+                const storedTheme = localStorage.getItem('theme');
+                const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (storedTheme === 'dark' || (!storedTheme && supportDarkMode)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (_) {}
+        })();
+    </script>
+
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -82,6 +97,35 @@
                     }
                 });
             }
+
+            // Modern Dark Mode Toggle
+            var themeBtn = document.getElementById('themeToggleMod');
+            function syncModThemeUI() {
+                var isDark = document.documentElement.classList.contains('dark');
+                if (themeBtn) {
+                    var icon = themeBtn.querySelector('i');
+                    if (icon) {
+                        if (isDark) {
+                            icon.className = 'fas fa-sun text-amber-400';
+                            themeBtn.setAttribute('title', 'Beralih ke Mode Terang');
+                        } else {
+                            icon.className = 'fas fa-moon text-slate-700 dark:text-slate-200';
+                            themeBtn.setAttribute('title', 'Beralih ke Mode Gelap');
+                        }
+                    }
+                }
+            }
+
+            if (themeBtn) {
+                themeBtn.addEventListener('click', function() {
+                    var isDark = document.documentElement.classList.toggle('dark');
+                    try {
+                        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                    } catch(e) {}
+                    syncModThemeUI();
+                });
+            }
+            syncModThemeUI();
         });
     </script>
     @stack('js')

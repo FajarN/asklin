@@ -20,6 +20,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
 
+    <!-- Instant Dark Mode Init (Zero FOUC) -->
+    <script>
+        (function () {
+            try {
+                const storedTheme = localStorage.getItem('theme');
+                const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (storedTheme === 'dark' || (!storedTheme && supportDarkMode)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (_) {}
+        })();
+    </script>
+
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -82,6 +97,40 @@
                     }
                 });
             }
+
+            // Theme Toggle Logic
+            var themeBtn = document.getElementById('themeToggleOrg');
+            var themeBtnTop = document.getElementById('themeToggleOrgTop');
+
+            function syncThemeUI() {
+                var isDark = document.documentElement.classList.contains('dark');
+                [themeBtn, themeBtnTop].forEach(function(btn) {
+                    if (!btn) return;
+                    var icon = btn.querySelector('i');
+                    var text = btn.querySelector('.theme-text');
+                    if (isDark) {
+                        if (icon) { icon.className = 'fas fa-sun text-amber-400'; }
+                        if (text) { text.textContent = 'Mode Terang'; }
+                        btn.setAttribute('title', 'Beralih ke Mode Terang');
+                    } else {
+                        if (icon) { icon.className = 'fas fa-moon text-slate-600 dark:text-slate-300'; }
+                        if (text) { text.textContent = 'Mode Gelap'; }
+                        btn.setAttribute('title', 'Beralih ke Mode Gelap');
+                    }
+                });
+            }
+
+            function toggleTheme() {
+                var isDark = document.documentElement.classList.toggle('dark');
+                try {
+                    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                } catch(e) {}
+                syncThemeUI();
+            }
+
+            if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+            if (themeBtnTop) themeBtnTop.addEventListener('click', toggleTheme);
+            syncThemeUI();
         });
     </script>
     @stack('js')

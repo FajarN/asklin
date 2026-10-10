@@ -17,6 +17,10 @@
                 </div>
             </div>
             <div class="org-topbar-items">
+                <button type="button" class="org-theme-toggle-top" id="themeToggleOrgTop" aria-label="Ganti Tema" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 3px 10px; border-radius: 9999px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 11px; transition: all 0.2s;">
+                    <i class="fas fa-moon"></i>
+                    <span class="theme-text">Mode Gelap</span>
+                </button>
                 <span class="org-topbar-badge">
                     <i class="fas fa-shield-alt text-red-400 mr-1"></i> SK Kemenkumham: AHU-0004928.AH.01.07
                 </span>
@@ -99,7 +103,10 @@
                 </ul>
 
                 <!-- Action Button in Header -->
-                <div class="org-header-actions" style="margin-left: 12px;">
+                <div class="org-header-actions" style="margin-left: 12px; display: flex; align-items: center; gap: 8px;">
+                    <button type="button" class="org-theme-toggle" id="themeToggleOrg" aria-label="Ganti Tema" title="Ganti Mode Gelap/Terang">
+                        <i class="fas fa-moon"></i>
+                    </button>
                     @guest
                         <a href="{{ route('login') }}" class="org-btn org-btn-outline">
                             <i class="fas fa-sign-in-alt text-xs"></i>
