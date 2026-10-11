@@ -55,11 +55,20 @@
     }
     }
 </style>
+@php
+    $bgSertifikat = file_exists(public_path('assets/images/sertifikat.jpg')) 
+        ? public_path('assets/images/sertifikat.jpg') 
+        : asset('/assets/images/sertifikat.jpg');
+    $imgTtd = file_exists(public_path('assets/images/ttd.png')) 
+        ? public_path('assets/images/ttd.png') 
+        : asset('/assets/images/ttd.png');
+@endphp
+
 <page>
 
     <table cellpadding="0" cellspacing="0">
         <tr>
-            <td><img src="{{ asset('/assets/images/sertifikat.jpg') }}" alt="" style="width: 290mm"></td>
+            <td><img src="{{ $bgSertifikat }}" alt="" style="width: 290mm"></td>
         </tr>
     </table>
 
@@ -115,7 +124,7 @@
 
     <table cellpadding="0" cellspacing="0" class="foto">
         <tr>
-            <img src="{{ asset('/assets/images/ttd.png') }}" alt="" width="300">
+            <img src="{{ $imgTtd }}" alt="" width="300">
         </tr>
     </table>
 

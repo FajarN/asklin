@@ -110,9 +110,18 @@
 
 
 
+@php
+    $bgSk = file_exists(public_path('assets/images/skanggota.jpg')) 
+        ? public_path('assets/images/skanggota.jpg') 
+        : asset('/assets/images/skanggota.jpg');
+    $imgTtd = file_exists(public_path('assets/images/ttd.png')) 
+        ? public_path('assets/images/ttd.png') 
+        : asset('/assets/images/ttd.png');
+@endphp
+
     <table cellpadding="0" cellspacing="0">
         <tr>
-            <td><img src="{{ asset('/assets/images/skanggota.jpg') }}" alt="" style="width:208mm"></td>
+            <td><img src="{{ $bgSk }}" alt="" style="width:208mm"></td>
         </tr>
     </table>
 
@@ -242,7 +251,7 @@
         {{-- <p class="ttd">Jakarta, {{ $anggota->verifikasi_pusat }}</p> --}}
         <p style="margin-top:-10px;">PENGURUS PUSAT ASOSIASI KLINIK INDONESIA</p>
         <p style="margin-top:-10px;"class="ttd">KETUA UMUM</p>
-        <img src="{{ asset('/assets/images/ttd.png') }}" alt="" width="220">
+        <img src="{{ $imgTtd }}" alt="" width="220">
         <p class="ttd">dr. Eddi Junaidi, SpOG.,SH.,MKes</p>
     </div>
 

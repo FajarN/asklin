@@ -1375,7 +1375,7 @@ class HomeController extends Controller
 
         try {
             ob_start();
-            $content = view('backend.verifikasi.printsk', compact('anggota', 'created_on'));
+            $content = view('backend.anggota.printsk', compact('anggota', 'created_on'));
 
             $html2pdf = new Html2Pdf('P', 'F4', 'fr', true, 'UTF-8', 1);
             $html2pdf->pdf->SetDisplayMode('fullpage');
