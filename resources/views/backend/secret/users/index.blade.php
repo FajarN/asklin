@@ -41,7 +41,7 @@
                 <i class="fas fa-users-cog text-emerald-600 mr-1.5"></i> Daftar Akun Pengguna
             </h4>
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-                <div class="w-full sm:w-48">
+                <div class="w-full sm:w-44">
                     <select id="role" class="form-control w-full text-xs" data-placeholder="Pilih Role...">
                         <option value="">Semua Peran / Role</option>
                         @foreach ($role as $i)
@@ -49,9 +49,16 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="w-full sm:w-64">
+                <div class="w-full sm:w-48">
+                    <select id="status_relasi" class="form-control w-full text-xs">
+                        <option value="">Semua Status Relasi</option>
+                        <option value="linked">✓ Berelasi Anggota</option>
+                        <option value="unlinked">✗ Tidak Berelasi</option>
+                    </select>
+                </div>
+                <div class="w-full sm:w-60">
                     <div class="relative">
-                        <input type="text" class="form-control pl-9 w-full text-xs" placeholder="Cari nama, email..." id="search">
+                        <input type="text" class="form-control pl-9 w-full text-xs" placeholder="Cari nama, email, klinik..." id="search">
                         <i class="fas fa-search absolute left-3 top-3 text-xs text-slate-400"></i>
                     </div>
                 </div>
@@ -67,6 +74,7 @@
                             <th>Nama</th>
                             <th>Email</th>
                             <th>Group / Role</th>
+                            <th>Relasi Anggota</th>
                             <th>Propinsi</th>
                             <th>Kab/Kota</th>
                             <th>Login Terakhir</th>
@@ -102,20 +110,17 @@
         });
         $(function() {
             var table = $('#table').DataTable({
-                dom: 'Bfrtip',
-                buttons: ['copy', 'csv', 'pdf', 'print', {
-                    extend: 'excel',
-                    text: 'Export To Excel'
-                }],
-                pageLength: 200,
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
                 processing: true,
                 serverSide: true,
                 searching: false,
                 ajax: {
                     url: "{{ route('users.list') }}",
                     data: function(d) {
-                        d.search = $('#search').val(),
-                            d.role_names = $('#role').val()
+                        d.search = $('#search').val();
+                        d.role_names = $('#role').val();
+                        d.status_relasi = $('#status_relasi').val();
                     }
                 },
                 columns: [{
@@ -137,17 +142,25 @@
                         name: 'roles'
                     },
                     {
-                        data: 'kota',
-                        name: 'kota'
+                        data: 'status_relasi',
+                        name: 'status_relasi',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'provinsi',
                         name: 'provinsi'
                     },
                     {
+                        data: 'kota',
+                        name: 'kota'
+                    },
+                    {
                         data: 'last_login_at',
                         "render": function(data, type, row, meta) {
-                            return row.last_login_at + '<br/>' + row.last_login_ip;
+                            var ip = row.last_login_ip || '-';
+                            var tgl = row.last_login_at || 'Belum pernah';
+                            return '<span class="text-xs text-slate-600 dark:text-slate-400">' + tgl + '</span><br/><small class="text-slate-400 font-mono text-[10px]">' + ip + '</small>';
                         }
                     },
                     {
@@ -159,10 +172,15 @@
                 ]
             });
 
-            $("#search").keyup(function() {
-                table.draw();
+            var searchTimer = null;
+            $("#search").on('keyup input', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(function() {
+                    table.draw();
+                }, 300);
             });
-            $('#role').on('change', function(e) {
+
+            $('#role, #status_relasi').on('change', function(e) {
                 table.draw();
             });
         });
