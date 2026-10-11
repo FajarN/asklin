@@ -54,44 +54,6 @@
                 @endcanany
             @endhasrole
 
-            @hasanyrole('Superadmin|Admin Konas')
-                @canany(['konas-master-hotel-list', 'konas-tipe-hotel-list', 'konas-peserta-list',
-                    'konas-booking-hotel-list', 'konas-data-penerbangan-list', 'konas-partner-list'])
-                    <li class="menu-header">KONAS</li>
-                    <li class="dropdown">
-                        <a href="javascript:void(0)" class="nav-link has-dropdown"><i class="fas fa-th-large"></i></i>
-                            <span>Module Konas</span></a>
-                        <ul class="dropdown-menu">
-                            @can('konas-master-hotel-list')
-                                <li class="dropdown @if (Request::url() == route('konas_master_hotel.index')) active @endif"><a class="nav-link"
-                                        href="{{ route('konas_master_hotel.index') }}">Hotel</a></li>
-                            @endcan
-                            @can('konas-tipe-hotel-list')
-                                <li class="dropdown @if (Request::url() == route('konas_master_tipe_hotel.index')) active @endif"><a class="nav-link"
-                                        href="{{ route('konas_master_tipe_hotel.index') }}">Tipe
-                                        Hotel</a></li>
-                            @endcan
-                            @can('konas-peserta-list')
-                                <li class="dropdown @if (Request::url() == route('konas.index')) active @endif"><a class="nav-link"
-                                        href="{{ route('konas.index') }}">Peserta Konas</a></li>
-                            @endcan
-                            @can('konas-booking-hotel-list')
-                                <li class="dropdown @if (Request::url() == route('konas_booking.index')) active @endif"><a class="nav-link"
-                                        href="{{ route('konas_booking.index') }}">Booking Hotel</a></li>
-                            @endcan
-                            @can('konas-data-penerbangan-list')
-                                <li class="dropdown @if (Request::url() == route('konas_penerbangan.index')) active @endif"><a class="nav-link"
-                                        href="{{ route('konas_penerbangan.index') }}">Data Penerbangan</a></li>
-                            @endcan
-                            @can('konas-partner-list')
-                                <li class="dropdown @if (Request::url() == route('partner.index')) active @endif"><a class="nav-link"
-                                        href="{{ route('partner.index') }}">Partner</a></li>
-                            @endcan
-                        </ul>
-                    </li>
-                @endcanany
-            @endhasanyrole
-
             @can('verifikasi-anggota')
                 <li class="menu-header">Ruang Verifikasi</li>
                 <li class="dropdown @if (Request::url() == route('verifikasi_anggota.index')) active @endif"><a class="nav-link"
@@ -230,19 +192,20 @@
             @endcanany
 
 
-            @canany(['slider-list', 'event-list', 'berita-list', 'gallery-list', 'kontak-list'])
+            @php
+                $isKonasActive = request()->routeIs('konas_admin.*') || request()->is('backend/konas*') || request()->is('backend/peserta-konas*') || request()->is('backend/booking-hotel*') || request()->is('backend/data-penerbangan*') || request()->is('backend/konas-master-hotel*') || request()->is('backend/konas-master-tipe-hotel*') || request()->is('backend/partner*');
+                $isEventActive = request()->routeIs('events.*');
+                $isWebsiteActive = request()->routeIs('slider.*') || $isEventActive || $isKonasActive || request()->routeIs('berita.*') || request()->routeIs('galery.*') || request()->routeIs('kontak.*');
+            @endphp
+            @if(auth()->check() && (auth()->user()->canany(['slider-list', 'berita-list', 'gallery-list', 'kontak-list']) || auth()->user()->hasRole(['Superadmin', 'Admin Pusat'])))
                 <li class="menu-header">Content</li>
-                <li class="dropdown">
-                    <a href="#" class="nav-link has-dropdown"><i
+                <li class="dropdown @if (request()->routeIs('slider.*') || request()->routeIs('berita.*') || request()->routeIs('galery.*') || request()->routeIs('kontak.*')) active @endif">
+                    <a href="javascript:void(0)" class="nav-link has-dropdown"><i
                             class="fas fa-folder-open"></i><span>Website</span></a>
                     <ul class="dropdown-menu">
                         @can('slider-list')
                             <li class="dropdown @if (Request::url() == route('slider.index')) active @endif"><a
                                     href="{{ route('slider.index') }}">Slider</a></li>
-                        @endcan
-                        @can('event-list')
-                            <li class="dropdown @if (Request::url() == route('events.index')) active @endif"><a
-                                    href="{{ route('events.index') }}">Event</a></li>
                         @endcan
                         @can('berita-list')
                             <li class="dropdown @if (Request::url() == route('berita.index')) active @endif"><a
@@ -258,7 +221,25 @@
                         @endcan
                     </ul>
                 </li>
-            @endcanany
+            @endif
+
+            @if(auth()->check() && (auth()->user()->can('event-list') || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Admin Konas']) || auth()->user()->canany(['konas-master-hotel-list', 'konas-tipe-hotel-list', 'konas-peserta-list', 'konas-booking-hotel-list', 'konas-data-penerbangan-list', 'konas-partner-list'])))
+                <li class="dropdown @if ($isEventActive || $isKonasActive) active @endif">
+                    <a href="javascript:void(0)" class="nav-link has-dropdown"><i
+                            class="fas fa-calendar-alt"></i><span>Agenda Event</span></a>
+                    <ul class="dropdown-menu">
+                        @can('event-list')
+                            <li class="@if ($isEventActive) active @endif"><a class="nav-link"
+                                    href="{{ route('events.index') }}">Semua Event</a></li>
+                        @endcan
+                        @if(auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Admin Konas']) || auth()->user()->canany(['konas-master-hotel-list', 'konas-tipe-hotel-list', 'konas-peserta-list', 'konas-booking-hotel-list', 'konas-data-penerbangan-list', 'konas-partner-list']))
+                            <li class="@if ($isKonasActive) active @endif"><a class="nav-link"
+                                    href="{{ route('konas_admin.index') }}">Event Konas</a></li>
+                        @endif
+                        <li><a class="nav-link" href="javascript:void(0)" onclick="Swal.fire({icon: 'info', title: 'Belum Dibuat', text: 'Modul Event Rakernas sedang dalam pengembangan (belum dibuat).'})">Event Rakernas <span class="badge badge-secondary ml-1" style="font-size: 8px; padding: 2px 4px;">Belum dibuat</span></a></li>
+                    </ul>
+                </li>
+            @endif
 
 
             @can('secret')

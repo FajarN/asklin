@@ -26,12 +26,17 @@ class KonasMasterHotelController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = KonasMasterHotel::latest()->get();
+            $query = KonasMasterHotel::query();
+            if ($request->filled('id_periode')) {
+                $query->where('id_periode', $request->id_periode);
+            }
+            $data = $query->latest()->get();
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            if (Str::contains(Str::lower($data['hotel']), Str::lower($request->get('search')))){
+                    $search = is_array($request->get('search')) ? ($request->input('search.value') ?? '') : $request->get('search');
+                    if (!empty($search)) {
+                        $instance->collection = $instance->collection->filter(function ($data) use ($search) {
+                            if (Str::contains(Str::lower($data['hotel'] ?? ''), Str::lower($search))){
                                 return true;
                             }
                             return false;
@@ -58,13 +63,19 @@ class KonasMasterHotelController extends Controller
     public function store(Request $request)
     {
         $id = $request->id;
+        $periodeId = $request->id_periode ?: (\App\Models\KonasPeriode::where('status', '1')->value('id') ?? 1);
+        $payload = [
+            'hotel' => $request->hotel,
+            'status' => $request->status,
+            'alamat' => $request->alamat,
+        ];
+        if ($request->filled('id_periode') || empty($id)) {
+            $payload['id_periode'] = $periodeId;
+        }
+
         $data = KonasMasterHotel::updateOrCreate(
             ['id' => $id],
-            [
-                'hotel' => $request->hotel,
-                'status' => $request->status,
-                'alamat' => $request->alamat,
-            ]
+            $payload
         );
 
         return Response()->json($data);

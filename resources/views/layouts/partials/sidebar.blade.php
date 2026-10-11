@@ -281,8 +281,8 @@
             </div>
         @endcanany
 
-        <!-- Section: Content Website (Berita, Event, Slider, Galeri, Kontak) -->
-        @canany(['slider-list', 'event-list', 'berita-list', 'gallery-list', 'kontak-list'])
+        <!-- Section: Content Website (Berita, Slider, Galeri, Kontak) -->
+        @canany(['slider-list', 'berita-list', 'gallery-list', 'kontak-list'])
             <div class="sidebar-dropdown-group" data-group="website">
                 <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
                     <div class="flex items-center gap-3">
@@ -294,9 +294,6 @@
                 <ul class="dropdown-submenu hidden pl-7 pr-1 mt-1 space-y-1">
                     @can('berita-list')
                         <li><a href="{{ route('berita.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('berita.index') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Berita & Artikel</a></li>
-                    @endcan
-                    @can('event-list')
-                        <li><a href="{{ route('events.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('events.index') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Agenda Event</a></li>
                     @endcan
                     @can('slider-list')
                         <li><a href="{{ route('slider.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('slider.index') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Banner Slider</a></li>
@@ -311,40 +308,45 @@
             </div>
         @endcanany
 
-        <!-- Section: Modul KONAS (Kongres Nasional) -->
-        @hasanyrole('Superadmin|Admin Konas')
-            @canany(['konas-master-hotel-list', 'konas-tipe-hotel-list', 'konas-peserta-list', 'konas-booking-hotel-list', 'konas-data-penerbangan-list', 'konas-partner-list'])
-                <div class="sidebar-dropdown-group" data-group="konas">
-                    <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-hotel text-sm text-slate-400 group-hover:text-red-600"></i>
-                            <span>Modul Konas</span>
-                        </div>
-                        <i class="fas fa-chevron-right text-[10px] text-slate-400 transition-transform dropdown-arrow"></i>
-                    </button>
-                    <ul class="dropdown-submenu hidden pl-7 pr-1 mt-1 space-y-1">
-                        @can('konas-peserta-list')
-                            <li><a href="{{ route('konas.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('konas.index') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Peserta Konas</a></li>
-                        @endcan
-                        @can('konas-booking-hotel-list')
-                            <li><a href="{{ route('konas_booking.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('konas_booking.index') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Booking Hotel</a></li>
-                        @endcan
-                        @can('konas-data-penerbangan-list')
-                            <li><a href="{{ route('konas_penerbangan.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('konas_penerbangan.index') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Data Penerbangan</a></li>
-                        @endcan
-                        @can('konas-master-hotel-list')
-                            <li><a href="{{ route('konas_master_hotel.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('konas_master_hotel.index') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Master Hotel</a></li>
-                        @endcan
-                        @can('konas-tipe-hotel-list')
-                            <li><a href="{{ route('konas_master_tipe_hotel.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('konas_master_tipe_hotel.index') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Tipe Hotel</a></li>
-                        @endcan
-                        @can('konas-partner-list')
-                            <li><a href="{{ route('partner.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('partner.index') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">Partner</a></li>
-                        @endcan
-                    </ul>
-                </div>
-            @endcanany
-        @endhasanyrole
+        <!-- Section: Menu Agenda Event -->
+        @if(auth()->check() && (auth()->user()->can('event-list') || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Admin Konas']) || auth()->user()->canany(['konas-master-hotel-list', 'konas-tipe-hotel-list', 'konas-peserta-list', 'konas-booking-hotel-list', 'konas-data-penerbangan-list', 'konas-partner-list'])))
+            <div class="sidebar-dropdown-group" data-group="agenda-event">
+                <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-calendar-alt text-sm text-slate-400 group-hover:text-red-600"></i>
+                        <span>Agenda Event</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-[10px] text-slate-400 transition-transform dropdown-arrow"></i>
+                </button>
+                <ul class="dropdown-submenu hidden pl-7 pr-1 mt-1 space-y-1">
+                    @can('event-list')
+                        <li>
+                            <a href="{{ route('events.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::url() == route('events.index') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }} flex items-center gap-2">
+                                <i class="fas fa-calendar-check text-[10px]"></i>
+                                <span>Event biasa</span>
+                            </a>
+                        </li>
+                    @endcan
+                    @if(auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Admin Konas']) || auth()->user()->canany(['konas-master-hotel-list', 'konas-tipe-hotel-list', 'konas-peserta-list', 'konas-booking-hotel-list', 'konas-data-penerbangan-list', 'konas-partner-list']))
+                        <li>
+                            <a href="{{ route('konas_admin.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ request()->routeIs('konas_admin.*') || request()->is('backend/konas*') || request()->is('backend/peserta-konas*') || request()->is('backend/booking-hotel*') || request()->is('backend/data-penerbangan*') || request()->is('backend/konas-master-hotel*') || request()->is('backend/konas-master-tipe-hotel*') || request()->is('backend/partner*') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }} flex items-center gap-2">
+                                <i class="fas fa-landmark text-[10px]"></i>
+                                <span>Event Konas</span>
+                            </a>
+                        </li>
+                    @endif
+                    <li>
+                        <a href="javascript:void(0)" onclick="Swal.fire({icon: 'info', title: 'Belum Dibuat', text: 'Modul Event Rakernas sedang dalam pengembangan (belum dibuat).'})" class="block px-3 py-1.5 rounded-lg text-[11px] text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400 cursor-pointer flex items-center justify-between">
+                            <span class="flex items-center gap-2">
+                                <i class="fas fa-users-cog text-[10px]"></i>
+                                <span>Event Rakernas</span>
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-medium">Belum dibuat</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        @endif
 
         <!-- Section: Laporan -->
         @canany(['laporan-pusat', 'laporan-daerah', 'laporan-cabang'])

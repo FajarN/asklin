@@ -30,15 +30,16 @@ class KonasMasterTipeHotelController extends Controller
             $data = KonasMasterTipeHotel::select('konas_master_hotel_tipe.*', 'konas_master_hotel.hotel')->join('konas_master_hotel', 'konas_master_hotel.id', '=', 'konas_master_hotel_tipe.id_hotel')->get();
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            if (Str::contains(Str::lower($data['hotel']), Str::lower($request->get('search')))){
+                    $search = is_array($request->get('search')) ? ($request->input('search.value') ?? '') : $request->get('search');
+                    if (!empty($search)) {
+                        $instance->collection = $instance->collection->filter(function ($data) use ($search) {
+                            if (Str::contains(Str::lower($data['hotel']), Str::lower($search))){
                                 return true;
                             }
-                            if (Str::contains(Str::lower($data['tipe']), Str::lower($request->get('search')))){
+                            if (Str::contains(Str::lower($data['tipe']), Str::lower($search))){
                                 return true;
                             }
-                            if (Str::contains(Str::lower($data['harga']), Str::lower($request->get('search')))){
+                            if (Str::contains(Str::lower($data['harga']), Str::lower($search))){
                                 return true;
                             }
                             return false;

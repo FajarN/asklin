@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend\konas;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\{KonasPeserta, KonasMasterHotel, KonasMasterTipeHotel, KonasBookingHotel, KonasPenerbangan, KonasPartner, User};
+use App\Models\{KonasPeserta, KonasPeriode, KonasMasterHotel, KonasMasterTipeHotel, KonasBookingHotel, KonasPenerbangan, KonasPartner, User};
 use Laravolt\Indonesia\Models\Province;
 use DataTables;
 use Illuminate\Support\Str;
@@ -34,22 +34,28 @@ class KonasPesertaController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = KonasPeserta::select('konas_peserta.*', 'a.id as userid', 'indonesia_cities.name', 'indonesia_provinces.name as provinsi')
+            $query = KonasPeserta::select('konas_peserta.*', 'a.id as userid', 'indonesia_cities.name', 'indonesia_provinces.name as provinsi')
                 ->leftJoin('users as a', 'a.email', '=', 'konas_peserta.email')
                 ->leftjoin("indonesia_cities", 'indonesia_cities.code', '=', 'konas_peserta.cabang')
-                ->leftjoin("indonesia_provinces", 'indonesia_provinces.code', '=', 'konas_peserta.id_provinsi')
-                ->orderBy('konas_peserta.created_by', 'desc')->get();
+                ->leftjoin("indonesia_provinces", 'indonesia_provinces.code', '=', 'konas_peserta.id_provinsi');
+
+            if ($request->filled('id_periode')) {
+                $query->where('konas_peserta.id_periode', $request->id_periode);
+            }
+
+            $data = $query->orderBy('konas_peserta.id', 'desc')->get();
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            if (Str::contains(Str::lower($data['nama_peserta']), Str::lower($request->get('search')))){
+                    $search = is_array($request->get('search')) ? ($request->input('search.value') ?? '') : $request->get('search');
+                    if (!empty($search)) {
+                        $instance->collection = $instance->collection->filter(function ($data) use ($search) {
+                            if (Str::contains(Str::lower($data['nama_peserta'] ?? ''), Str::lower($search))){
                                 return true;
                             }
-                            if (Str::contains(Str::lower($data['nama_klinik']), Str::lower($request->get('search')))){
+                            if (Str::contains(Str::lower($data['nama_klinik'] ?? ''), Str::lower($search))){
                                 return true;
                             }
-                            if (Str::contains(Str::lower($data['status_pembayaran']), Str::lower($request->get('search')))){
+                            if (Str::contains(Str::lower($data['status_pembayaran'] ?? ''), Str::lower($search))){
                                 return true;
                             }
                             return false;
@@ -167,25 +173,31 @@ class KonasPesertaController extends Controller
             $surat_mandat = NULL;
         }
 
+        $periodeId = $request->id_periode ?: (KonasPeriode::where('status', '1')->value('id') ?? 1);
+        $dataToSave = [
+            'nama_peserta' => $request->nama_peserta,
+            'nik' => $request->nik,
+            'tgl_lahir' => $request->tgl_lahir,
+            'no_hp' => $request->no_hp,
+            'email' => $request->email,
+            'nama_klinik' => $request->nama_klinik,
+            'alamat_klinik' => $request->alamat_klinik,
+            'status' => $request->status,
+            'biaya_pendaftaran' => $request->biaya_pendaftaran ?: '1500000',
+            'cabang' => $request->id_kota,
+            'id_provinsi' => $request->id_provinsi,
+            'surat_mandat' => $surat_mandat,
+            'komisi' => $request->komisi,
+            'nama_sertifikat' => $request->nama_sertifikat
+        ];
+
+        if ($request->filled('id_periode') || empty($request->id)) {
+            $dataToSave['id_periode'] = $periodeId;
+        }
+
         $data = KonasPeserta::updateOrCreate(
             ['id' => $request->id],
-            [
-                'nama_peserta' => $request->nama_peserta,
-                'nik' => $request->nik,
-                'tgl_lahir' => $request->tgl_lahir,
-                'no_hp' => $request->no_hp,
-                'email' => $request->email,
-                // 'foto' => $foto,
-                'nama_klinik' => $request->nama_klinik,
-                'alamat_klinik' => $request->alamat_klinik,
-                'status' => $request->status,
-                'biaya_pendaftaran' => '1500000',
-                'cabang' => $request->id_kota,
-                'id_provinsi' => $request->id_provinsi,
-                'surat_mandat' => $surat_mandat,
-                'komisi' => $request->komisi,
-                'nama_sertifikat' => $request->nama_sertifikat
-            ]
+            $dataToSave
         );
 
         return Response()->json($data);

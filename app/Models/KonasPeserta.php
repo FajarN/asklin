@@ -12,6 +12,7 @@ class KonasPeserta extends Model
     protected $table = 'konas_peserta';
 
     protected $fillable = [
+        'id_periode',
         'no_anggota',
         'nama_peserta',
         'nama_sertifikat',
@@ -36,4 +37,9 @@ class KonasPeserta extends Model
         'status_pembayaran_hotel',
         'biaya_hotel'
     ];
+
+    public function periode()
+    {
+        return $this->belongsTo(KonasPeriode::class, 'id_periode');
+    }
 }

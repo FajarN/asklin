@@ -27,17 +27,23 @@ class KonasBookingController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = KonasBookingHotel::select('konas_booking_hotel.*', 'a.name')
-                ->join('users as a', 'a.id', '=', 'konas_booking_hotel.id_user')
-                ->orderBy('konas_booking_hotel.tanggal', 'DESC')->get();
+            $query = KonasBookingHotel::select('konas_booking_hotel.*', 'a.name')
+                ->join('users as a', 'a.id', '=', 'konas_booking_hotel.id_user');
+
+            if ($request->filled('id_periode')) {
+                $query->where('konas_booking_hotel.id_periode', $request->id_periode);
+            }
+
+            $data = $query->orderBy('konas_booking_hotel.tanggal', 'DESC')->get();
             return Datatables::of($data)
                 ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            if (Str::contains(Str::lower($data['hotel']), Str::lower($request->get('search')))){
+                    $search = is_array($request->get('search')) ? ($request->input('search.value') ?? '') : $request->get('search');
+                    if (!empty($search)) {
+                        $instance->collection = $instance->collection->filter(function ($data) use ($search) {
+                            if (Str::contains(Str::lower($data['hotel'] ?? ''), Str::lower($search))){
                                 return true;
                             }
-                            if (Str::contains(Str::lower($data['tipe']), Str::lower($request->get('search')))){
+                            if (Str::contains(Str::lower($data['tipe'] ?? ''), Str::lower($search))){
                                 return true;
                             }
                             return false;

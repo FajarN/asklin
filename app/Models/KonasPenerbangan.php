@@ -13,10 +13,21 @@ class KonasPenerbangan extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id_periode',
         'tanggal',
         'dari',
         'tujuan',
         'pesawat',
         'id_user'
     ];
+
+    public function periode()
+    {
+        return $this->belongsTo(KonasPeriode::class, 'id_periode');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
 }

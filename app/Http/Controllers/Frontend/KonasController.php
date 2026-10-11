@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
-use App\Models\{User, KonasPeserta, KonasMasterHotel, KonasMasterTipeHotel, KonasBookingHotel, KonasPenerbangan, KonasPartner};
+use App\Models\{User, KonasPeriode, KonasPeserta, KonasMasterHotel, KonasMasterTipeHotel, KonasBookingHotel, KonasPenerbangan, KonasPartner};
 use Spatie\Permission\Models\Role;
 use Auth;
 use Laravolt\Indonesia\Models\Province;
@@ -16,14 +16,90 @@ use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 use Carbon\Carbon;
 use Mail;
 use App\Mail\{Konas, Hotel};
+use App\Services\TemplateService;
 
 class KonasController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $title = "Kongres II Asosiasi Klinik Indonesia";
-        $description = "Asklin adalah asosiasi klinik seluruh indonesia.";
-        $partner = KonasPartner::all();
+        $activeTemplate = TemplateService::getActiveTemplate();
+
+        // Template 1 (Canvas) tidak diubah sama sekali sesuai instruksi
+        if ($activeTemplate === TemplateService::TEMPLATE_CANVAS) {
+            $title = "Kongres II Asosiasi Klinik Indonesia";
+            $description = "Asklin adalah asosiasi klinik seluruh indonesia.";
+            $partner = KonasPartner::all();
+
+            return view('frontend.konas.index', compact('title', 'description', 'partner'));
+        }
+
+        // Pengelolaan Periode untuk Landing Page Template 2 & Template 3
+        $allPeriodes = KonasPeriode::orderBy('tahun_mulai', 'desc')->get();
+        $activePeriode = KonasPeriode::where('status', '1')->first();
+
+        // Fitur Riwayat Periode (bisa dipilih via query param 'periode' atau 'periode_id')
+        $selectedPeriode = null;
+        if ($request->filled('periode')) {
+            $selectedPeriode = KonasPeriode::where('periode', $request->periode)->first();
+        } elseif ($request->filled('periode_id')) {
+            $selectedPeriode = KonasPeriode::find($request->periode_id);
+        }
+
+        // Default ke periode aktif, atau periode pertama jika tidak ada yang aktif
+        if (!$selectedPeriode) {
+            $selectedPeriode = $activePeriode ?? $allPeriodes->first();
+        }
+
+        // Status periode apakah boleh ditampilkan publik / aktif
+        $isPeriodeActive = $selectedPeriode && $selectedPeriode->status == '1';
+
+        $partnerQuery = KonasPartner::query();
+        if ($selectedPeriode) {
+            $partnerQuery->where('id_periode', $selectedPeriode->id);
+        }
+        $partner = $partnerQuery->get();
+        if ($partner->isEmpty()) {
+            $partner = KonasPartner::all();
+        }
+
+        $hotelQuery = KonasMasterHotel::where('status', '1');
+        if ($selectedPeriode) {
+            $hotelQuery->where('id_periode', $selectedPeriode->id);
+        }
+        $hotels = $hotelQuery->get();
+        if ($hotels->isEmpty()) {
+            $hotels = KonasMasterHotel::where('status', '1')->get();
+        }
+
+        $provinsi = Province::orderBy('name', 'asc')->get();
+
+        $title = $selectedPeriode 
+            ? "{$selectedPeriode->nama} ({$selectedPeriode->periode}) - Kongres Nasional ASKLIN" 
+            : "Kongres Nasional Asosiasi Klinik Indonesia (KONAS ASKLIN)";
+
+        $description = $selectedPeriode && $selectedPeriode->tema 
+            ? "Informasi resmi {$selectedPeriode->nama}. Tema: {$selectedPeriode->tema}. Lokasi: {$selectedPeriode->tempat}. Pendaftaran delegasi klinik, jadwal sidang, akomodasi hotel, dan sponsorship."
+            : "Portal resmi Kongres Nasional Asosiasi Klinik Indonesia (ASKLIN). Forum tertinggi musyawarah pimpinan dan delegasi klinik se-Indonesia.";
+
+        $dataView = compact(
+            'title',
+            'description',
+            'allPeriodes',
+            'activePeriode',
+            'selectedPeriode',
+            'isPeriodeActive',
+            'partner',
+            'hotels',
+            'provinsi'
+        );
+
+        if ($activeTemplate === TemplateService::TEMPLATE_CUSTOM_ORG) {
+            return view('frontend.templates.custom_org.konas', $dataView);
+        }
+
+        if ($activeTemplate === TemplateService::TEMPLATE_MODERN_ORG) {
+            return view('frontend.templates.modern_org.konas', $dataView);
+        }
 
         return view('frontend.konas.index', compact('title', 'description', 'partner'));
     }
@@ -111,8 +187,27 @@ class KonasController extends Controller
             'surat_mandat' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
+        // Cek periode aktif
+        $periodeAktif = KonasPeriode::where('status', '1')->first();
+        if (!$periodeAktif) {
+            return redirect()->back()->with('error', 'Pendaftaran KONAS saat ini sedang dinonaktifkan atau belum dibuka.');
+        }
+
+        // Cek batas waktu pendaftaran
+        if ($periodeAktif->tgl_tutup_daftar && Carbon::now()->greaterThan($periodeAktif->tgl_tutup_daftar->endOfDay())) {
+            return redirect()->back()->with('error', 'Pendaftaran untuk ' . $periodeAktif->nama . ' telah ditutup pada ' . $periodeAktif->tgl_tutup_daftar->format('d M Y') . '.');
+        }
+
+        $nominalBiaya = (int) preg_replace('/[^0-9]/', '', $periodeAktif->biaya_registrasi ?? '1500000');
+        if ($nominalBiaya <= 0) {
+            $nominalBiaya = 1500000;
+        }
+
         // cek apakah email sudah terdaftar sebelumnya
-        $existingUser = KonasPeserta::where('email', $request->email)->first();
+        $existingUser = KonasPeserta::where('email', $request->email)
+            ->where('id_periode', $periodeAktif->id)
+            ->first();
+
         if ($existingUser) {
             return redirect()->route('konas.akun');
         }
@@ -124,7 +219,7 @@ class KonasController extends Controller
             'Authorization' => $secret_key
         ])->post('https://api.xendit.co/v2/invoices', [
             'external_id' => $external_id,
-            'amount' => '1500000'
+            'amount' => (string) $nominalBiaya
         ]);
         
         $response = $data_request->object();
@@ -134,7 +229,6 @@ class KonasController extends Controller
             mkdir($destinationPath, 0755, true);
         }
         
-        $cekdata = KonasPeserta::find($request->id);
         $cd = KonasPeserta::selectRaw('MAX(RIGHT(no_anggota,4)) AS kd_max')->get();
         $kd = "";
         if($cd->count()>0){
@@ -162,7 +256,9 @@ class KonasController extends Controller
         }else{
             $surat_mandat = NULL;
         }
+
         $konas = KonasPeserta::create([
+            'id_periode' => $periodeAktif->id,
             'no_anggota' => $noanggota,
             'nama_peserta' => $request->nama_peserta,
             'nik' => $request->nik,
@@ -173,10 +269,10 @@ class KonasController extends Controller
             'nama_klinik' => $request->nama_klinik,
             'alamat_klinik' => $request->alamat_klinik,
             'status' => $request->status,
-            'status_pembayaran' => $response->status,
-            'link_pembayaran' => $response->invoice_url,
+            'status_pembayaran' => $response ? ($response->status ?? 'PENDING') : 'PENDING',
+            'link_pembayaran' => $response ? ($response->invoice_url ?? '#') : '#',
             'doc_no' => $external_id,
-            'biaya_pendaftaran' => '1500000',
+            'biaya_pendaftaran' => (string) $nominalBiaya,
             'cabang' => $request->id_kota,
             'id_provinsi' => $request->id_provinsi,
             'surat_mandat' => $surat_mandat,
@@ -187,12 +283,19 @@ class KonasController extends Controller
         if($konas->id){
             // Send Email
             $mailData = [
-                'title' => 'Pendaftaran KONAS 2023 Berhasil',
-                'body' => 'Pendaftaran KONAS 2023 berhasil.'
+                'title' => 'Pendaftaran ' . $periodeAktif->nama . ' Berhasil',
+                'body' => 'Pendaftaran delegasi ' . $periodeAktif->nama . ' (' . $periodeAktif->periode . ') berhasil diajukan.'
             ];
-            Mail::to($konas->email)->send(new Konas($mailData));
+            try {
+                Mail::to($konas->email)->send(new Konas($mailData));
+            } catch (\Exception $e) {
+                // Ignore email failure if SMTP unconfigured
+            }
             
-            return redirect()->away($response->invoice_url);
+            if ($response && !empty($response->invoice_url)) {
+                return redirect()->away($response->invoice_url);
+            }
+            return redirect()->route('konas.akun')->with('success', 'Pendaftaran berhasil diajukan.');
         }else{
             return redirect()->route('konas.registrasi');
         }

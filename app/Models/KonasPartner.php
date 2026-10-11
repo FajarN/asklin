@@ -13,8 +13,14 @@ class KonasPartner extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id_periode',
         'nama',
         'photo',
         'link'
     ];
+
+    public function periode()
+    {
+        return $this->belongsTo(KonasPeriode::class, 'id_periode');
+    }
 }

@@ -377,8 +377,19 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/cabang/print', 'printView')->name('laporan_cabang.print');
     });
 
+    // Modul Administrasi Terpadu KONAS
+    Route::get('/konas-admin', [App\Http\Controllers\Backend\konas\KonasAdminController::class, 'index'])->name('konas_admin.index');
+
+    Route::prefix('konas-periode')->controller(App\Http\Controllers\Backend\konas\KonasPeriodeController::class)->group(function () {
+        Route::get('/list', 'list')->name('konas_periode.list');
+        Route::post('/store', 'store')->name('konas_periode.store');
+        Route::post('/edit', 'edit')->name('konas_periode.edit');
+        Route::post('/toggle-status', 'toggleStatus')->name('konas_periode.toggle_status');
+        Route::post('/delete', 'destroy')->name('konas_periode.delete');
+    });
+
     Route::prefix('konas-master-hotel')->controller(App\Http\Controllers\Backend\konas\KonasMasterHotelController::class)->group(function () {
-        Route::get('/', 'index')->name('konas_master_hotel.index');
+        Route::get('/', function() { return redirect()->route('konas_admin.index', ['tab' => 'hotel']); })->name('konas_master_hotel.index');
         Route::get('/list', 'list')->name('konas_master_hotel.list');
         Route::post('/edit', 'edit')->name('konas_master_hotel.edit');
         Route::post('/store', 'store')->name('konas_master_hotel.store');
@@ -386,7 +397,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     });
 
     Route::prefix('konas-master-tipe-hotel')->controller(App\Http\Controllers\Backend\konas\KonasMasterTipeHotelController::class)->group(function () {
-        Route::get('/', 'index')->name('konas_master_tipe_hotel.index');
+        Route::get('/', function() { return redirect()->route('konas_admin.index', ['tab' => 'hotel']); })->name('konas_master_tipe_hotel.index');
         Route::get('/list', 'list')->name('konas_master_tipe_hotel.list');
         Route::post('/edit', 'edit')->name('konas_master_tipe_hotel.edit');
         Route::post('/store', 'store')->name('konas_master_tipe_hotel.store');
@@ -394,7 +405,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     });
 
     Route::prefix('peserta-konas')->controller(App\Http\Controllers\Backend\konas\KonasPesertaController::class)->group(function () {
-        Route::get('/', 'index')->name('konas.index');
+        Route::get('/', function() { return redirect()->route('konas_admin.index', ['tab' => 'peserta']); })->name('konas.index');
         Route::get('/list', 'list')->name('konas.list');
         Route::post('/edit', 'edit')->name('konas.edit');
         Route::post('/updateStatus', 'updateStatus')->name('konas.updateStatus');
@@ -403,12 +414,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/delete', 'destroy')->name('konas.delete');
         Route::get('/approve/{id}', 'approve')->name('konas.approve');
         Route::post('/status_pembayaran', 'status_pembayaran')->name('konas.status_pembayaran');
-        Route::post('/delete', 'destroy')->name('konas.delete');
         Route::get('/invoice/{id}', 'invoice')->name('konas.invoice');
     });
 
     Route::prefix('booking-hotel')->controller(App\Http\Controllers\Backend\konas\KonasBookingController::class)->group(function () {
-        Route::get('/', 'index')->name('konas_booking.index');
+        Route::get('/', function() { return redirect()->route('konas_admin.index', ['tab' => 'booking']); })->name('konas_booking.index');
         Route::get('/list', 'list')->name('konas_booking.list');
         Route::post('/edit', 'edit')->name('konas_booking.edit');
         Route::post('/store', 'store')->name('konas_booking.store');
@@ -416,7 +426,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     });
 
     Route::prefix('data-penerbangan')->controller(App\Http\Controllers\Backend\konas\KonasPenerbanganController::class)->group(function () {
-        Route::get('/', 'index')->name('konas_penerbangan.index');
+        Route::get('/', function() { return redirect()->route('konas_admin.index', ['tab' => 'penerbangan']); })->name('konas_penerbangan.index');
         Route::get('/list', 'list')->name('konas_penerbangan.list');
         Route::post('/edit', 'edit')->name('konas_penerbangan.edit');
         Route::post('/store', 'store')->name('konas_penerbangan.store');
@@ -424,7 +434,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     });
 
     Route::prefix('partner')->controller(App\Http\Controllers\Backend\konas\KonasPartnerController::class)->group(function () {
-        Route::get('/', 'index')->name('partner.index');
+        Route::get('/', function() { return redirect()->route('konas_admin.index', ['tab' => 'partner']); })->name('partner.index');
         Route::get('/list', 'list')->name('partner.list');
         Route::post('/edit', 'edit')->name('partner.edit');
         Route::post('/store', 'store')->name('partner.store');

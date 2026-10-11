@@ -13,7 +13,9 @@ class KonasBookingHotel extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id_periode',
         'hotel',
+        'nama_peserta',
         'jumlah',
         'extrabed',
         'harga_kasur',
@@ -27,4 +29,14 @@ class KonasBookingHotel extends Model
         'doc_no',
         'tanggal'
     ];
+
+    public function periode()
+    {
+        return $this->belongsTo(KonasPeriode::class, 'id_periode');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
 }
