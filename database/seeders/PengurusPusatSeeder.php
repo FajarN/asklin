@@ -95,7 +95,7 @@ class PengurusPusatSeeder extends Seeder
                     'id_struktur_organisasi' => $idStruktur,
                     'jabatan' => 'dewan pembina',
                     'nama_lengkap' => $nama,
-                    'urutan' => $idx + 1,
+                    'urutan' => $idx + 1, // 1 .. 2
                     'status' => 'aktif',
                     'parent_id' => null,
                     'id_kelompok' => null,
@@ -119,7 +119,7 @@ class PengurusPusatSeeder extends Seeder
                     'id_struktur_organisasi' => $idStruktur,
                     'jabatan' => 'dewan penasehat',
                     'nama_lengkap' => $nama,
-                    'urutan' => $idx + 1,
+                    'urutan' => $idx + 3, // 3 .. 11
                     'status' => 'aktif',
                     'parent_id' => null,
                     'id_kelompok' => null,
@@ -131,7 +131,7 @@ class PengurusPusatSeeder extends Seeder
                 'id_struktur_organisasi' => $idStruktur,
                 'jabatan' => 'ketua umum',
                 'nama_lengkap' => 'dr. Eddi Junaidi, SpOG., SH., MKes',
-                'urutan' => 1,
+                'urutan' => 12, // setelah Dewan Pembina & Dewan Penasehat
                 'status' => 'aktif',
                 'parent_id' => null,
                 'id_kelompok' => null,

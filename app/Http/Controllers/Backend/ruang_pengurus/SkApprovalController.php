@@ -166,6 +166,14 @@ class SkApprovalController extends Controller
         $struktur = $sk->strukturOrganisasi;
         $pengurus = StrukturPengurus::where('id_struktur_organisasi', $struktur->id)
             ->whereNull('parent_id')
+            ->orderByRaw("
+                CASE 
+                    WHEN LOWER(jabatan) LIKE '%pembina%' THEN 1
+                    WHEN LOWER(jabatan) LIKE '%penasehat%' OR LOWER(jabatan) LIKE '%penasihat%' THEN 2
+                    WHEN LOWER(jabatan) LIKE '%ketua umum%' OR LOWER(jabatan) = 'ketua' THEN 3
+                    ELSE 4
+                END ASC
+            ")
             ->orderBy('urutan', 'asc')
             ->get();
 
