@@ -57,6 +57,11 @@ Route::get('/konas/registrasi', [App\Http\Controllers\Frontend\KonasController::
 Route::post('/konas/registrasi/store', [App\Http\Controllers\Frontend\KonasController::class, 'store'])->name('konas.storepeserta');
 Route::post('/konas/callback', [App\Http\Controllers\Frontend\KonasController::class, 'callback'])->name('konas.callback');
 
+// Modul RAKERNAS (Rapat Kerja Nasional)
+Route::get('/rakernas', [App\Http\Controllers\Frontend\RakernasController::class, 'index'])->name('rakernas');
+Route::post('/rakernas/daftar', [App\Http\Controllers\Frontend\RakernasController::class, 'store'])->name('rakernas.daftar');
+Route::get('/rakernas/cetak-kartu/{id}', [App\Http\Controllers\Frontend\RakernasController::class, 'cetakKartu'])->name('rakernas.cetak_kartu');
+
 Route::group(['middleware' => ['auth']], function () {
     // khusus konas
     Route::get('/konas/akun', [App\Http\Controllers\Frontend\KonasController::class, 'akun'])->name('konas.akun');
@@ -439,6 +444,38 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::post('/edit', 'edit')->name('partner.edit');
         Route::post('/store', 'store')->name('partner.store');
         Route::post('/delete', 'destroy')->name('partner.delete');
+    });
+
+    // Modul Administrasi Terpadu RAKERNAS
+    Route::get('/rakernas-admin', [App\Http\Controllers\Backend\rakernas\RakernasAdminController::class, 'index'])->name('rakernas_admin.index');
+
+    Route::prefix('rakernas-periode')->controller(App\Http\Controllers\Backend\rakernas\RakernasPeriodeController::class)->group(function () {
+        Route::get('/list', 'list')->name('rakernas_periode.list');
+        Route::post('/store', 'store')->name('rakernas_periode.store');
+        Route::post('/edit', 'edit')->name('rakernas_periode.edit');
+        Route::post('/toggle-status', 'toggleStatus')->name('rakernas_periode.toggle_status');
+        Route::post('/delete', 'destroy')->name('rakernas_periode.delete');
+    });
+
+    Route::prefix('rakernas-peserta')->controller(App\Http\Controllers\Backend\rakernas\RakernasPesertaController::class)->group(function () {
+        Route::get('/list', 'list')->name('rakernas_peserta.list');
+        Route::post('/store', 'store')->name('rakernas_peserta.store');
+        Route::post('/edit', 'edit')->name('rakernas_peserta.edit');
+        Route::post('/delete', 'destroy')->name('rakernas_peserta.delete');
+    });
+
+    Route::prefix('rakernas-undangan')->controller(App\Http\Controllers\Backend\rakernas\RakernasUndanganController::class)->group(function () {
+        Route::get('/list', 'list')->name('rakernas_undangan.list');
+        Route::post('/store', 'store')->name('rakernas_undangan.store');
+        Route::post('/edit', 'edit')->name('rakernas_undangan.edit');
+        Route::post('/delete', 'destroy')->name('rakernas_undangan.delete');
+    });
+
+    Route::prefix('rakernas-galeri')->controller(App\Http\Controllers\Backend\rakernas\RakernasGaleriController::class)->group(function () {
+        Route::get('/list', 'list')->name('rakernas_galeri.list');
+        Route::post('/store', 'store')->name('rakernas_galeri.store');
+        Route::post('/edit', 'edit')->name('rakernas_galeri.edit');
+        Route::post('/delete', 'destroy')->name('rakernas_galeri.delete');
     });
 
     Route::prefix('struktur_organisasi')->controller(App\Http\Controllers\Backend\ruang_pengurus\StrukturOrganisasiController::class)->group(function () {

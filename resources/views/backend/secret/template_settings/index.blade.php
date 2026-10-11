@@ -8,7 +8,7 @@
 
     <!-- Responsive Standard Breadcrumb -->
     <x-breadcrumb :items="[
-        ['label' => 'Pengaturan Sistem', 'url' => route('settings')],
+        ['label' => 'Pengaturan Sistem'],
         ['label' => 'Template Frontend'],
     ]" />
 

@@ -108,22 +108,53 @@
         background-color: #0f172a !important;
         border-bottom: 2px solid #34d399 !important;
     }
-    .table-responsive table.table thead th {
+    /* Enforce 100% full width & enlarged table styles */
+    .dataTables_wrapper,
+    .table-responsive,
+    table.dataTable,
+    .table-responsive table.table {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+    .table-responsive table.table thead th,
+    table.dataTable thead th {
         background-color: #f8fafc !important;
         color: #334155 !important;
-        border-bottom: 2px solid #e2e8f0 !important;
+        border-bottom: 2px solid #cbd5e1 !important;
+        font-size: 0.8125rem !important; /* 13px */
         font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.04em !important;
+        padding: 0.95rem 1.125rem !important;
+        vertical-align: middle !important;
     }
-    .dark .table-responsive table.table thead th {
+    .dark .table-responsive table.table thead th,
+    .dark table.dataTable thead th {
         background-color: #0f172a !important;
         color: #cbd5e1 !important;
         border-bottom: 2px solid #334155 !important;
     }
-    .table-responsive table.table tbody td {
+    .table-responsive table.table tbody td,
+    table.dataTable tbody td {
         color: #1e293b !important;
+        font-size: 0.875rem !important; /* 14px */
+        padding: 1rem 1.125rem !important;
+        vertical-align: middle !important;
+        line-height: 1.5 !important;
     }
-    .dark .table-responsive table.table tbody td {
+    .dark .table-responsive table.table tbody td,
+    .dark table.dataTable tbody td {
         color: #f1f5f9 !important;
+    }
+    .table-responsive .btn {
+        padding: 0.4rem 0.75rem !important;
+        font-size: 0.8125rem !important;
+        border-radius: 0.5rem !important;
+    }
+    .table-responsive .badge {
+        font-size: 0.75rem !important;
+        padding: 0.35rem 0.65rem !important;
+        font-weight: 700 !important;
     }
 </style>
 
@@ -303,16 +334,16 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover w-full text-xs" id="table-periode">
+                    <table class="table table-striped table-hover w-full" id="table-periode">
                         <thead>
                             <tr>
-                                <th width="5%">No</th>
-                                <th width="20%">Nama & Periode</th>
-                                <th width="25%">Tema & Lokasi</th>
-                                <th width="15%">Waktu Pelaksanaan</th>
-                                <th width="12%">Biaya Registrasi</th>
-                                <th width="10%">Status Publik</th>
-                                <th width="13%">Aksi</th>
+                                <th>No</th>
+                                <th>Nama & Periode</th>
+                                <th>Tema & Lokasi</th>
+                                <th>Waktu Pelaksanaan</th>
+                                <th>Biaya Registrasi</th>
+                                <th>Status Publik</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -336,7 +367,7 @@
 
                     <div class="flex flex-wrap items-center gap-2">
                         <div class="w-40 sm:w-48">
-                            <select id="peserta_provinsi" class="form-control text-xs">
+                            <select id="peserta_provinsi" class="form-control text-sm font-medium">
                                 <option value="">Semua Provinsi</option>
                                 @foreach($provinsi as $i)
                                     <option value="{{ $i->code }}">{{ $i->name }}</option>
@@ -344,24 +375,24 @@
                             </select>
                         </div>
                         <div class="w-40 sm:w-48">
-                            <select id="peserta_cabang" class="form-control text-xs">
+                            <select id="peserta_cabang" class="form-control text-sm font-medium">
                                 <option value="">Semua Cabang</option>
                             </select>
                         </div>
-                        <div class="w-48 sm:w-56">
+                        <div class="w-48 sm:w-60">
                             <div class="relative">
-                                <input type="text" class="form-control pl-8 text-xs" placeholder="Cari nama, klinik..." id="peserta_search">
+                                <input type="text" class="form-control pl-8 text-sm" placeholder="Cari nama, klinik..." id="peserta_search">
                                 <i class="fas fa-search absolute left-2.5 top-2.5 text-xs text-slate-400"></i>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-emerald btn-sm text-white bg-emerald-600 font-semibold" onclick="tambahPesertaModal()">
+                        <button type="button" class="btn btn-emerald btn-sm text-white bg-emerald-600 font-semibold px-3 py-2" onclick="tambahPesertaModal()">
                             <i class="fas fa-plus mr-1"></i> Tambah
                         </button>
                     </div>
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover w-full text-xs" id="table-peserta">
+                    <table class="table table-striped table-hover w-full" id="table-peserta">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -373,7 +404,7 @@
                                 <th>Status Delegasi</th>
                                 <th>Provinsi / Cabang</th>
                                 <th>Komisi</th>
-                                <th>Aksi</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -394,13 +425,13 @@
                             Data pemesanan kamar hotel delegasi, ekstra kasur, dan status pembayaran Xendit.
                         </p>
                     </div>
-                    <div class="w-56">
-                        <input type="text" class="form-control text-xs" placeholder="Cari pemesanan..." id="booking_search">
+                    <div class="w-60">
+                        <input type="text" class="form-control text-sm" placeholder="Cari pemesanan..." id="booking_search">
                     </div>
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover w-full text-xs" id="table-booking">
+                    <table class="table table-striped table-hover w-full" id="table-booking">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -411,7 +442,7 @@
                                 <th>Total Biaya</th>
                                 <th>Status Bayar</th>
                                 <th>Tanggal Booking</th>
-                                <th>Aksi</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -432,13 +463,13 @@
                             Jadwal kedatangan dan kepulangan peserta untuk koordinasi penjemputan dan akomodasi panitia.
                         </p>
                     </div>
-                    <div class="w-56">
-                        <input type="text" class="form-control text-xs" placeholder="Cari penerbangan..." id="penerbangan_search">
+                    <div class="w-60">
+                        <input type="text" class="form-control text-sm" placeholder="Cari penerbangan..." id="penerbangan_search">
                     </div>
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover w-full text-xs" id="table-penerbangan">
+                    <table class="table table-striped table-hover w-full" id="table-penerbangan">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -470,14 +501,14 @@
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover w-full text-xs" id="table-hotel">
+                            <table class="table table-striped table-hover w-full" id="table-hotel">
                                 <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Hotel</th>
                                         <th>Alamat</th>
                                         <th>Status</th>
-                                        <th>Aksi</th>
+                                        <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -496,7 +527,7 @@
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover w-full text-xs" id="table-tipe-hotel">
+                            <table class="table table-striped table-hover w-full" id="table-tipe-hotel">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -504,7 +535,7 @@
                                         <th>Tipe Kamar</th>
                                         <th>Harga</th>
                                         <th>Stok</th>
-                                        <th>Aksi</th>
+                                        <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -533,14 +564,14 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover w-full text-xs" id="table-partner">
+                    <table class="table table-striped table-hover w-full" id="table-partner">
                         <thead>
                             <tr>
-                                <th width="5%">No</th>
-                                <th width="15%">Logo Mitra</th>
-                                <th width="35%">Nama Mitra / Instansi</th>
-                                <th width="30%">Tautan Website</th>
-                                <th width="15%">Aksi</th>
+                                <th>No</th>
+                                <th>Logo Mitra</th>
+                                <th>Nama Mitra / Instansi</th>
+                                <th>Tautan Website</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -1010,6 +1041,15 @@
             $('#tab-' + tab + '-nav').tab('show');
         }
 
+        // Auto adjust table column widths on tab switch and window resize
+        $('button[data-toggle="tab"], a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+        });
+
+        $(window).on('resize', function() {
+            $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+        });
+
         // Filter event listeners
         $('#peserta_provinsi').change(function() {
             loadKotaByProvinsi($(this).val(), '#peserta_cabang', function() {
@@ -1038,6 +1078,10 @@
         const url = new URL(window.location);
         url.searchParams.set('tab', tabName);
         window.history.replaceState({}, '', url);
+
+        setTimeout(function() {
+            $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+        }, 100);
     }
 
     function changeFilterPeriode(val) {
@@ -1077,27 +1121,40 @@
         dtPeriode = $('#table-periode').DataTable({
             processing: true,
             serverSide: true,
+            autoWidth: false,
             ajax: "{{ route('konas_periode.list') }}",
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-medium' },
                 { 
                     data: 'nama', 
                     name: 'nama',
                     render: function(data, type, row) {
-                        return `<div class="font-bold text-slate-800 dark:text-white">${data}</div><div class="text-[11px] text-slate-400">Periode: ${row.periode}</div>`;
+                        return `<div class="font-bold text-sm text-slate-800 dark:text-white">${data}</div><div class="text-xs text-slate-500 mt-0.5">Periode: <span class="font-semibold text-slate-700 dark:text-slate-300">${row.periode}</span></div>`;
                     }
                 },
                 { 
                     data: 'tema', 
                     name: 'tema',
                     render: function(data, type, row) {
-                        return `<div class="font-semibold text-slate-700 dark:text-slate-200">${data || '-'}</div><div class="text-[11px] text-slate-400"><i class="fas fa-map-marker-alt text-red-500 mr-1"></i>${row.tempat || '-'}</div>`;
+                        return `<div class="font-medium text-sm text-slate-700 dark:text-slate-200">${data || '-'}</div><div class="text-xs text-slate-500 mt-1"><i class="fas fa-map-marker-alt text-rose-500 mr-1"></i>${row.tempat || '-'}</div>`;
                     }
                 },
-                { data: 'waktu_pelaksanaan', name: 'waktu_pelaksanaan' },
-                { data: 'biaya_formatted', name: 'biaya_registrasi' },
-                { data: 'status_badge', name: 'status' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                { 
+                    data: 'waktu_pelaksanaan', 
+                    name: 'waktu_pelaksanaan',
+                    render: function(data) {
+                        return `<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">${data || '-'}</span>`;
+                    }
+                },
+                { 
+                    data: 'biaya_formatted', 
+                    name: 'biaya_registrasi',
+                    render: function(data) {
+                        return `<span class="text-sm font-bold text-emerald-700 dark:text-emerald-400">${data}</span>`;
+                    }
+                },
+                { data: 'status_badge', name: 'status', className: 'text-center' },
+                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
             ]
         });
     }
@@ -1107,6 +1164,7 @@
         dtPeserta = $('#table-peserta').DataTable({
             processing: true,
             serverSide: true,
+            autoWidth: false,
             ajax: {
                 url: "{{ route('konas.list') }}",
                 data: function(d) {
@@ -1117,40 +1175,66 @@
                 }
             },
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'no_anggota', name: 'no_anggota' },
-                { data: 'nama_peserta', name: 'nama_peserta' },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-medium' },
+                { 
+                    data: 'no_anggota', 
+                    name: 'no_anggota',
+                    render: function(data) {
+                        return data ? `<span class="badge badge-light border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-xs font-bold text-slate-700 dark:text-slate-200">${data}</span>` : '<span class="text-slate-400">-</span>';
+                    }
+                },
+                { 
+                    data: 'nama_peserta', 
+                    name: 'nama_peserta',
+                    render: function(data, type, row) {
+                        return `<div class="font-bold text-sm text-slate-800 dark:text-white">${data}</div><div class="text-xs text-slate-500 mt-0.5"><i class="far fa-envelope mr-1 text-slate-400"></i>${row.email || '-'}</div>`;
+                    }
+                },
                 { 
                     data: 'surat_mandat', 
                     name: 'surat_mandat',
+                    className: 'text-center',
                     render: function(data) {
-                        return data ? `<a href="{{ asset('images/konas') }}/${data}" target="_blank" class="badge badge-primary"><i class="fas fa-file-pdf"></i> Mandat</a>` : '-';
+                        return data ? `<a href="{{ asset('images/konas') }}/${data}" target="_blank" class="badge badge-primary px-2.5 py-1.5 text-xs font-semibold inline-flex items-center gap-1 shadow-sm"><i class="fas fa-file-pdf"></i> Mandat</a>` : '<span class="text-slate-400">-</span>';
                     }
                 },
                 { 
                     data: 'no_hp', 
                     name: 'no_hp',
-                    render: function(data, type, row) {
-                        return `<div>${data || '-'}</div><div class="text-[10px] text-slate-400">${row.email || ''}</div>`;
+                    render: function(data) {
+                        return `<div class="font-medium text-xs text-slate-800 dark:text-slate-200 flex items-center gap-1.5"><i class="fab fa-whatsapp text-emerald-500 text-sm"></i>${data || '-'}</div>`;
                     }
                 },
-                { data: 'nama_klinik', name: 'nama_klinik' },
+                { 
+                    data: 'nama_klinik', 
+                    name: 'nama_klinik',
+                    render: function(data, type, row) {
+                        return `<div class="font-bold text-sm text-emerald-700 dark:text-emerald-400">${data || '-'}</div><div class="text-xs text-slate-500 line-clamp-1 mt-0.5">${row.alamat_klinik || ''}</div>`;
+                    }
+                },
                 { 
                     data: 'status', 
                     name: 'status',
+                    className: 'text-center',
                     render: function(data) {
-                        return `<span class="badge badge-info">${data}</span>`;
+                        return `<span class="badge badge-info px-2.5 py-1.5 text-xs font-bold rounded-full">${data}</span>`;
                     }
                 },
                 { 
                     data: 'provinsi', 
                     name: 'provinsi',
                     render: function(data, type, row) {
-                        return `<div>${data || '-'}</div><div class="text-[10px] text-slate-400">${row.name || ''}</div>`;
+                        return `<div class="font-semibold text-xs text-slate-800 dark:text-slate-200">${data || '-'}</div><div class="text-xs text-slate-500 mt-0.5">${row.name || ''}</div>`;
                     }
                 },
-                { data: 'komisi', name: 'komisi' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                { 
+                    data: 'komisi', 
+                    name: 'komisi',
+                    render: function(data) {
+                        return data ? `<span class="badge badge-secondary px-2.5 py-1 text-xs font-semibold">${data}</span>` : '<span class="text-slate-400">-</span>';
+                    }
+                },
+                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
             ]
         });
     }
@@ -1160,6 +1244,7 @@
         dtBooking = $('#table-booking').DataTable({
             processing: true,
             serverSide: true,
+            autoWidth: false,
             ajax: {
                 url: "{{ route('konas_booking.list') }}",
                 data: function(d) {
@@ -1167,29 +1252,62 @@
                 }
             },
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'name', name: 'name' },
-                { data: 'hotel', name: 'hotel' },
-                { data: 'jumlah', name: 'jumlah' },
-                { data: 'extrabed', name: 'extrabed' },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-medium' },
+                { 
+                    data: 'name', 
+                    name: 'name',
+                    render: function(data) {
+                        return `<div class="font-bold text-sm text-slate-800 dark:text-white">${data}</div>`;
+                    }
+                },
+                { 
+                    data: 'hotel', 
+                    name: 'hotel',
+                    render: function(data, type, row) {
+                        return `<div class="font-semibold text-sm text-slate-800 dark:text-white">${data}</div><div class="text-xs text-slate-500 mt-0.5">Tipe: <span class="font-medium text-slate-700 dark:text-slate-300">${row.tipe || '-'}</span></div>`;
+                    }
+                },
+                { 
+                    data: 'jumlah', 
+                    name: 'jumlah',
+                    className: 'text-center',
+                    render: function(data) {
+                        return `<span class="badge badge-light border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-xs font-bold">${data} Kamar</span>`;
+                    }
+                },
+                { 
+                    data: 'extrabed', 
+                    name: 'extrabed',
+                    className: 'text-center',
+                    render: function(data) {
+                        return data > 0 ? `<span class="badge badge-info px-2.5 py-1 text-xs font-semibold">${data} Bed</span>` : '<span class="text-slate-400">-</span>';
+                    }
+                },
                 { 
                     data: 'total', 
                     name: 'total',
                     render: function(data) {
-                        return 'Rp ' + Number(data).toLocaleString('id-ID');
+                        return `<span class="text-sm font-bold text-emerald-700 dark:text-emerald-400">Rp ${Number(data).toLocaleString('id-ID')}</span>`;
                     }
                 },
                 { 
                     data: 'status_pembayaran', 
                     name: 'status_pembayaran',
+                    className: 'text-center',
                     render: function(data) {
                         return data === 'SETTLED' || data === 'PAID' 
-                            ? '<span class="badge badge-success">Lunas</span>' 
-                            : '<span class="badge badge-warning">Pending</span>';
+                            ? '<span class="badge badge-success px-2.5 py-1.5 text-xs font-bold rounded-full"><i class="fas fa-check-circle mr-1"></i> Lunas</span>' 
+                            : '<span class="badge badge-warning px-2.5 py-1.5 text-xs font-bold rounded-full"><i class="fas fa-clock mr-1"></i> Pending</span>';
                     }
                 },
-                { data: 'tanggal', name: 'tanggal' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                { 
+                    data: 'tanggal', 
+                    name: 'tanggal',
+                    render: function(data) {
+                        return `<span class="text-xs font-medium text-slate-600 dark:text-slate-400">${data || '-'}</span>`;
+                    }
+                },
+                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
             ]
         });
     }
@@ -1199,6 +1317,7 @@
         dtPenerbangan = $('#table-penerbangan').DataTable({
             processing: true,
             serverSide: true,
+            autoWidth: false,
             ajax: {
                 url: "{{ route('konas_penerbangan.list') }}",
                 data: function(d) {
@@ -1206,24 +1325,42 @@
                 }
             },
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'nama_peserta', name: 'nama_peserta' },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-medium' },
+                { 
+                    data: 'nama_peserta', 
+                    name: 'nama_peserta',
+                    render: function(data) {
+                        return `<div class="font-bold text-sm text-slate-800 dark:text-white">${data}</div>`;
+                    }
+                },
                 { 
                     data: 'nama_klinik', 
                     name: 'nama_klinik',
                     render: function(data, type, row) {
-                        return `<div>${data || '-'}</div><div class="text-[10px] text-slate-400">${row.no_hp || ''}</div>`;
+                        return `<div class="font-semibold text-sm text-emerald-700 dark:text-emerald-400">${data || '-'}</div><div class="text-xs text-slate-500 mt-0.5"><i class="fab fa-whatsapp text-emerald-500 mr-1"></i>${row.no_hp || '-'}</div>`;
                     }
                 },
-                { data: 'pesawat', name: 'pesawat' },
+                { 
+                    data: 'pesawat', 
+                    name: 'pesawat',
+                    render: function(data) {
+                        return `<div class="font-semibold text-sm text-slate-800 dark:text-slate-200 flex items-center gap-1.5"><i class="fas fa-plane text-indigo-500"></i>${data || '-'}</div>`;
+                    }
+                },
                 { 
                     data: 'dari', 
                     name: 'dari',
                     render: function(data, type, row) {
-                        return `${data} &rarr; ${row.tujuan}`;
+                        return `<div class="text-xs font-bold text-slate-700 dark:text-slate-300">${data} <i class="fas fa-arrow-right text-slate-400 mx-1"></i> ${row.tujuan}</div>`;
                     }
                 },
-                { data: 'tanggal', name: 'tanggal' }
+                { 
+                    data: 'tanggal', 
+                    name: 'tanggal',
+                    render: function(data) {
+                        return `<span class="text-xs font-medium text-slate-600 dark:text-slate-400">${data || '-'}</span>`;
+                    }
+                }
             ]
         });
     }
@@ -1233,6 +1370,7 @@
         dtHotel = $('#table-hotel').DataTable({
             processing: true,
             serverSide: true,
+            autoWidth: false,
             ajax: {
                 url: "{{ route('konas_master_hotel.list') }}",
                 data: function(d) {
@@ -1240,17 +1378,30 @@
                 }
             },
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'hotel', name: 'hotel' },
-                { data: 'alamat', name: 'alamat' },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-medium' },
+                { 
+                    data: 'hotel', 
+                    name: 'hotel',
+                    render: function(data) {
+                        return `<div class="font-bold text-sm text-slate-800 dark:text-white">${data}</div>`;
+                    }
+                },
+                { 
+                    data: 'alamat', 
+                    name: 'alamat',
+                    render: function(data) {
+                        return `<div class="text-xs text-slate-600 dark:text-slate-400">${data || '-'}</div>`;
+                    }
+                },
                 { 
                     data: 'status', 
                     name: 'status',
+                    className: 'text-center',
                     render: function(data) {
-                        return data == '1' ? '<span class="badge badge-success">Aktif</span>' : '<span class="badge badge-secondary">Nonaktif</span>';
+                        return data == '1' ? '<span class="badge badge-success px-2.5 py-1 text-xs font-bold rounded-full">Aktif</span>' : '<span class="badge badge-secondary px-2.5 py-1 text-xs font-bold rounded-full">Nonaktif</span>';
                     }
                 },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
             ]
         });
     }
@@ -1259,20 +1410,40 @@
         dtTipeHotel = $('#table-tipe-hotel').DataTable({
             processing: true,
             serverSide: true,
+            autoWidth: false,
             ajax: "{{ route('konas_master_tipe_hotel.list') }}",
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'hotel', name: 'hotel' },
-                { data: 'tipe', name: 'tipe' },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-medium' },
+                { 
+                    data: 'hotel', 
+                    name: 'hotel',
+                    render: function(data) {
+                        return `<div class="font-semibold text-xs text-slate-700 dark:text-slate-300">${data}</div>`;
+                    }
+                },
+                { 
+                    data: 'tipe', 
+                    name: 'tipe',
+                    render: function(data) {
+                        return `<div class="font-bold text-sm text-slate-800 dark:text-white">${data}</div>`;
+                    }
+                },
                 { 
                     data: 'harga', 
                     name: 'harga',
                     render: function(data) {
-                        return 'Rp ' + Number(data).toLocaleString('id-ID');
+                        return `<span class="text-sm font-bold text-emerald-700 dark:text-emerald-400">Rp ${Number(data).toLocaleString('id-ID')}</span>`;
                     }
                 },
-                { data: 'stok', name: 'stok' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                { 
+                    data: 'stok', 
+                    name: 'stok',
+                    className: 'text-center',
+                    render: function(data) {
+                        return `<span class="badge badge-light border border-slate-300 dark:border-slate-600 px-2 py-1 text-xs font-bold">${data}</span>`;
+                    }
+                },
+                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
             ]
         });
     }
@@ -1282,6 +1453,7 @@
         dtPartner = $('#table-partner').DataTable({
             processing: true,
             serverSide: true,
+            autoWidth: false,
             ajax: {
                 url: "{{ route('partner.list') }}",
                 data: function(d) {
@@ -1289,23 +1461,30 @@
                 }
             },
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-medium' },
                 { 
                     data: 'photo', 
                     name: 'photo',
+                    className: 'text-center',
                     render: function(data) {
-                        return `<img src="{{ asset('images/partner') }}/${data}" style="height: 38px; object-fit: contain; border-radius: 4px; padding: 2px; background: #f8fafc;" onerror="this.src='{{ asset('assets/images/logo_asklin.png') }}'">`;
+                        return `<div class="w-16 h-12 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-1 flex items-center justify-center mx-auto shadow-sm"><img src="{{ asset('images/partner') }}/${data}" style="max-height: 100%; max-width: 100%; object-fit: contain;" onerror="this.src='{{ asset('assets/images/logo_asklin.png') }}'"></div>`;
                     }
                 },
-                { data: 'nama', name: 'nama' },
+                { 
+                    data: 'nama', 
+                    name: 'nama',
+                    render: function(data) {
+                        return `<div class="font-bold text-sm text-slate-800 dark:text-white">${data}</div>`;
+                    }
+                },
                 { 
                     data: 'link', 
                     name: 'link',
                     render: function(data) {
-                        return data ? `<a href="${data}" target="_blank" class="text-blue-600 hover:underline"><i class="fas fa-external-link-alt mr-1"></i>${data}</a>` : '-';
+                        return data ? `<a href="${data}" target="_blank" class="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1"><i class="fas fa-external-link-alt"></i> ${data}</a>` : '<span class="text-slate-400">-</span>';
                     }
                 },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
             ]
         });
     }

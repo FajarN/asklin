@@ -53,9 +53,11 @@ class KonasBookingController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function($data){
                     $actionBtn = '
-                        <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
-                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 28px, 0px); top: 0px; left: 0px; will-change: transform;">
-                            <a href="javascript:void(0)" onclick="edit('.$data["id"].')" class="dropdown-item has-icon"><i class="fas fa-edit"></i> Edit</a>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-info btn-sm dropdown-toggle font-semibold px-2.5 py-1.5" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog mr-1"></i> Aksi</button>
+                            <div class="dropdown-menu shadow-lg rounded-xl p-1 text-xs border border-slate-200">
+                                <a href="javascript:void(0)" onclick="edit('.$data["id"].')" class="dropdown-item py-1.5 px-3 rounded-lg flex items-center gap-2"><i class="fas fa-edit text-blue-600"></i> Edit Reservasi</a>
+                            </div>
                         </div>
                     ';
                     return $actionBtn;

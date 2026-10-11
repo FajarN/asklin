@@ -64,6 +64,11 @@
                             <span>Konas</span>
                         </a>
                     </li>
+                    <li class="mod-nav-item {{ request()->is('rakernas*') ? 'active' : '' }}">
+                        <a href="{{ route('rakernas') }}" class="mod-nav-link">
+                            <span>Rakernas</span>
+                        </a>
+                    </li>
                     <li class="mod-nav-item {{ request()->routeIs('kontak') ? 'active' : '' }}">
                         <a href="{{ route('kontak') }}" class="mod-nav-link">
                             <span>Kontak</span>

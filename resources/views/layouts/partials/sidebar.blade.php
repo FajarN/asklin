@@ -336,12 +336,9 @@
                         </li>
                     @endif
                     <li>
-                        <a href="javascript:void(0)" onclick="Swal.fire({icon: 'info', title: 'Belum Dibuat', text: 'Modul Event Rakernas sedang dalam pengembangan (belum dibuat).'})" class="block px-3 py-1.5 rounded-lg text-[11px] text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400 cursor-pointer flex items-center justify-between">
-                            <span class="flex items-center gap-2">
-                                <i class="fas fa-users-cog text-[10px]"></i>
-                                <span>Event Rakernas</span>
-                            </span>
-                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-medium">Belum dibuat</span>
+                        <a href="{{ route('rakernas_admin.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ request()->routeIs('rakernas_admin.*') || request()->is('backend/rakernas*') ? 'text-red-600 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }} flex items-center gap-2">
+                            <i class="fas fa-users-cog text-[10px]"></i>
+                            <span>Event Rakernas</span>
                         </a>
                     </li>
                 </ul>

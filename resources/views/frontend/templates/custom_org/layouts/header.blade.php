@@ -95,6 +95,11 @@
                             <span>Konas</span>
                         </a>
                     </li>
+                    <li class="org-nav-item {{ request()->is('rakernas*') ? 'active' : '' }}">
+                        <a href="{{ route('rakernas') }}" class="org-nav-link">
+                            <span>Rakernas</span>
+                        </a>
+                    </li>
                     <li class="org-nav-item {{ request()->routeIs('kontak') ? 'active' : '' }}">
                         <a href="{{ route('kontak') }}" class="org-nav-link">
                             <span>Kontak</span>

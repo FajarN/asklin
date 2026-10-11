@@ -235,8 +235,8 @@
                         @if(auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Admin Konas']) || auth()->user()->canany(['konas-master-hotel-list', 'konas-tipe-hotel-list', 'konas-peserta-list', 'konas-booking-hotel-list', 'konas-data-penerbangan-list', 'konas-partner-list']))
                             <li class="@if ($isKonasActive) active @endif"><a class="nav-link"
                                     href="{{ route('konas_admin.index') }}">Event Konas</a></li>
-                        @endif
-                        <li><a class="nav-link" href="javascript:void(0)" onclick="Swal.fire({icon: 'info', title: 'Belum Dibuat', text: 'Modul Event Rakernas sedang dalam pengembangan (belum dibuat).'})">Event Rakernas <span class="badge badge-secondary ml-1" style="font-size: 8px; padding: 2px 4px;">Belum dibuat</span></a></li>
+                        <li class="@if (request()->routeIs('rakernas_admin.*') || request()->is('backend/rakernas*')) active @endif"><a class="nav-link"
+                                href="{{ route('rakernas_admin.index') }}">Event Rakernas</a></li>
                     </ul>
                 </li>
             @endif

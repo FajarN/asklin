@@ -31,9 +31,9 @@ class KonasPeriodeController extends Controller
             ->addIndexColumn()
             ->addColumn('status_badge', function ($row) {
                 if ($row->status == '1') {
-                    return '<span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i> Aktif</span>';
+                    return '<span class="badge badge-success px-3 py-1.5 text-xs font-bold rounded-full"><i class="fas fa-check-circle mr-1"></i> Aktif</span>';
                 }
-                return '<span class="badge badge-secondary px-2 py-1"><i class="fas fa-times-circle mr-1"></i> Nonaktif</span>';
+                return '<span class="badge badge-secondary px-3 py-1.5 text-xs font-bold rounded-full"><i class="fas fa-times-circle mr-1"></i> Nonaktif</span>';
             })
             ->addColumn('waktu_pelaksanaan', function ($row) {
                 $mulai = $row->tanggal_mulai ? $row->tanggal_mulai->format('d M Y') : '-';
@@ -46,13 +46,13 @@ class KonasPeriodeController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $btnToggle = $row->status == '1'
-                    ? '<button type="button" class="btn btn-warning btn-sm" title="Nonaktifkan Periode" onclick="toggleStatusPeriode(' . $row->id . ', 0)"><i class="fas fa-pause"></i> Nonaktifkan</button>'
-                    : '<button type="button" class="btn btn-success btn-sm" title="Aktifkan Periode" onclick="toggleStatusPeriode(' . $row->id . ', 1)"><i class="fas fa-play"></i> Aktifkan</button>';
+                    ? '<button type="button" class="btn btn-warning btn-sm font-semibold" title="Nonaktifkan Periode" onclick="toggleStatusPeriode(' . $row->id . ', 0)"><i class="fas fa-pause mr-1"></i> Nonaktifkan</button>'
+                    : '<button type="button" class="btn btn-success btn-sm font-semibold" title="Aktifkan Periode" onclick="toggleStatusPeriode(' . $row->id . ', 1)"><i class="fas fa-play mr-1"></i> Aktifkan</button>';
 
                 return '
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-info btn-sm" title="Edit Periode" onclick="editPeriode(' . $row->id . ')">
-                            <i class="fas fa-edit"></i> Edit
+                    <div class="inline-flex items-center gap-1.5" role="group">
+                        <button type="button" class="btn btn-info btn-sm font-semibold" title="Edit Periode" onclick="editPeriode(' . $row->id . ')">
+                            <i class="fas fa-edit mr-1"></i> Edit
                         </button>
                         ' . $btnToggle . '
                         <button type="button" class="btn btn-danger btn-sm" title="Hapus Periode" onclick="deletePeriode(' . $row->id . ')">

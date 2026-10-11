@@ -78,45 +78,36 @@ class KonasPesertaController extends Controller
                 ->addColumn('action', function($data){
                     if($data->userid){
                         $approve = '
-                                <button class="btn btn-danger btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
-                            
-                                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 28px, 0px); top: 0px; left: 0px; will-change: transform;">
-                               
-                                <a href="'.route('cetak_kartu', $data["id"]).'" target="_BLANK" class="dropdown-item has-icon"><i class="fas fa-print"></i> Cetak</a>
-                                <div class="dropdown-divider"></div>
-                                
-                                <a href="'.route('konas.invoice', $data["id"]).'" target="_BLANK" class="dropdown-item has-icon"><i class="fas fa-print"></i> Invoice</a>
-                                <div class="dropdown-divider"></div>
-                                
-                                <a href="javascript:void(0)" onclick="deleteu('.$data["id"].')" class="dropdown-item has-icon"><i class="fas fa-trash"></i> Hapus</a>
-                                <div class="dropdown-divider"></div>
-                                
-                                <a href="javascript:void(0)" onclick="edit('.$data["id"].')" class="dropdown-item has-icon"><i class="fas fa-edit"></i> Edit</a>
-                                <div class="dropdown-divider"></div>
-
-                                  <a href="javascript:void(0)" onclick="updateStatus('.$data["id"].')" class="dropdown-item has-icon"><i class="fas fa-pen"></i>Status Pembayaran</a>
-                                <div class="dropdown-divider"></div>
-
-                                 </div>
-                                           
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary btn-sm dropdown-toggle font-semibold px-2.5 py-1.5" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-cog mr-1"></i> Aksi
+                                </button>
+                                <div class="dropdown-menu shadow-lg rounded-xl p-1 text-xs border border-slate-200" style="min-width: 170px;">
+                                    <a href="'.route('cetak_kartu', $data["id"]).'" target="_BLANK" class="dropdown-item py-1.5 px-3 rounded-lg flex items-center gap-2"><i class="fas fa-id-card text-emerald-600"></i> Cetak Kartu</a>
+                                    <a href="'.route('konas.invoice', $data["id"]).'" target="_BLANK" class="dropdown-item py-1.5 px-3 rounded-lg flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-blue-600"></i> Cetak Invoice</a>
+                                    <div class="dropdown-divider my-1"></div>
+                                    <a href="javascript:void(0)" onclick="updateStatus('.$data["id"].')" class="dropdown-item py-1.5 px-3 rounded-lg flex items-center gap-2"><i class="fas fa-credit-card text-amber-600"></i> Status Bayar</a>
+                                    <a href="javascript:void(0)" onclick="edit('.$data["id"].')" class="dropdown-item py-1.5 px-3 rounded-lg flex items-center gap-2"><i class="fas fa-edit text-indigo-600"></i> Edit Data</a>
+                                    <div class="dropdown-divider my-1"></div>
+                                    <a href="javascript:void(0)" onclick="deleteu('.$data["id"].')" class="dropdown-item py-1.5 px-3 rounded-lg flex items-center gap-2 text-rose-600"><i class="fas fa-trash"></i> Hapus</a>
+                                </div>
+                            </div>
                         ';
                     }else{
                         $approve = '
-                                 <button class="btn btn-danger btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
-                            
-                                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 28px, 0px); top: 0px; left: 0px; will-change: transform;">
-                             
-                                <a href="'.route('konas.approve', $data->id).'" class="dropdown-item has-icon"><i class="fas  fa-check-circle"></i> Approve</a>
-                                <div class="dropdown-divider"></div>
-
-                                 <a href="javascript:void(0)" onclick="updateStatus('.$data["id"].')" class="dropdown-item has-icon"><i class="fas fa-pen"></i>Status Pembayaran</a>
-                                <div class="dropdown-divider"></div>
-                                
-                                <a href="javascript:void(0)" onclick="edit('.$data["id"].')" class="dropdown-item has-icon"><i class="fas fa-edit"></i> Edit</a>
-                                <div class="dropdown-divider"></div>
-
-                                 </div>
-                        
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary btn-sm dropdown-toggle font-semibold px-2.5 py-1.5" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-cog mr-1"></i> Aksi
+                                </button>
+                                <div class="dropdown-menu shadow-lg rounded-xl p-1 text-xs border border-slate-200" style="min-width: 170px;">
+                                    <a href="'.route('konas.approve', $data->id).'" class="dropdown-item py-1.5 px-3 rounded-lg flex items-center gap-2 text-emerald-600 font-semibold"><i class="fas fa-check-circle"></i> Approve Registrasi</a>
+                                    <div class="dropdown-divider my-1"></div>
+                                    <a href="javascript:void(0)" onclick="updateStatus('.$data["id"].')" class="dropdown-item py-1.5 px-3 rounded-lg flex items-center gap-2"><i class="fas fa-credit-card text-amber-600"></i> Status Bayar</a>
+                                    <a href="javascript:void(0)" onclick="edit('.$data["id"].')" class="dropdown-item py-1.5 px-3 rounded-lg flex items-center gap-2"><i class="fas fa-edit text-indigo-600"></i> Edit Data</a>
+                                    <div class="dropdown-divider my-1"></div>
+                                    <a href="javascript:void(0)" onclick="deleteu('.$data["id"].')" class="dropdown-item py-1.5 px-3 rounded-lg flex items-center gap-2 text-rose-600"><i class="fas fa-trash"></i> Hapus</a>
+                                </div>
+                            </div>
                         ';
                     }
                     $actionBtn = $approve;
