@@ -149,10 +149,30 @@
                 border: none;
             }
         }
+
+        .watermark-draft {
+            position: fixed;
+            top: 35%;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 80pt;
+            font-weight: 900;
+            color: rgba(148, 163, 184, 0.18);
+            transform: rotate(-35deg);
+            z-index: 0;
+            letter-spacing: 15px;
+            pointer-events: none;
+            user-select: none;
+        }
     </style>
 </head>
 
 <body>
+    @if($struktur->status !== 'disetujui' && $struktur->status !== 'aktif')
+        <div class="watermark-draft">DRAFT</div>
+    @endif
+
     <div class="no-print">
         <button onclick="window.print()" class="btn">Cetak</button>
         <a href="{{ route('struktur_organisasi.detail', $struktur->id) }}" class="btn btn-secondary">Kembali</a>

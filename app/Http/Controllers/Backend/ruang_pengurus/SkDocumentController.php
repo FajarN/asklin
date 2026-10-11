@@ -140,11 +140,70 @@ class SkDocumentController extends Controller
             default => 'Kongres Nasional',
         };
 
+        // Parse susunan pengurus ke struktur hierarki resmi organisasi
+        $pembina = [];
+        $penasehat = [];
+        $pimpinan = [];
+        $koordinator_daerah = [];
+        $bidangList = [];
+        $lainnya = [];
+
+        foreach ($pengurusSemua as $p) {
+            $jabatanLower = strtolower(trim($p->jabatan));
+            $keteranganTrim = trim($p->keterangan ?? '');
+
+            if (strpos($jabatanLower, 'pembina') !== false) {
+                $pembina[] = $p->nama_lengkap;
+            } elseif (strpos($jabatanLower, 'penasehat') !== false || strpos($jabatanLower, 'penasihat') !== false) {
+                $penasehat[] = $p->nama_lengkap;
+            } elseif (strpos($jabatanLower, 'koordinator daerah') !== false) {
+                $koordinator_daerah[] = [
+                    'wilayah' => $keteranganTrim ?: 'Wilayah',
+                    'nama' => $p->nama_lengkap
+                ];
+            } elseif (strpos($jabatanLower, 'koordinator bidang') !== false || strpos($jabatanLower, 'anggota bidang') !== false) {
+                $namaBidang = $keteranganTrim ?: 'Bidang Organisasi';
+                if (!isset($bidangList[$namaBidang])) {
+                    $bidangList[$namaBidang] = ['koordinator' => null, 'anggota' => []];
+                }
+                if (strpos($jabatanLower, 'koordinator') !== false || strpos($jabatanLower, 'ketua') !== false) {
+                    $bidangList[$namaBidang]['koordinator'] = $p->nama_lengkap;
+                } else {
+                    $bidangList[$namaBidang]['anggota'][] = $p->nama_lengkap;
+                }
+            } elseif (strpos($jabatanLower, 'bidang') !== false && !in_array($jabatanLower, ['koordinator bidang', 'anggota bidang'])) {
+                $namaBidang = $p->jabatan;
+                if (!isset($bidangList[$namaBidang])) {
+                    $bidangList[$namaBidang] = ['koordinator' => $p->nama_lengkap, 'anggota' => []];
+                } else {
+                    if (!$bidangList[$namaBidang]['koordinator']) {
+                        $bidangList[$namaBidang]['koordinator'] = $p->nama_lengkap;
+                    } else {
+                        $bidangList[$namaBidang]['anggota'][] = $p->nama_lengkap;
+                    }
+                }
+            } else {
+                $pimpinan[] = [
+                    'jabatan' => ucwords($p->jabatan),
+                    'nama' => $p->nama_lengkap
+                ];
+            }
+        }
+
+        $isDraft = ($sk->status !== 'terbit');
+
         $data = [
             'sk' => $sk,
             'struktur' => $struktur,
             'kelompokList' => $kelompokList,
             'pengurusSemua' => $pengurusSemua,
+            'isDraft' => $isDraft,
+            'pembina' => $pembina,
+            'penasehat' => $penasehat,
+            'pimpinan' => $pimpinan,
+            'koordinator_daerah' => $koordinator_daerah,
+            'bidangList' => $bidangList,
+            'lainnya' => $lainnya,
             'ketum' => $ketum,
             'ttdBase64' => $ttdBase64,
             'kopBase64' => $kopBase64,

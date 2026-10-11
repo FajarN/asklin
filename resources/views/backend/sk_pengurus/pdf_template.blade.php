@@ -146,35 +146,97 @@
             vertical-align: top;
         }
 
-        .table-pengurus {
+        @if($isDraft)
+        .watermark-draft {
+            position: fixed;
+            top: 30%;
+            left: -15%;
+            width: 130%;
+            text-align: center;
+            font-size: 95pt;
+            font-weight: 900;
+            color: #94a3b8;
+            opacity: 0.18;
+            transform: rotate(-35deg);
+            -webkit-transform: rotate(-35deg);
+            z-index: -1000;
+            letter-spacing: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
+        @endif
+
+        /* Lampiran Structure Styles (Tanpa Table Bergaris, Tanpa Asal Faskes) */
+        .pos-section {
+            margin-bottom: 12px;
+        }
+
+        .pos-header-title {
+            font-weight: bold;
+            font-size: 10.5pt;
+            text-transform: uppercase;
+            margin-top: 10px;
+            margin-bottom: 3px;
+            letter-spacing: 0.3px;
+        }
+
+        .table-pos {
             width: 100%;
             border-collapse: collapse;
-            font-size: 9.5pt;
-            margin-top: 8px;
-            margin-bottom: 15px;
+            font-size: 10pt;
+            margin-bottom: 4px;
         }
 
-        .table-pengurus th, .table-pengurus td {
-            border: 1px solid #444;
-            padding: 5px 6px;
+        .table-pos td {
+            vertical-align: top;
+            padding: 2.5px 0;
+            border: none;
         }
 
-        .table-pengurus th {
-            background-color: #f2f2f2;
+        .col-pos-label {
+            width: 220px;
             font-weight: bold;
+        }
+
+        .col-pos-colon {
+            width: 15px;
             text-align: center;
-            text-transform: uppercase;
+            font-weight: bold;
         }
 
-        .group-header-row td {
-            background-color: #eaeaea;
+        .col-pos-val {
             font-weight: bold;
-            text-transform: uppercase;
-            padding: 5px 8px;
+        }
+
+        .pos-ol {
+            margin: 2px 0 6px 20px;
+            padding-left: 0;
+            font-size: 10pt;
+        }
+
+        .pos-ol li {
+            margin-bottom: 2.5px;
+            font-weight: bold;
+        }
+
+        .bidang-box {
+            margin-top: 8px;
+            page-break-inside: avoid;
+        }
+
+        .bidang-name {
+            font-weight: bold;
+            font-size: 10pt;
+            margin-bottom: 2px;
         }
     </style>
 </head>
 <body>
+
+    @if($isDraft)
+        <div class="watermark-draft">DRAFT</div>
+    @endif
 
     <!-- KOP SURAT RESMI -->
     <div class="kop-container">
@@ -403,68 +465,115 @@
         </h3>
     </div>
 
-    <!-- Tabel Susunan Pengurus -->
-    <table class="table-pengurus">
-        <thead>
-            <tr>
-                <th style="width: 32px;">NO</th>
-                <th style="width: 210px;">JABATAN</th>
-                <th>NAMA LENGKAP & GELAR</th>
-                <th style="width: 170px;">ASAL KLINIK / FASKES</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php $globalNo = 1; @endphp
-            @forelse($kelompokList as $kelompok)
-                @php
-                    $pengurusInGroup = $pengurusSemua->where('id_kelompok', $kelompok->id);
-                @endphp
-                @if($pengurusInGroup->count() > 0)
-                    <tr class="group-header-row">
-                        <td colspan="4">{{ $kelompok->nama_kelompok }}</td>
-                    </tr>
-                    @foreach($pengurusInGroup as $person)
+    <!-- Susunan Personalia Pengurus (Sesuai Format Dokumen Resmi ASKLIN & Cetak Struktur Organisasi) -->
+    <div style="font-size: 10pt; line-height: 1.4; margin-top: 5px;">
+
+        <!-- Dewan Pembina -->
+        @if(count($pembina) > 0)
+            <div class="pos-section">
+                <div class="pos-header-title">Dewan Pembina :</div>
+                <ol class="pos-ol">
+                    @foreach($pembina as $nama)
+                        <li>{{ $nama }}</li>
+                    @endforeach
+                </ol>
+            </div>
+        @endif
+
+        <!-- Dewan Penasehat -->
+        @if(count($penasehat) > 0)
+            <div class="pos-section">
+                <div class="pos-header-title">Dewan Penasehat :</div>
+                <ol class="pos-ol">
+                    @foreach($penasehat as $nama)
+                        <li>{{ $nama }}</li>
+                    @endforeach
+                </ol>
+            </div>
+        @endif
+
+        <!-- Pimpinan Struktural (Ketua Umum, Waka, Sekjen, Bendahara, dll) -->
+        @if(count($pimpinan) > 0)
+            <div class="pos-section">
+                <table class="table-pos">
+                    @foreach($pimpinan as $p)
                         <tr>
-                            <td class="text-center">{{ $globalNo++ }}</td>
-                            <td style="font-weight: 600;">{{ $person->jabatan }}</td>
-                            <td style="font-weight: bold;">{{ $person->nama_lengkap }}</td>
-                            <td>{{ $person->keterangan ?: '-' }}</td>
+                            <td class="col-pos-label">{{ $p['jabatan'] }}</td>
+                            <td class="col-pos-colon">:</td>
+                            <td class="col-pos-val">{{ $p['nama'] }}</td>
                         </tr>
                     @endforeach
-                @endif
-            @empty
-                @foreach($pengurusSemua as $person)
-                    <tr>
-                        <td class="text-center">{{ $globalNo++ }}</td>
-                        <td style="font-weight: 600;">{{ $person->jabatan }}</td>
-                        <td style="font-weight: bold;">{{ $person->nama_lengkap }}</td>
-                        <td>{{ $person->keterangan ?: '-' }}</td>
-                    </tr>
-                @endforeach
-            @endforelse
+                </table>
+            </div>
+        @endif
 
-            {{-- Pengurus tanpa kelompok jika ada --}}
-            @php
-                $unassigned = $pengurusSemua->whereNull('id_kelompok');
-            @endphp
-            @if($unassigned->count() > 0)
-                <tr class="group-header-row">
-                    <td colspan="4">PENGURUS LAINNYA</td>
-                </tr>
-                @foreach($unassigned as $person)
-                    <tr>
-                        <td class="text-center">{{ $globalNo++ }}</td>
-                        <td style="font-weight: 600;">{{ $person->jabatan }}</td>
-                        <td style="font-weight: bold;">{{ $person->nama_lengkap }}</td>
-                        <td>{{ $person->keterangan ?: '-' }}</td>
-                    </tr>
+        <!-- Koordinator Daerah -->
+        @if(count($koordinator_daerah) > 0)
+            <div class="pos-section" style="margin-top: 10px;">
+                <div class="pos-header-title">KOORDINATOR DAERAH :</div>
+                <table class="table-pos" style="margin-left: 10px;">
+                    @foreach($koordinator_daerah as $koor)
+                        <tr>
+                            <td class="col-pos-label" style="width: 250px;">{{ strtoupper($koor['wilayah']) }}</td>
+                            <td class="col-pos-colon">:</td>
+                            <td class="col-pos-val">{{ $koor['nama'] }}</td>
+                        </tr>
+                    @endforeach
+                </table>
+            </div>
+        @endif
+
+        <!-- Bidang-Bidang -->
+        @if(count($bidangList) > 0)
+            <div class="pos-section" style="margin-top: 12px;">
+                <div class="pos-header-title">BIDANG-BIDANG :</div>
+                @php $bidangNo = 1; @endphp
+                @foreach($bidangList as $namaBidang => $bData)
+                    <div class="bidang-box">
+                        <div class="bidang-name">{{ $bidangNo++ }}. {{ strtoupper($namaBidang) }}</div>
+                        @if($bData['koordinator'])
+                            <table class="table-pos" style="margin-left: 15px;">
+                                <tr>
+                                    <td style="width: 120px; font-weight: bold;">Koordinator</td>
+                                    <td style="width: 15px; font-weight: bold; text-align: center;">:</td>
+                                    <td style="font-weight: bold;">{{ $bData['koordinator'] }}</td>
+                                </tr>
+                            </table>
+                        @endif
+                        @if(count($bData['anggota']) > 0)
+                            <div style="margin-left: 15px;">
+                                <span style="font-weight: bold; font-size: 10pt;">Anggota :</span>
+                                <ol class="pos-ol" style="margin-left: 20px;">
+                                    @foreach($bData['anggota'] as $anggotaNama)
+                                        <li>{{ $anggotaNama }}</li>
+                                    @endforeach
+                                </ol>
+                            </div>
+                        @endif
+                    </div>
                 @endforeach
-            @endif
-        </tbody>
-    </table>
+            </div>
+        @endif
+
+        <!-- Pengurus Lainnya jika ada -->
+        @if(count($lainnya) > 0)
+            <div class="pos-section" style="margin-top: 8px;">
+                <table class="table-pos">
+                    @foreach($lainnya as $l)
+                        <tr>
+                            <td class="col-pos-label">{{ $l['jabatan'] }}</td>
+                            <td class="col-pos-colon">:</td>
+                            <td class="col-pos-val">{{ $l['nama'] }}</td>
+                        </tr>
+                    @endforeach
+                </table>
+            </div>
+        @endif
+
+    </div>
 
     <!-- Tanda Tangan Lampiran -->
-    <table class="table-ttd" style="margin-top: 20px;">
+    <table class="table-ttd" style="margin-top: 25px; page-break-inside: avoid;">
         <tr>
             <td style="width: 48%; vertical-align: bottom;">
                 @if($sk->show_qr && $qrCodeSvg)

@@ -35,8 +35,8 @@
                         <i class="fas fa-bell text-emerald-600 text-xs"></i> Notifikasi Masuk
                     </span>
                     <div class="flex items-center gap-2">
-                        <button type="button" onclick="dismissAllNavbarNotifications(event)" class="text-[11px] text-rose-500 hover:text-rose-700 font-semibold flex items-center gap-1 transition" title="Hapus notifikasi dari popup navbar saja (arsip asli tetap tersimpan di pusat notifikasi)">
-                            <i class="fas fa-trash-alt text-[10px]"></i> Hapus Tampilan
+                        <button type="button" onclick="dismissAllNavbarNotifications(event)" class="w-6 h-6 rounded-md text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center justify-center transition" title="Hapus semua tampilan dari popup navbar (arsip asli tetap aman di Pusat Notifikasi)">
+                            <i class="fas fa-trash-alt text-xs"></i>
                         </button>
                         <span class="text-slate-200 dark:text-slate-700">|</span>
                         <a href="{{ route('notifications.index') }}" class="text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline font-semibold">
