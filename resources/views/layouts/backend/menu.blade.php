@@ -274,6 +274,8 @@
                                 href="{{ route('permissions.index') }}">Permission</a></li>
                         <li class="dropdown @if (Request::url() == route('settings.index')) active @endif"><a class="nav-link"
                                 href="{{ route('settings.index') }}">Setting</a></li>
+                        <li class="dropdown @if (Request::url() == route('smtp_settings.index')) active @endif"><a class="nav-link"
+                                href="{{ route('smtp_settings.index') }}">Setting Email SMTP</a></li>
                     </ul>
                 </li>
             @endcan

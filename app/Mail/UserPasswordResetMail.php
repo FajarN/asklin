@@ -43,7 +43,7 @@ class UserPasswordResetMail extends Mailable
             ? "Pemberitahuan Pembaruan Akses Akun ASKLIN: {$this->klinikName}" 
             : "Pemberitahuan Pembaruan Akses Akun Sistem ASKLIN";
 
-        return $this->from(config('mail.from.address', 'pp_asklin@asklin.org'), 'Pengurus Pusat ASKLIN')
+        return $this->from(config('mail.from.address', 'pp_asklin@asklin.org'), config('mail.from.name', 'Pengurus Pusat ASKLIN'))
             ->subject($subject)
             ->view('emails.user_password_reset');
     }

@@ -151,6 +151,12 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
             Route::get('/exit-preview', 'exitPreview')->name('template_settings.exit_preview');
         });
 
+        Route::prefix('smtp-settings')->controller(App\Http\Controllers\Backend\secret\SmtpSettingController::class)->group(function () {
+            Route::get('/', 'index')->name('smtp_settings.index');
+            Route::post('/update', 'update')->name('smtp_settings.update');
+            Route::post('/test-send', 'testSend')->name('smtp_settings.test_send');
+        });
+
         Route::prefix('slider')->controller(App\Http\Controllers\Backend\web\SliderController::class)->group(function () {
             Route::get('/', 'index')->name('slider.index');
             Route::get('/list', 'list')->name('slider.list');
