@@ -450,6 +450,16 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/print/{id}', [App\Http\Controllers\Backend\ruang_pengurus\SkDocumentController::class, 'print'])->name('sk_pengurus.print');
     });
 
+    Route::prefix('sk-lama')->controller(App\Http\Controllers\Backend\ruang_pengurus\SkLamaController::class)->group(function () {
+        Route::get('/', 'index')->name('sk_lama.index');
+        Route::get('/list', 'list')->name('sk_lama.list');
+        Route::post('/store', 'store')->name('sk_lama.store');
+        Route::get('/edit/{id}', 'edit')->name('sk_lama.edit');
+        Route::post('/update/{id}', 'update')->name('sk_lama.update');
+        Route::post('/delete/{id}', 'destroy')->name('sk_lama.delete');
+        Route::get('/download/{id}', 'download')->name('sk_lama.download');
+    });
+
     Route::group(['prefix' => 'expired-sio', 'as' => 'expired_sio.'], function () {
         Route::get('/', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'index'])->name('index');
         Route::get('/list', [App\Http\Controllers\Backend\ExpiredSIOController::class, 'list'])->name('list');

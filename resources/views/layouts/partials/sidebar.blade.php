@@ -175,6 +175,13 @@
                             <span>Surat Keputusan (SK)</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('sk_lama.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ Str::contains(Request::url(), 'sk-lama') ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-400 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60' }}">
+                            <i class="fas fa-archive text-sm {{ Str::contains(Request::url(), 'sk-lama') ? 'text-red-600 dark:text-red-400' : 'text-slate-400' }}"></i>
+                            <span>Arsip SK Lama</span>
+                        </a>
+                    </li>
                     @if(auth()->user()->can('master-ketua-umum-list') || auth()->user()->hasRole(['Superadmin', 'Admin Pusat', 'Sekjen', 'Ketua Umum']))
                     <li>
                         <a href="{{ route('master_ketua_umum.index') }}"
