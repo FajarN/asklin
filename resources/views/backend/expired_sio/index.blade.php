@@ -300,7 +300,8 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
-                pageLength: 25,
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
                 order: [
                     [6, 'asc']
                 ], // Order by tgl_akhir_ijin

@@ -121,24 +121,22 @@ class VerifikasiAnggotaController extends Controller
                 // Filter berdasarkan jenis klinik
                 ->when($request->get('filter_jenis'), function ($query) use ($request) {
                     $query->where('anggota.jenis_klinik', $request->get('filter_jenis'));
-                })
-                ->get();
+                });
 
             return Datatables::of($data)
-                ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $searchQuery = Str::lower($request->get('search'));
-                        $instance->collection = $instance->collection->filter(function ($data) use ($searchQuery) {
-                            if (Str::contains(Str::lower($data['nama_klinik']), $searchQuery)) {
-                                return true;
-                            }
-                            if (Str::contains(Str::lower($data['no_anggota']), $searchQuery)) {
-                                return true;
-                            }
-                            if (Str::contains(Str::lower($data['name']), $searchQuery)) {
-                                return true;
-                            }
-                            return false;
+                ->filter(function ($query) use ($request) {
+                    $search = is_array($request->get('search'))
+                        ? ($request->input('search.value') ?? '')
+                        : (string) $request->get('search');
+                    $search = trim($search);
+
+                    if (!empty($search)) {
+                        $query->where(function ($q) use ($search) {
+                            $q->where('anggota.nama_klinik', 'like', "%{$search}%")
+                                ->orWhere('anggota.no_anggota', 'like', "%{$search}%")
+                                ->orWhere('anggota.nama_pemilik_klinik', 'like', "%{$search}%")
+                                ->orWhere('indonesia_cities.name', 'like', "%{$search}%")
+                                ->orWhere('indonesia_provinces.name', 'like', "%{$search}%");
                         });
                     }
                 })

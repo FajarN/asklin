@@ -55,7 +55,25 @@ class LaporanService
             'subtitle' => '',
         ];
 
-        if ($level === 'daerah') {
+        if ($level === 'pusat') {
+            $scope['is_locked_provinsi'] = false;
+            $scope['is_locked_kota'] = false;
+
+            if ($request->filled('provinsi')) {
+                $scope['provinsi_id'] = (string) $request->provinsi;
+                $province = Province::where('code', $scope['provinsi_id'])->first();
+                $scope['provinsi_name'] = $province ? $province->name : '';
+            }
+            if ($request->filled('kota')) {
+                $scope['kota_id'] = (string) $request->kota;
+                $city = City::where('code', $scope['kota_id'])->first();
+                $scope['kota_name'] = $city ? $city->name : '';
+            }
+
+            $scope['title'] = 'Laporan Nasional (Pengurus Pusat ASKLIN)';
+            $scope['subtitle'] = 'Pusat komando eksekutif pelaporan keanggotaan, sertifikasi, dan iuran klinik se-Indonesia';
+
+        } elseif ($level === 'daerah') {
             // Level: Daerah (Provinsi)
             if ($isNationalAdmin) {
                 // National admin can choose any province
@@ -164,7 +182,17 @@ class LaporanService
      */
     public function getSubRegionOptions(array $scope): array
     {
-        if ($scope['level'] === 'daerah') {
+        if ($scope['level'] === 'pusat') {
+            if (!empty($scope['provinsi_id'])) {
+                return City::where('province_code', $scope['provinsi_id'])
+                    ->orderBy('name', 'asc')
+                    ->get(['code', 'name'])
+                    ->toArray();
+            }
+            return Province::orderBy('name', 'asc')
+                ->get(['code', 'name'])
+                ->toArray();
+        } elseif ($scope['level'] === 'daerah') {
             return City::where('province_code', $scope['provinsi_id'])
                 ->orderBy('name', 'asc')
                 ->get(['code', 'name'])
@@ -183,7 +211,14 @@ class LaporanService
     public function applyFilters($query, array $scope, Request $request, string $alias = 'anggota')
     {
         // 1. Mandatory Regional Bounds (Security Isolation)
-        if ($scope['level'] === 'daerah') {
+        if ($scope['level'] === 'pusat') {
+            if ($request->filled('provinsi')) {
+                $query->where("{$alias}.id_provinsi", $request->provinsi);
+            }
+            if ($request->filled('kota')) {
+                $query->where("{$alias}.id_kota", $request->kota);
+            }
+        } elseif ($scope['level'] === 'daerah') {
             $query->where("{$alias}.id_provinsi", $scope['provinsi_id']);
 
             // Optional city filter within this authorized province
@@ -231,9 +266,19 @@ class LaporanService
             } catch (\Exception $e) {}
         }
 
-        // 4. Status Keanggotaan filter
+        // 4. Status Keanggotaan filter (Checking no_anggota for true approval)
         if ($request->filled('status')) {
-            $query->where("{$alias}.status", $request->status);
+            if ($request->status === 'approved') {
+                $query->whereNotNull("{$alias}.no_anggota")
+                    ->where("{$alias}.no_anggota", '!=', '');
+            } elseif (in_array($request->status, ['belum_approved', 'unapproved', 'inaktif', 'pending_approval'])) {
+                $query->where(function ($q) use ($alias) {
+                    $q->whereNull("{$alias}.no_anggota")
+                        ->orWhere("{$alias}.no_anggota", '=', '');
+                });
+            } else {
+                $query->where("{$alias}.status", $request->status);
+            }
         }
 
         // 5. Status Pembayaran filter
@@ -312,8 +357,8 @@ class LaporanService
 
         $stats = $anggotaQuery->selectRaw("
             COUNT(*) as total_anggota,
-            SUM(CASE WHEN anggota.status = 'approved' THEN 1 ELSE 0 END) as anggota_aktif,
-            SUM(CASE WHEN anggota.status != 'approved' THEN 1 ELSE 0 END) as anggota_inaktif,
+            SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as anggota_aktif,
+            SUM(CASE WHEN anggota.no_anggota IS NULL OR anggota.no_anggota = '' THEN 1 ELSE 0 END) as anggota_inaktif,
             SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as anggota_bayar_lunas,
             SUM(CASE WHEN anggota.status_pembayaran != '1' OR anggota.status_pembayaran IS NULL THEN 1 ELSE 0 END) as anggota_bayar_pending,
             SUM(CASE WHEN {$dateSql} >= ? THEN 1 ELSE 0 END) as anggota_baru_30_hari
@@ -350,6 +395,18 @@ class LaporanService
             SUM(CASE WHEN pembayaran.status = '0' OR pembayaran.status = '' THEN pembayaran.total ELSE 0 END) as nominal_pending
         ")->first();
 
+        $totalProvinsiAktif = 0;
+        $totalKotaAktif = 0;
+        if ($scope['level'] === 'pusat') {
+            $provQuery = DB::table('anggota');
+            $this->applyFilters($provQuery, $scope, $request, 'anggota');
+            $totalProvinsiAktif = $provQuery->whereNotNull('id_provinsi')->where('id_provinsi', '!=', '')->distinct('id_provinsi')->count('id_provinsi');
+
+            $kotaQuery = DB::table('anggota');
+            $this->applyFilters($kotaQuery, $scope, $request, 'anggota');
+            $totalKotaAktif = $kotaQuery->whereNotNull('id_kota')->where('id_kota', '!=', '')->distinct('id_kota')->count('id_kota');
+        }
+
         return [
             'total_anggota' => $totalAnggota,
             'anggota_aktif' => (int) ($stats->anggota_aktif ?? 0),
@@ -365,6 +422,8 @@ class LaporanService
             'transaksi_bayar_pending' => (int) ($payStats->transaksi_pending ?? 0),
             'nominal_bayar_lunas' => (float) ($payStats->nominal_lunas ?? 0),
             'nominal_bayar_pending' => (float) ($payStats->nominal_pending ?? 0),
+            'total_provinsi_aktif' => (int) $totalProvinsiAktif,
+            'total_kota_aktif' => (int) $totalKotaAktif,
         ];
     }
 
@@ -382,7 +441,7 @@ class LaporanService
             $data = $query->selectRaw("
                 MONTH({$dateSql}) as periode,
                 COUNT(*) as total,
-                SUM(CASE WHEN anggota.status = 'approved' THEN 1 ELSE 0 END) as aktif
+                SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as aktif
             ")
             ->whereRaw("{$dateSql} IS NOT NULL")
             ->groupBy('periode')
@@ -405,7 +464,7 @@ class LaporanService
             $data = $query->selectRaw("
                 YEAR({$dateSql}) as periode,
                 COUNT(*) as total,
-                SUM(CASE WHEN anggota.status = 'approved' THEN 1 ELSE 0 END) as aktif
+                SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as aktif
             ")
             ->whereRaw("{$dateSql} IS NOT NULL")
             ->groupBy('periode')
@@ -469,7 +528,29 @@ class LaporanService
      */
     public function getRegionalDistributionChartData(array $scope, Request $request): array
     {
-        if ($scope['level'] === 'daerah') {
+        if ($scope['level'] === 'pusat') {
+            if ($request->filled('provinsi')) {
+                $query = DB::table('anggota')
+                    ->join('indonesia_cities', 'indonesia_cities.code', '=', 'anggota.id_kota');
+                $this->applyFilters($query, $scope, $request, 'anggota');
+
+                $rows = $query->select('indonesia_cities.name as wilayah', DB::raw('count(*) as total'))
+                    ->groupBy('indonesia_cities.name')
+                    ->orderByDesc('total')
+                    ->limit(15)
+                    ->get();
+            } else {
+                $query = DB::table('anggota')
+                    ->join('indonesia_provinces', 'indonesia_provinces.code', '=', 'anggota.id_provinsi');
+                $this->applyFilters($query, $scope, $request, 'anggota');
+
+                $rows = $query->select('indonesia_provinces.name as wilayah', DB::raw('count(*) as total'))
+                    ->groupBy('indonesia_provinces.name')
+                    ->orderByDesc('total')
+                    ->limit(15)
+                    ->get();
+            }
+        } elseif ($scope['level'] === 'daerah') {
             $query = DB::table('anggota')
                 ->join('indonesia_cities', 'indonesia_cities.code', '=', 'anggota.id_kota');
             $this->applyFilters($query, $scope, $request, 'anggota');
@@ -628,10 +709,49 @@ class LaporanService
         $dateSql = $this->getUnifiedDateSql('anggota');
 
         // 1. Regional Breakdown Table
-        if ($scope['level'] === 'daerah') {
+        if ($scope['level'] === 'pusat') {
+            if ($request->filled('provinsi')) {
+                $regionalQuery = DB::table('indonesia_cities')
+                    ->where('province_code', $request->provinsi)
+                    ->leftJoin('anggota', function ($join) {
+                        $join->on('anggota.id_kota', '=', 'indonesia_cities.code');
+                    });
+
+                $regionalData = $regionalQuery->select(
+                    'indonesia_cities.code',
+                    'indonesia_cities.name',
+                    DB::raw('COUNT(anggota.id) as total_anggota'),
+                    DB::raw("SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as aktif"),
+                    DB::raw("SUM(CASE WHEN (anggota.no_anggota IS NULL OR anggota.no_anggota = '') AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as inaktif"),
+                    DB::raw("SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as lunas"),
+                    DB::raw("SUM(CASE WHEN (anggota.status_pembayaran != '1' OR anggota.status_pembayaran IS NULL) AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as belum_lunas")
+                )
+                ->groupBy('indonesia_cities.code', 'indonesia_cities.name')
+                ->orderBy('indonesia_cities.name')
+                ->get();
+            } else {
+                $regionalQuery = DB::table('indonesia_provinces')
+                    ->leftJoin('anggota', function ($join) {
+                        $join->on('anggota.id_provinsi', '=', 'indonesia_provinces.code');
+                    });
+
+                $regionalData = $regionalQuery->select(
+                    'indonesia_provinces.code',
+                    'indonesia_provinces.name',
+                    DB::raw('COUNT(anggota.id) as total_anggota'),
+                    DB::raw("SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as aktif"),
+                    DB::raw("SUM(CASE WHEN (anggota.no_anggota IS NULL OR anggota.no_anggota = '') AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as inaktif"),
+                    DB::raw("SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as lunas"),
+                    DB::raw("SUM(CASE WHEN (anggota.status_pembayaran != '1' OR anggota.status_pembayaran IS NULL) AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as belum_lunas")
+                )
+                ->groupBy('indonesia_provinces.code', 'indonesia_provinces.name')
+                ->orderBy('indonesia_provinces.name')
+                ->get();
+            }
+        } elseif ($scope['level'] === 'daerah') {
             $regionalQuery = DB::table('indonesia_cities')
                 ->where('province_code', $scope['provinsi_id'])
-                ->leftJoin('anggota', function ($join) use ($scope, $request) {
+                ->leftJoin('anggota', function ($join) {
                     $join->on('anggota.id_kota', '=', 'indonesia_cities.code');
                 });
 
@@ -639,8 +759,8 @@ class LaporanService
                 'indonesia_cities.code',
                 'indonesia_cities.name',
                 DB::raw('COUNT(anggota.id) as total_anggota'),
-                DB::raw("SUM(CASE WHEN anggota.status = 'approved' THEN 1 ELSE 0 END) as aktif"),
-                DB::raw("SUM(CASE WHEN anggota.status != 'approved' AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as inaktif"),
+                DB::raw("SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as aktif"),
+                DB::raw("SUM(CASE WHEN (anggota.no_anggota IS NULL OR anggota.no_anggota = '') AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as inaktif"),
                 DB::raw("SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as lunas"),
                 DB::raw("SUM(CASE WHEN (anggota.status_pembayaran != '1' OR anggota.status_pembayaran IS NULL) AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as belum_lunas")
             )
@@ -650,7 +770,7 @@ class LaporanService
         } else {
             $regionalQuery = DB::table('indonesia_districts')
                 ->where('city_code', $scope['kota_id'])
-                ->leftJoin('anggota', function ($join) use ($scope, $request) {
+                ->leftJoin('anggota', function ($join) {
                     $join->on('anggota.id_kecamatan', '=', 'indonesia_districts.code');
                 });
 
@@ -658,8 +778,8 @@ class LaporanService
                 'indonesia_districts.code',
                 'indonesia_districts.name',
                 DB::raw('COUNT(anggota.id) as total_anggota'),
-                DB::raw("SUM(CASE WHEN anggota.status = 'approved' THEN 1 ELSE 0 END) as aktif"),
-                DB::raw("SUM(CASE WHEN anggota.status != 'approved' AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as inaktif"),
+                DB::raw("SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as aktif"),
+                DB::raw("SUM(CASE WHEN (anggota.no_anggota IS NULL OR anggota.no_anggota = '') AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as inaktif"),
                 DB::raw("SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as lunas"),
                 DB::raw("SUM(CASE WHEN (anggota.status_pembayaran != '1' OR anggota.status_pembayaran IS NULL) AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as belum_lunas")
             )
@@ -682,7 +802,7 @@ class LaporanService
         $tahunBreakdown = $tahunQuery->selectRaw("
             YEAR({$dateSql}) as tahun,
             COUNT(*) as total,
-            SUM(CASE WHEN anggota.status = 'approved' THEN 1 ELSE 0 END) as disetujui,
+            SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as disetujui,
             SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as lunas
         ")
         ->whereRaw("{$dateSql} IS NOT NULL")
@@ -715,8 +835,8 @@ class LaporanService
         $yoyData = $yoyQuery->selectRaw("
             SUM(CASE WHEN YEAR({$dateSql}) = {$currentYear} THEN 1 ELSE 0 END) as anggota_tahun_ini,
             SUM(CASE WHEN YEAR({$dateSql}) = {$prevYear} THEN 1 ELSE 0 END) as anggota_tahun_lalu,
-            SUM(CASE WHEN YEAR({$dateSql}) = {$currentYear} AND status = 'approved' THEN 1 ELSE 0 END) as aktif_tahun_ini,
-            SUM(CASE WHEN YEAR({$dateSql}) = {$prevYear} AND status = 'approved' THEN 1 ELSE 0 END) as aktif_tahun_lalu
+            SUM(CASE WHEN YEAR({$dateSql}) = {$currentYear} AND anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as aktif_tahun_ini,
+            SUM(CASE WHEN YEAR({$dateSql}) = {$prevYear} AND anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as aktif_tahun_lalu
         ")->first();
 
         return [
@@ -744,7 +864,42 @@ class LaporanService
         $today = Carbon::today()->toDateString();
 
         // Matrix 1: Wilayah x Status Anggota
-        if ($scope['level'] === 'daerah') {
+        if ($scope['level'] === 'pusat') {
+            if ($request->filled('provinsi')) {
+                $m1Query = DB::table('indonesia_cities')
+                    ->where('province_code', $request->provinsi)
+                    ->leftJoin('anggota', function ($join) {
+                        $join->on('anggota.id_kota', '=', 'indonesia_cities.code');
+                    });
+                $m1Rows = $m1Query->select(
+                    'indonesia_cities.name as baris',
+                    DB::raw("SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as col_approved"),
+                    DB::raw("SUM(CASE WHEN (anggota.no_anggota IS NULL OR anggota.no_anggota = '') AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as col_waiting"),
+                    DB::raw("SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as col_proses"),
+                    DB::raw("SUM(CASE WHEN (anggota.status_pembayaran != '1' OR anggota.status_pembayaran IS NULL) AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as col_lainnya"),
+                    DB::raw("COUNT(anggota.id) as col_total")
+                )
+                ->groupBy('indonesia_cities.name')
+                ->orderBy('indonesia_cities.name')
+                ->get();
+            } else {
+                $m1Query = DB::table('indonesia_provinces')
+                    ->leftJoin('anggota', function ($join) {
+                        $join->on('anggota.id_provinsi', '=', 'indonesia_provinces.code');
+                    });
+                $m1Rows = $m1Query->select(
+                    'indonesia_provinces.name as baris',
+                    DB::raw("SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as col_approved"),
+                    DB::raw("SUM(CASE WHEN (anggota.no_anggota IS NULL OR anggota.no_anggota = '') AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as col_waiting"),
+                    DB::raw("SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as col_proses"),
+                    DB::raw("SUM(CASE WHEN (anggota.status_pembayaran != '1' OR anggota.status_pembayaran IS NULL) AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as col_lainnya"),
+                    DB::raw("COUNT(anggota.id) as col_total")
+                )
+                ->groupBy('indonesia_provinces.name')
+                ->orderBy('indonesia_provinces.name')
+                ->get();
+            }
+        } elseif ($scope['level'] === 'daerah') {
             $m1Query = DB::table('indonesia_cities')
                 ->where('province_code', $scope['provinsi_id'])
                 ->leftJoin('anggota', function ($join) {
@@ -752,10 +907,10 @@ class LaporanService
                 });
             $m1Rows = $m1Query->select(
                 'indonesia_cities.name as baris',
-                DB::raw("SUM(CASE WHEN anggota.status = 'approved' THEN 1 ELSE 0 END) as col_approved"),
-                DB::raw("SUM(CASE WHEN anggota.status = 'waiting' THEN 1 ELSE 0 END) as col_waiting"),
-                DB::raw("SUM(CASE WHEN anggota.status = 'proses' THEN 1 ELSE 0 END) as col_proses"),
-                DB::raw("SUM(CASE WHEN anggota.status NOT IN ('approved', 'waiting', 'proses') AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as col_lainnya"),
+                DB::raw("SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as col_approved"),
+                DB::raw("SUM(CASE WHEN (anggota.no_anggota IS NULL OR anggota.no_anggota = '') AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as col_waiting"),
+                DB::raw("SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as col_proses"),
+                DB::raw("SUM(CASE WHEN (anggota.status_pembayaran != '1' OR anggota.status_pembayaran IS NULL) AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as col_lainnya"),
                 DB::raw("COUNT(anggota.id) as col_total")
             )
             ->groupBy('indonesia_cities.name')
@@ -769,10 +924,10 @@ class LaporanService
                 });
             $m1Rows = $m1Query->select(
                 'indonesia_districts.name as baris',
-                DB::raw("SUM(CASE WHEN anggota.status = 'approved' THEN 1 ELSE 0 END) as col_approved"),
-                DB::raw("SUM(CASE WHEN anggota.status = 'waiting' THEN 1 ELSE 0 END) as col_waiting"),
-                DB::raw("SUM(CASE WHEN anggota.status = 'proses' THEN 1 ELSE 0 END) as col_proses"),
-                DB::raw("SUM(CASE WHEN anggota.status NOT IN ('approved', 'waiting', 'proses') AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as col_lainnya"),
+                DB::raw("SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as col_approved"),
+                DB::raw("SUM(CASE WHEN (anggota.no_anggota IS NULL OR anggota.no_anggota = '') AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as col_waiting"),
+                DB::raw("SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as col_proses"),
+                DB::raw("SUM(CASE WHEN (anggota.status_pembayaran != '1' OR anggota.status_pembayaran IS NULL) AND anggota.id IS NOT NULL THEN 1 ELSE 0 END) as col_lainnya"),
                 DB::raw("COUNT(anggota.id) as col_total")
             )
             ->groupBy('indonesia_districts.name')
@@ -785,10 +940,10 @@ class LaporanService
         $this->applyFilters($m2Query, $scope, $request, 'anggota');
         $m2Rows = $m2Query->selectRaw("
             YEAR({$dateSql}) as baris,
-            SUM(CASE WHEN anggota.status = 'approved' THEN 1 ELSE 0 END) as col_approved,
-            SUM(CASE WHEN anggota.status = 'waiting' THEN 1 ELSE 0 END) as col_waiting,
-            SUM(CASE WHEN anggota.status = 'proses' THEN 1 ELSE 0 END) as col_proses,
-            SUM(CASE WHEN anggota.status NOT IN ('approved', 'waiting', 'proses') THEN 1 ELSE 0 END) as col_lainnya,
+            SUM(CASE WHEN anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as col_approved,
+            SUM(CASE WHEN (anggota.no_anggota IS NULL OR anggota.no_anggota = '') THEN 1 ELSE 0 END) as col_waiting,
+            SUM(CASE WHEN anggota.status_pembayaran = '1' THEN 1 ELSE 0 END) as col_proses,
+            SUM(CASE WHEN (anggota.status_pembayaran != '1' OR anggota.status_pembayaran IS NULL) THEN 1 ELSE 0 END) as col_lainnya,
             COUNT(*) as col_total
         ")
         ->whereRaw("{$dateSql} IS NOT NULL")
@@ -965,7 +1120,7 @@ class LaporanService
 
         } elseif ($type === 'rekapitulasi') {
             $rekap = $this->getRekapitulasiData($scope, $request);
-            $wilayahLabel = $scope['level'] === 'daerah' ? 'Kabupaten/Kota' : 'Kecamatan';
+            $wilayahLabel = $scope['level'] === 'pusat' ? ($request->filled('provinsi') ? 'Kabupaten/Kota' : 'Provinsi') : ($scope['level'] === 'daerah' ? 'Kabupaten/Kota' : 'Kecamatan');
 
             $writer->addHeader(['REKAPITULASI WILAYAH: ' . strtoupper($scope['title'])]);
             $writer->addRow([]);
@@ -996,12 +1151,15 @@ class LaporanService
             $writer->addRow([]);
             $writer->addRow(['KOMPARASI ANTARPERIODE (YEAR-OVER-YEAR)']);
             $writer->addRow(['Periode', 'Total Pendaftar', 'Disetujui Aktif']);
+            foreach (['current', 'prev'] as $p) {
+                // ...
+            }
             $writer->addRow(['Tahun Ini (' . $rekap['yoy']['current_year'] . ')', $rekap['yoy']['anggota_current'], $rekap['yoy']['aktif_current']]);
             $writer->addRow(['Tahun Lalu (' . $rekap['yoy']['prev_year'] . ')', $rekap['yoy']['anggota_prev'], $rekap['yoy']['aktif_prev']]);
 
         } elseif ($type === 'matriks') {
             $matriks = $this->getMatrixData($scope, $request);
-            $wilayahLabel = $scope['level'] === 'daerah' ? 'Kabupaten/Kota' : 'Kecamatan';
+            $wilayahLabel = $scope['level'] === 'pusat' ? ($request->filled('provinsi') ? 'Kabupaten/Kota' : 'Provinsi') : ($scope['level'] === 'daerah' ? 'Kabupaten/Kota' : 'Kecamatan');
 
             $writer->addHeader(['MATRIKS 1: ' . strtoupper($wilayahLabel) . ' X STATUS ANGGOTA']);
             $writer->addRow([]);
@@ -1090,7 +1248,7 @@ class LaporanService
         $writer->addRow([]);
         $writer->addRow(['--- INFORMASI DOKUMEN ---']);
         $writer->addRow(['Tingkat Organisasi:', strtoupper($scope['level'])]);
-        $writer->addRow(['Wilayah:', $scope['level'] === 'daerah' ? $scope['provinsi_name'] : $scope['kota_name']]);
+        $writer->addRow(['Wilayah:', $scope['level'] === 'pusat' ? ($scope['provinsi_name'] ?: 'Seluruh Indonesia') : ($scope['level'] === 'daerah' ? $scope['provinsi_name'] : $scope['kota_name'])]);
         $writer->addRow(['Dicetak Oleh:', Auth::user()->name ?? 'System']);
         $writer->addRow(['Waktu Export:', Carbon::now()->format('d-m-Y H:i:s')]);
 

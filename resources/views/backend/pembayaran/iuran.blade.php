@@ -153,6 +153,8 @@ $(function () {
         processing: true,
         serverSide: true,
         searching: false,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         ajax: { 
             url: "{{ route('pembayaran.list_iuran_anggota') }}",
             data: function (d) {
@@ -189,8 +191,12 @@ $(function () {
         ]
     });
 
-    $("#search").keyup(function(){
-        table.draw();
+    var searchTimer = null;
+    $("#search").on('keyup input', function(){
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            table.draw();
+        }, 300);
     });
 });
 

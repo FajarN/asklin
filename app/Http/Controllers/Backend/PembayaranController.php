@@ -47,18 +47,20 @@ class PembayaranController extends Controller
                 })
                 ->when(Auth::user()->hasRole('Admin Pusat'), function ($query) use ($request) {
                     $query->where('b.status', 'Terverifikasi Cabang');
-                })
-                ->get();
+                });
+
             return Datatables::of($data)
-                ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            if (Str::contains(Str::lower($data['nama']), Str::lower($request->get('search')))){
-                                return true;
-                            }elseif (Str::contains(Str::lower($data['nama_klinik']), Str::lower($request->get('search')))){
-                                return true;
-                            }
-                            return false;
+                ->filter(function ($query) use ($request) {
+                    $search = is_array($request->get('search'))
+                        ? ($request->input('search.value') ?? '')
+                        : (string) $request->get('search');
+                    $search = trim($search);
+
+                    if (!empty($search)) {
+                        $query->where(function ($q) use ($search) {
+                            $q->where('a.nama', 'like', "%{$search}%")
+                                ->orWhere('b.nama_klinik', 'like', "%{$search}%")
+                                ->orWhere('b.no_anggota', 'like', "%{$search}%");
                         });
                     }
                 })
@@ -113,18 +115,20 @@ class PembayaranController extends Controller
                 })
                 ->when(Auth::user()->hasRole('Admin Pusat'), function ($query) use ($request) {
                     $query->where('b.status', 'Terverifikasi Cabang');
-                })
-                ->get();
+                });
+
             return Datatables::of($data)
-                ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            if (Str::contains(Str::lower($data['nama']), Str::lower($request->get('search')))){
-                                return true;
-                            }elseif (Str::contains(Str::lower($data['nama_klinik']), Str::lower($request->get('search')))){
-                                return true;
-                            }
-                            return false;
+                ->filter(function ($query) use ($request) {
+                    $search = is_array($request->get('search'))
+                        ? ($request->input('search.value') ?? '')
+                        : (string) $request->get('search');
+                    $search = trim($search);
+
+                    if (!empty($search)) {
+                        $query->where(function ($q) use ($search) {
+                            $q->where('a.nama', 'like', "%{$search}%")
+                                ->orWhere('b.nama_klinik', 'like', "%{$search}%")
+                                ->orWhere('b.no_anggota', 'like', "%{$search}%");
                         });
                     }
                 })
@@ -166,18 +170,20 @@ class PembayaranController extends Controller
                 })
                 ->when(Auth::user()->hasRole('Admin Pusat'), function ($query) use ($request) {
                     $query->where('b.status', 'Terverifikasi Cabang');
-                })
-                ->get();
+                });
+
             return Datatables::of($data)
-                ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            if (Str::contains(Str::lower($data['nama']), Str::lower($request->get('search')))){
-                                return true;
-                            }elseif (Str::contains(Str::lower($data['nama_klinik']), Str::lower($request->get('search')))){
-                                return true;
-                            }
-                            return false;
+                ->filter(function ($query) use ($request) {
+                    $search = is_array($request->get('search'))
+                        ? ($request->input('search.value') ?? '')
+                        : (string) $request->get('search');
+                    $search = trim($search);
+
+                    if (!empty($search)) {
+                        $query->where(function ($q) use ($search) {
+                            $q->where('a.nama', 'like', "%{$search}%")
+                                ->orWhere('b.nama_klinik', 'like', "%{$search}%")
+                                ->orWhere('b.no_anggota', 'like', "%{$search}%");
                         });
                     }
                 })

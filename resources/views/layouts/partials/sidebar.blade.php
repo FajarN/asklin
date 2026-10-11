@@ -378,6 +378,13 @@
                             </a>
                         </li>
                     @endcan
+                    @can('laporan-pusat')
+                        <li>
+                            <a href="{{ route('laporan_export.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Str::contains(Request::url(), 'laporan-export') ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Laporan Keseluruhan (Export)
+                            </a>
+                        </li>
+                    @endcan
                 </ul>
             </div>
         @endcanany

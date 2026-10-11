@@ -54,9 +54,77 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
+    <style>
+        /* Global Top Indeterminate Progress Bar */
+        #global-top-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3.5px;
+            z-index: 999999;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+            overflow: hidden;
+            background: rgba(220, 38, 38, 0.15);
+        }
+        #global-top-progress.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        #global-top-progress .bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #dc2626 100%);
+            transform-origin: left center;
+            animation: topProgressIndeterminate 1.3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        @keyframes topProgressIndeterminate {
+            0% {
+                transform: translateX(-100%) scaleX(0.2);
+            }
+            50% {
+                transform: translateX(0%) scaleX(0.6);
+            }
+            100% {
+                transform: translateX(100%) scaleX(0.2);
+            }
+        }
+        #global-search-pill {
+            position: fixed;
+            top: 14px;
+            right: 24px;
+            z-index: 999998;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #global-search-pill.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+
     @stack('css')
 </head>
 <body class="h-full antialiased transition-colors duration-200">
+    <!-- Global Top Progress Bar -->
+    <div id="global-top-progress" role="progressbar" aria-label="Memuat data...">
+        <div class="bar"></div>
+    </div>
+
+    <!-- Floating Indicator Pill saat proses pencarian/muat data berlangsung -->
+    <div id="global-search-pill">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-900/90 text-white dark:bg-slate-800/95 dark:text-slate-100 shadow-xl border border-slate-700/60 backdrop-blur-md">
+            <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+            <i class="fas fa-spinner fa-spin text-amber-400 text-xs"></i>
+            <span id="global-search-pill-text">Mencari & memuat data...</span>
+        </div>
+    </div>
+
     <div class="min-h-full flex flex-col">
         <!-- Modern Sidebar Navigation -->
         @include('layouts.partials.sidebar')
@@ -411,6 +479,95 @@
                 document.addEventListener('DOMContentLoaded', initModalController);
             } else {
                 initModalController();
+            }
+        })();
+
+        // Global Top Progress Bar & DataTables Server-Side Search Controller
+        (function() {
+            let activeRequests = 0;
+            const topProgress = document.getElementById('global-top-progress');
+            const searchPill = document.getElementById('global-search-pill');
+            const pillText = document.getElementById('global-search-pill-text');
+
+            function showProgress(message) {
+                activeRequests++;
+                if (topProgress) topProgress.classList.add('active');
+                if (searchPill) {
+                    if (message && pillText) {
+                        pillText.textContent = message;
+                    }
+                    searchPill.classList.add('active');
+                }
+            }
+
+            function hideProgress() {
+                activeRequests = Math.max(0, activeRequests - 1);
+                if (activeRequests === 0) {
+                    if (topProgress) topProgress.classList.remove('active');
+                    if (searchPill) searchPill.classList.remove('active');
+                }
+            }
+
+            // Global API exposed to window
+            window.showTopProgress = showProgress;
+            window.hideTopProgress = hideProgress;
+
+            // Hook jQuery & DataTables when ready
+            if (window.jQuery) {
+                // Set Global DataTables default pageLength = 10
+                if (jQuery.fn && jQuery.fn.dataTable) {
+                    jQuery.extend(true, jQuery.fn.dataTable.defaults, {
+                        pageLength: 10,
+                        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                        language: {
+                            processing: '<span class="hidden">Memuat...</span>', // Suppress intrusive table overlay
+                            search: 'Cari:',
+                            lengthMenu: 'Tampilkan _MENU_ data',
+                            info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+                            infoEmpty: 'Menampilkan 0 data',
+                            infoFiltered: '(disaring dari _MAX_ total data)',
+                            zeroRecords: 'Tidak ditemukan data yang sesuai',
+                            emptyTable: 'Tidak ada data tersedia',
+                            paginate: {
+                                first: '<i class="fas fa-angle-double-left"></i>',
+                                previous: '<i class="fas fa-angle-left"></i>',
+                                next: '<i class="fas fa-angle-right"></i>',
+                                last: '<i class="fas fa-angle-double-right"></i>'
+                            }
+                        }
+                    });
+                }
+
+                // DataTables event listener
+                jQuery(document).on('preXhr.dt', function(e, settings, data) {
+                    let isSearching = false;
+                    if (data && (
+                        (data.search && (typeof data.search === 'string' ? data.search : data.search.value)) ||
+                        jQuery('#search').val() ||
+                        jQuery('input[name="search"]').val()
+                    )) {
+                        isSearching = true;
+                    }
+                    showProgress(isSearching ? 'Sedang mencari data...' : 'Memuat data...');
+                });
+
+                jQuery(document).on('xhr.dt draw.dt error.dt', function() {
+                    hideProgress();
+                });
+
+                // Global fallback for standard AJAX
+                jQuery(document).ajaxStart(function() {
+                    // Hanya jika belum dipicu oleh DataTables
+                    if (activeRequests === 0) {
+                        showProgress('Memproses data...');
+                    }
+                });
+
+                jQuery(document).ajaxStop(function() {
+                    activeRequests = 0;
+                    if (topProgress) topProgress.classList.remove('active');
+                    if (searchPill) searchPill.classList.remove('active');
+                });
             }
         })();
     </script>

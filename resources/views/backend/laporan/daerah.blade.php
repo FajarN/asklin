@@ -951,7 +951,10 @@ $(document).ready(function () {
             $.ajax({
                 type: 'POST',
                 url: "{{ route('getKota') }}",
-                data: { id_provinsi: idProv },
+                data: { 
+                    id_provinsi: idProv,
+                    _token: "{{ csrf_token() }}"
+                },
                 success: function (msg) {
                     $('#filter_kota').html(msg);
                 }
@@ -965,6 +968,8 @@ $(document).ready(function () {
     var dtAnggota = $('#tableAnggota').DataTable({
         processing: true,
         serverSide: true,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         ajax: {
             url: "{{ route('laporan_daerah.list') }}",
             data: function (d) {
@@ -998,6 +1003,8 @@ $(document).ready(function () {
     var dtSertifikat = $('#tableSertifikat').DataTable({
         processing: true,
         serverSide: true,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         ajax: {
             url: "{{ route('laporan_daerah.sertifikat_list') }}",
             data: function (d) {
@@ -1030,6 +1037,8 @@ $(document).ready(function () {
     var dtPembayaran = $('#tablePembayaran').DataTable({
         processing: true,
         serverSide: true,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         ajax: {
             url: "{{ route('laporan_daerah.pembayaran_list') }}",
             data: function (d) {

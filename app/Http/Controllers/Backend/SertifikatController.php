@@ -38,7 +38,7 @@ class SertifikatController extends Controller
                 'sertifikat.*',
                 'a.nama_klinik',
                 'a.no_anggota',
-                'a.updated_at',
+                'a.updated_at as anggota_updated_at',
                 'a.nama_kontak',
                 'a.alamat_klinik',
                 'a.rt',
@@ -63,18 +63,20 @@ class SertifikatController extends Controller
                 })
                 ->when($request->filled('tahun'), function ($query) use ($request) {
                     $query->whereYear('sertifikat.dari', $request->tahun);
-                })
-                ->get();
+                });
 
             return Datatables::of($data)
-                ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $instance->collection = $instance->collection->filter(function ($data) use ($request) {
-                            $search = Str::lower($request->get('search'));
+                ->filter(function ($query) use ($request) {
+                    $search = is_array($request->get('search'))
+                        ? ($request->input('search.value') ?? '')
+                        : (string) $request->get('search');
+                    $search = trim($search);
 
-                            return Str::contains(Str::lower($data['sertifikat']), $search) ||
-                                Str::contains(Str::lower($data['nama_klinik']), $search) ||
-                                Str::contains(Str::lower($data['kota']), $search);
+                    if (!empty($search)) {
+                        $query->where(function ($q) use ($search) {
+                            $q->where('a.nama_klinik', 'like', "%{$search}%")
+                                ->orWhere('a.no_anggota', 'like', "%{$search}%")
+                                ->orWhere('d.name', 'like', "%{$search}%");
                         });
                     }
                 })

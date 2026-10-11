@@ -332,8 +332,19 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     Route::group(['prefix' => 'laporan-pusat', 'as' => 'laporan_pusat.'], function () {
         Route::get('/', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'index'])->name('index');
         Route::get('/list', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'list'])->name('list');
+        Route::get('/sertifikat-list', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'sertifikatList'])->name('sertifikat_list');
+        Route::get('/pembayaran-list', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'pembayaranList'])->name('pembayaran_list');
+        Route::get('/chart-data', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'chartData'])->name('chart_data');
         Route::get('/export/excel', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'exportExcel'])->name('export.excel');
         Route::get('/export/pdf', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'exportPdf'])->name('export.pdf');
+        Route::get('/print', [App\Http\Controllers\Backend\laporan\LaporanPusatController::class, 'printView'])->name('print');
+    });
+
+    Route::group(['prefix' => 'laporan-export', 'as' => 'laporan_export.'], function () {
+        Route::get('/', [App\Http\Controllers\Backend\laporan\LaporanExportController::class, 'index'])->name('index');
+        Route::get('/list', [App\Http\Controllers\Backend\laporan\LaporanExportController::class, 'list'])->name('list');
+        Route::get('/export/excel', [App\Http\Controllers\Backend\laporan\LaporanExportController::class, 'exportExcel'])->name('export.excel');
+        Route::get('/export/pdf', [App\Http\Controllers\Backend\laporan\LaporanExportController::class, 'exportPdf'])->name('export.pdf');
     });
 
     Route::prefix('laporan')->controller(App\Http\Controllers\Backend\laporan\LaporanDaerahController::class)->group(function () {

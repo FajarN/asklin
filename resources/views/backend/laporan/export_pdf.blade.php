@@ -157,6 +157,12 @@
                                 @case('verifikasi_pusat')
                                     {{ $item->verifikasi_pusat ? \Carbon\Carbon::parse($item->verifikasi_pusat)->format('d-m-Y H:i') : '-' }}
                                     @break
+                                @case('status_approval')
+                                    {{ !empty(trim($item->no_anggota ?? '')) ? 'Disetujui' : 'Belum Disetujui' }}
+                                    @break
+                                @case('tgl_daftar')
+                                    {{ $item->tgl_daftar_raw ? \Carbon\Carbon::parse($item->tgl_daftar_raw)->format('d-m-Y') : '-' }}
+                                    @break
                                 @case('status_pembayaran')
                                     {{ $item->status_pembayaran == '1' ? 'Lunas' : 'Belum Lunas' }}
                                     @break

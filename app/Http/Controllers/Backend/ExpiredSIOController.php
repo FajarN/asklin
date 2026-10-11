@@ -32,23 +32,20 @@ class ExpiredSIOController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->getDataQuery($request)->get();
+            $data = $this->getDataQuery($request);
 
             return Datatables::of($data)
-                ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('search'))) {
-                        $searchQuery = Str::lower($request->get('search'));
-                        $instance->collection = $instance->collection->filter(function ($data) use ($searchQuery) {
-                            if (Str::contains(Str::lower($data['nama_klinik']), $searchQuery)) {
-                                return true;
-                            }
-                            if (Str::contains(Str::lower($data['no_anggota']), $searchQuery)) {
-                                return true;
-                            }
-                            if (Str::contains(Str::lower($data['name']), $searchQuery)) {
-                                return true;
-                            }
-                            return false;
+                ->filter(function ($query) use ($request) {
+                    $search = is_array($request->get('search'))
+                        ? ($request->input('search.value') ?? '')
+                        : (string) $request->get('search');
+                    $search = trim($search);
+
+                    if (!empty($search)) {
+                        $query->where(function ($q) use ($search) {
+                            $q->where('anggota.nama_klinik', 'like', "%{$search}%")
+                                ->orWhere('anggota.no_anggota', 'like', "%{$search}%")
+                                ->orWhere('indonesia_cities.name', 'like', "%{$search}%");
                         });
                     }
                 })
@@ -137,13 +134,16 @@ class ExpiredSIOController extends Controller
                 }
             })
             ->when($request->search, function ($query) use ($request) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q
-                        ->where('anggota.nama_klinik', 'like', "%{$search}%")
-                        ->orWhere('anggota.no_anggota', 'like', "%{$search}%")
-                        ->orWhere('indonesia_cities.name', 'like', "%{$search}%");
-                });
+                $search = is_array($request->search) ? ($request->input('search.value') ?? '') : (string) $request->search;
+                $search = trim($search);
+                if (!empty($search)) {
+                    $query->where(function ($q) use ($search) {
+                        $q
+                            ->where('anggota.nama_klinik', 'like', "%{$search}%")
+                            ->orWhere('anggota.no_anggota', 'like', "%{$search}%")
+                            ->orWhere('indonesia_cities.name', 'like', "%{$search}%");
+                    });
+                }
             });
     }
 

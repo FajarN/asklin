@@ -273,7 +273,8 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
-                pageLength: 25,
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
                 order: [[5, 'asc']], // Order by expired_date
                 ajax: {
                     url: "{{ route('expired_sertifikat.list') }}",
