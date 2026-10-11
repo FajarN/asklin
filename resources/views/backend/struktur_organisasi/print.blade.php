@@ -298,8 +298,8 @@
                         'wilayah' => $wilayah,
                         'nama_lengkap' => $p->nama_lengkap,
                     ];
-                } elseif (strpos($jabatan, 'bidang') !== false) {
-                    $bidangName = $p->jabatan;
+                } elseif (strpos($jabatan, 'koordinator bidang') !== false || ($jabatan !== 'anggota bidang' && strpos($jabatan, 'bidang') !== false)) {
+                    $bidangName = $p->keterangan ?: $p->jabatan;
                     if (!isset($bidang[$bidangName])) {
                         $bidang[$bidangName] = [
                             'ketua' => null,

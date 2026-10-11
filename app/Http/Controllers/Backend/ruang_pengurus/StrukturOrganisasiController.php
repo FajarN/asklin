@@ -487,7 +487,6 @@ class StrukturOrganisasiController extends Controller
                 ->firstOrFail();
 
             $pengurus = StrukturPengurus::where('id_struktur_organisasi', $id)
-                ->whereNull('parent_id')
                 ->orderBy('urutan', 'asc')
                 ->get();
 
