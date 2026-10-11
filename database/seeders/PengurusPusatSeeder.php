@@ -25,14 +25,13 @@ class PengurusPusatSeeder extends Seeder
         DB::beginTransaction();
         try {
             // 1. Pastikan Master Tingkatan Pengurus Pusat ada
-            $tingkatanPusat = TingkatanPengurus::firstOrCreate(
-                ['id' => 1],
-                [
-                    'nama_tingkatan' => 'Pengurus Pusat',
-                    'urutan' => 1,
-                    'status' => 'aktif',
-                ]
-            );
+            $tingkatanPusat = TingkatanPengurus::where('nama_tingkatan', 'LIKE', '%Pusat%')->first();
+            if (!$tingkatanPusat) {
+                $tingkatanPusat = TingkatanPengurus::firstOrCreate(
+                    ['id' => 1],
+                    ['nama_tingkatan' => 'Pengurus Pusat']
+                );
+            }
 
             // 2. Pastikan 10 Kelompok Bidang terdaftar
             $kelompokData = [
