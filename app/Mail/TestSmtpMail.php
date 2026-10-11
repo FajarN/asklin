@@ -33,8 +33,7 @@ class TestSmtpMail extends Mailable
         $fromName = $this->smtpDetails['from_name'] ?? config('mail.from.name', 'Pengurus Pusat ASKLIN');
 
         return $this->from($fromAddress, $fromName)
-            ->subject('Pengujian Konfigurasi Email SMTP SIMAK ASKLIN [BERHASIL]')
+            ->subject('Pengujian Konfigurasi Email SMTP ASKLIN [BERHASIL]')
             ->view('emails.test_smtp');
     }
 }
-

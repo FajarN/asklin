@@ -39,21 +39,21 @@
 <div style="background-color: #f8fafc; border-radius: 10px; padding: 12px 18px; font-size: 13px;">
     <p style="margin: 5px 0;">
         @if(!empty($anggota->nama_klinik) && !empty($anggota->alamat))
-            <span style="color: #059669; font-weight: bold;">&#10004; Profil Klinik:</span> Sudah Lengkap
+            <span style="color: #dc2626; font-weight: bold;">&#10004; Profil Klinik:</span> Sudah Lengkap
         @else
             <span style="color: #e11d48; font-weight: bold;">&#10008; Profil Klinik:</span> Perlu Dilengkapi
         @endif
     </p>
     <p style="margin: 5px 0;">
         @if(!empty($anggota->sio) || !empty($anggota->file_sio))
-            <span style="color: #059669; font-weight: bold;">&#10004; Dokumen Legalitas SIO:</span> Terunggah
+            <span style="color: #dc2626; font-weight: bold;">&#10004; Dokumen Legalitas SIO:</span> Terunggah
         @else
             <span style="color: #d97706; font-weight: bold;">&#9888; Dokumen Legalitas SIO:</span> Masih Menunggu Unggahan Berkas
         @endif
     </p>
     <p style="margin: 5px 0;">
         @if(!empty($anggota->sdmKlinik) && $anggota->sdmKlinik->count() > 0)
-            <span style="color: #059669; font-weight: bold;">&#10004; SDM Medis & Dokter Penanggung Jawab:</span> Terisi ({{ $anggota->sdmKlinik->count() }} Personil)
+            <span style="color: #dc2626; font-weight: bold;">&#10004; SDM Medis & Dokter Penanggung Jawab:</span> Terisi ({{ $anggota->sdmKlinik->count() }} Personil)
         @else
             <span style="color: #d97706; font-weight: bold;">&#9888; SDM Medis & Dokter:</span> Belum Ada Data Personil Medis Terdaftar
         @endif

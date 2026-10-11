@@ -6,11 +6,11 @@
 </div>
 
 <p style="margin: 0 0 16px 0; color: #334155; line-height: 1.6;">
-    Halo Administrator SIMAK ASKLIN,
+    Halo Administrator  ASKLIN,
 </p>
 
 <p style="margin: 0 0 20px 0; color: #475569; line-height: 1.6;">
-    Email ini merupakan pesan uji coba (test email) otomatis dari sistem <strong>SIMAK ASKLIN (Asosiasi Klinik Indonesia)</strong>. Apabila Anda menerima email ini, artinya konfigurasi server email SMTP Anda telah berhasil terhubung dan siap digunakan untuk seluruh modul notifikasi sistem.
+    Email ini merupakan pesan uji coba (test email) otomatis dari sistem <strong> ASKLIN (Asosiasi Klinik Indonesia)</strong>. Apabila Anda menerima email ini, artinya konfigurasi server email SMTP Anda telah berhasil terhubung dan siap digunakan untuk seluruh modul notifikasi sistem.
 </p>
 
 <!-- Rincian Konfigurasi yang Digunakan -->
@@ -22,7 +22,7 @@
         <tr>
             <td style="width: 140px; padding: 6px 0; color: #64748b; font-weight: 600;">Status Koneksi</td>
             <td style="padding: 6px 0;">
-                <span style="display: inline-block; background-color: #d1fae5; color: #065f46; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;">
+                <span style="display: inline-block; background-color: #fee2e2; color: #991b1b; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 9999px; border: 1px solid #fecaca;">
                     &#10004; TERHUBUNG & TERVERIFIKASI
                 </span>
             </td>
@@ -33,7 +33,7 @@
         </tr>
         <tr>
             <td style="padding: 6px 0; color: #64748b; font-weight: 600;">SMTP Port & Enkripsi</td>
-            <td style="padding: 6px 0; font-weight: 600; color: #0284c7; font-family: monospace;">: {{ $smtpDetails['port'] ?? '-' }} ({{ strtoupper($smtpDetails['encryption'] ?? 'None') }})</td>
+            <td style="padding: 6px 0; font-weight: 600; color: #dc2626; font-family: monospace;">: {{ $smtpDetails['port'] ?? '-' }} ({{ strtoupper($smtpDetails['encryption'] ?? 'None') }})</td>
         </tr>
         <tr>
             <td style="padding: 6px 0; color: #64748b; font-weight: 600;">Email Pengirim (From)</td>
@@ -51,14 +51,14 @@
 </p>
 
 <div style="text-align: center; margin: 28px 0 20px 0;">
-    <a href="{{ url('/backend/secret/smtp-settings') }}" class="btn-cta" target="_blank" style="display: inline-block; background-color: #059669; color: #ffffff !important; font-size: 13px; font-weight: 700; text-decoration: none; padding: 12px 30px; border-radius: 10px; text-align: center; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25);">
+    <a href="{{ url('/backend/secret/smtp-settings') }}" class="btn-cta" target="_blank" style="display: inline-block; background-color: #dc2626; color: #ffffff !important; font-size: 13px; font-weight: 700; text-decoration: none; padding: 12px 30px; border-radius: 10px; text-align: center; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);">
         Buka Pengaturan Email SMTP &rarr;
     </a>
 </div>
 
 <p style="margin: 20px 0 0 0; font-size: 13px; color: #1e293b; font-weight: 600;">
     Salam Hangat,<br>
-    <span style="color: #059669; font-weight: 700;">Pengurus Pusat Asosiasi Klinik Indonesia (ASKLIN)</span>
+    <span style="color: #dc2626; font-weight: 700;">Pengurus Pusat Asosiasi Klinik Indonesia (ASKLIN)</span>
 </p>
 @endsection
 

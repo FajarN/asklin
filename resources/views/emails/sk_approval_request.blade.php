@@ -17,7 +17,7 @@
         </tr>
         <tr>
             <td style="padding: 4px 0; color: #64748b; font-weight: 600;">Tingkatan Organisasi</td>
-            <td style="padding: 4px 0; font-weight: 600; text-transform: uppercase; color: #059669;">: {{ $sk->tingkatan ?? '-' }}</td>
+            <td style="padding: 4px 0; font-weight: 600; text-transform: uppercase; color: #dc2626;">: {{ $sk->tingkatan ?? '-' }}</td>
         </tr>
         <tr>
             <td style="padding: 4px 0; color: #64748b; font-weight: 600;">Periode Masa Bakti</td>

@@ -31,7 +31,7 @@
             border: 1px solid #e2e8f0;
         }
         .header-banner {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
             padding: 28px 30px;
             text-align: center;
         }
@@ -53,7 +53,7 @@
             text-transform: uppercase;
         }
         .header-subtitle {
-            color: #d1fae5;
+            color: #fee2e2;
             font-size: 12px;
             margin-top: 4px;
             margin-bottom: 0;
@@ -84,8 +84,8 @@
             color: #b45309;
         }
         .badge-success {
-            background-color: #d1fae5;
-            color: #065f46;
+            background-color: #fee2e2;
+            color: #991b1b;
         }
         .badge-info {
             background-color: #e0f2fe;
@@ -100,7 +100,7 @@
         }
         .btn-cta {
             display: inline-block;
-            background-color: #059669;
+            background-color: #dc2626;
             color: #ffffff !important;
             font-size: 13px;
             font-weight: 700;
@@ -108,11 +108,11 @@
             padding: 12px 28px;
             border-radius: 10px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
             margin: 15px 0;
         }
         .btn-cta:hover {
-            background-color: #047857;
+            background-color: #b91c1c;
         }
         .footer {
             background-color: #f8fafc;
@@ -124,7 +124,7 @@
             line-height: 1.5;
         }
         .footer a {
-            color: #059669;
+            color: #dc2626;
             text-decoration: none;
         }
         .token-warning {

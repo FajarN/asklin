@@ -17,7 +17,7 @@
         </tr>
         <tr>
             <td style="padding: 4px 0; color: #64748b; font-weight: 600;">Nomor Anggota Resmi</td>
-            <td style="padding: 4px 0; font-weight: 800; font-size: 15px; color: #059669; font-family: monospace;">: {{ $anggota->no_anggota }}</td>
+            <td style="padding: 4px 0; font-weight: 800; font-size: 15px; color: #dc2626; font-family: monospace;">: {{ $anggota->no_anggota }}</td>
         </tr>
         <tr>
             <td style="padding: 4px 0; color: #64748b; font-weight: 600;">Status Keanggotaan</td>

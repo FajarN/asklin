@@ -248,7 +248,7 @@
                         <ul class="list-disc pl-4 space-y-1 text-[11px]">
                             <li>Google mewajibkan <strong>Verifikasi 2 Langkah (2-Step Verification)</strong> aktif pada akun Google Anda.</li>
                             <li>Gunakan <strong>Google App Password (Sandi Aplikasi 16 Huruf)</strong> sebagai <em>SMTP Password</em>, <u>bukan</u> password akun login Google Anda.</li>
-                            <li>Dapat dibuat di: <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-red-700 underline font-semibold">myaccount.google.com/apppasswords</a> (Pilih app: <em>Lainnya/Custom</em>, beri nama <em>SIMAK ASKLIN</em>).</li>
+                            <li>Dapat dibuat di: <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-red-700 underline font-semibold">myaccount.google.com/apppasswords</a> (Pilih app: <em>Lainnya/Custom</em>, beri nama <em> ASKLIN</em>).</li>
                         </ul>
                     </div>
 

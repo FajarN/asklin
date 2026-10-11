@@ -8,13 +8,13 @@
 <p style="margin: 0 0 16px 0; color: #334155; line-height: 1.6;">
     Yth. <strong>{{ $user->name }}</strong>
     @if(!empty($klinikName))
-        <br><span style="color: #059669; font-weight: 600;">Pengelola {{ $klinikName }}</span>
+        <br><span style="color: #dc2626; font-weight: 600;">Pengelola {{ $klinikName }}</span>
     @endif
     ,
 </p>
 
 <p style="margin: 0 0 20px 0; color: #475569; line-height: 1.6;">
-    Kami informasikan bahwa kata sandi (password) untuk akses akun Anda pada <strong>Sistem Informasi Manajemen Anggota Klinik (SIMAK ASKLIN)</strong> telah berhasil diperbarui oleh Administrator Sistem Pengurus Pusat ASKLIN.
+    Kami informasikan bahwa kata sandi (password) untuk akses akun Anda pada <strong>Sistem Informasi Manajemen Anggota Klinik ( ASKLIN)</strong> telah berhasil diperbarui oleh Administrator Sistem Pengurus Pusat ASKLIN.
 </p>
 
 <!-- Rincian Akun -->
@@ -34,7 +34,7 @@
         @if(!empty($klinikName))
         <tr>
             <td style="padding: 6px 0; color: #64748b; font-weight: 600;">Klinik Terhubung</td>
-            <td style="padding: 6px 0; font-weight: 700; color: #059669;">: {{ $klinikName }}</td>
+            <td style="padding: 6px 0; font-weight: 700; color: #dc2626;">: {{ $klinikName }}</td>
         </tr>
         @endif
         @if(!empty($noAnggota))
@@ -51,22 +51,22 @@
 </div>
 
 <!-- Highlight Box Password Baru (8 Karakter) -->
-<div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 2px dashed #059669; border-radius: 14px; padding: 22px 20px; text-align: center; margin: 26px 0;">
-    <div style="font-size: 12px; font-weight: 700; color: #047857; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px;">
+<div style="background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%); border: 2px dashed #dc2626; border-radius: 14px; padding: 22px 20px; text-align: center; margin: 26px 0;">
+    <div style="font-size: 12px; font-weight: 700; color: #991b1b; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px;">
         &#128273; Password Baru Anda (8 Digit)
     </div>
-    <div style="display: inline-block; background: #ffffff; border: 1px solid #a7f3d0; padding: 10px 24px; border-radius: 10px; font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: 800; letter-spacing: 4px; color: #065f46; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.15);">
+    <div style="display: inline-block; background: #ffffff; border: 1px solid #fecaca; padding: 10px 24px; border-radius: 10px; font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: 800; letter-spacing: 4px; color: #991b1b; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.15);">
         {{ $newPassword }}
     </div>
-    <p style="margin: 10px 0 0 0; font-size: 12px; color: #047857;">
+    <p style="margin: 10px 0 0 0; font-size: 12px; color: #991b1b;">
         Gunakan password di atas bersama email <strong>{{ $user->email }}</strong> untuk masuk.
     </p>
 </div>
 
 <!-- Tombol CTA -->
 <div style="text-align: center; margin: 28px 0 24px 0;">
-    <a href="{{ url('/login') }}" class="btn-cta" target="_blank" style="display: inline-block; background-color: #059669; color: #ffffff !important; font-size: 14px; font-weight: 700; text-decoration: none; padding: 14px 34px; border-radius: 10px; text-align: center; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);">
-        Masuk ke Portal SIMAK ASKLIN &rarr;
+    <a href="{{ url('/login') }}" class="btn-cta" target="_blank" style="display: inline-block; background-color: #dc2626; color: #ffffff !important; font-size: 14px; font-weight: 700; text-decoration: none; padding: 14px 34px; border-radius: 10px; text-align: center; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);">
+        Masuk ke Portal  ASKLIN &rarr;
     </a>
 </div>
 
@@ -88,7 +88,7 @@
 
 <p style="margin: 18px 0 0 0; font-size: 13px; color: #1e293b; font-weight: 600;">
     Salam Sehat & Sukses Selalu,<br>
-    <span style="color: #059669; font-weight: 700;">Pengurus Pusat Asosiasi Klinik Indonesia (ASKLIN)</span>
+    <span style="color: #dc2626; font-weight: 700;">Pengurus Pusat Asosiasi Klinik Indonesia (ASKLIN)</span>
 </p>
 @endsection
 
