@@ -12,6 +12,7 @@ class SyncUsersAnggotaCommand extends Command
 {
     /**
      * The name and signature of the console command.
+     * php artisan asklin:sync-users --cleanup --all-orphan
      *
      * @var string
      */
