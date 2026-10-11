@@ -125,6 +125,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
             Route::post('/store', 'store')->name('users.store');
             Route::put('/update/{id}', 'update')->name('users.update');
             Route::post('/delete', 'destroy')->name('users.delete');
+            Route::post('/{id}/reset-password', 'resetPassword')->name('users.reset_password');
         });
 
         Route::prefix('roles')->controller(App\Http\Controllers\Backend\secret\RoleController::class)->group(function () {
