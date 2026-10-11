@@ -339,12 +339,24 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     Route::prefix('laporan')->controller(App\Http\Controllers\Backend\laporan\LaporanDaerahController::class)->group(function () {
         Route::get('/daerah', 'index')->name('laporan_daerah');
         Route::get('/daerah/list', 'list')->name('laporan_daerah.list');
+        Route::get('/daerah/sertifikat-list', 'sertifikatList')->name('laporan_daerah.sertifikat_list');
+        Route::get('/daerah/pembayaran-list', 'pembayaranList')->name('laporan_daerah.pembayaran_list');
+        Route::get('/daerah/chart-data', 'chartData')->name('laporan_daerah.chart_data');
+        Route::get('/daerah/export/excel', 'exportExcel')->name('laporan_daerah.export_excel');
+        Route::get('/daerah/export/pdf', 'exportPdf')->name('laporan_daerah.export_pdf');
+        Route::get('/daerah/print', 'printView')->name('laporan_daerah.print');
     });
 
     Route::prefix('laporan')->controller(App\Http\Controllers\Backend\laporan\LaporanCabangController::class)->group(function () {
         Route::get('/cabang', 'index')->name('laporan_cabang');
         Route::get('/cabang/list', 'list')->name('laporan_cabang.list');
-        Route::get('/cabang/export', 'export')->name('laporan_cabang.export');
+        Route::get('/cabang/sertifikat-list', 'sertifikatList')->name('laporan_cabang.sertifikat_list');
+        Route::get('/cabang/pembayaran-list', 'pembayaranList')->name('laporan_cabang.pembayaran_list');
+        Route::get('/cabang/chart-data', 'chartData')->name('laporan_cabang.chart_data');
+        Route::get('/cabang/export', 'exportExcel')->name('laporan_cabang.export');
+        Route::get('/cabang/export/excel', 'exportExcel')->name('laporan_cabang.export_excel');
+        Route::get('/cabang/export/pdf', 'exportPdf')->name('laporan_cabang.export_pdf');
+        Route::get('/cabang/print', 'printView')->name('laporan_cabang.print');
     });
 
     Route::prefix('konas-master-hotel')->controller(App\Http\Controllers\Backend\konas\KonasMasterHotelController::class)->group(function () {
