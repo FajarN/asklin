@@ -410,6 +410,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/detail/{id}', 'detail')->name('struktur_organisasi.detail');
         Route::get('/print/{id}', 'printDetail')->name('struktur_organisasi.print');
         Route::post('/ajukan/{id}', 'ajukanSk')->name('struktur_organisasi.ajukan');
+        Route::post('/approve-pusat/{id}', 'approvePusatDirect')->name('struktur_organisasi.approve-pusat');
         Route::post('/reset-testing/{id}', 'resetTesting')->name('struktur_organisasi.reset-testing');
     });
 
@@ -433,6 +434,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
         Route::get('/navbar', 'getNavbarData')->name('notifications.navbar');
         Route::get('/read/{id}', 'markAsRead')->name('notifications.read');
         Route::post('/mark-all-read', 'markAllAsRead')->name('notifications.mark-all-read');
+        Route::post('/dismiss-navbar/{id}', 'dismissFromNavbar')->name('notifications.dismiss-navbar');
+        Route::post('/dismiss-navbar-all', 'dismissAllNavbar')->name('notifications.dismiss-navbar-all');
     });
 
     Route::prefix('sk_pengurus')->controller(App\Http\Controllers\Backend\ruang_pengurus\SkApprovalController::class)->group(function () {

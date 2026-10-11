@@ -232,8 +232,8 @@
                                     let bg = !item.is_read ? 'bg-emerald-50/40 dark:bg-emerald-950/30' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50';
 
                                     html += `
-                                        <a href="${item.read_url}" class="p-3 block transition-colors ${bg}">
-                                            <div class="flex items-start gap-2.5">
+                                        <div class="p-2.5 transition-colors flex items-start gap-2.5 group ${bg}">
+                                            <a href="${item.read_url}" class="flex items-start gap-2 flex-1 min-w-0">
                                                 <i class="fas ${icon} mt-0.5 text-xs shrink-0"></i>
                                                 <div class="space-y-0.5 flex-1 min-w-0">
                                                     <div class="flex items-center justify-between gap-1">
@@ -243,8 +243,11 @@
                                                     <p class="text-slate-500 dark:text-slate-400 line-clamp-2 text-[10px] leading-tight">${item.message}</p>
                                                     <span class="text-[9px] text-slate-400 block pt-0.5">${item.time_ago}</span>
                                                 </div>
-                                            </div>
-                                        </a>
+                                            </a>
+                                            <button type="button" onclick="dismissNavbarItem(event, ${item.id})" class="text-slate-300 hover:text-rose-500 p-1 rounded-md opacity-60 group-hover:opacity-100 transition shrink-0" title="Hapus dari tampilan navbar">
+                                                <i class="fas fa-times text-xs"></i>
+                                            </button>
+                                        </div>
                                     `;
                                 });
                                 notifList.innerHTML = html;
@@ -252,7 +255,8 @@
                                 notifList.innerHTML = `
                                     <div class="p-6 text-center text-slate-400">
                                         <i class="fas fa-check-circle text-emerald-500 text-lg mb-1 block"></i>
-                                        <p class="text-xs font-semibold">Tidak ada notifikasi baru</p>
+                                        <p class="text-xs font-semibold">Tidak ada notifikasi di popup</p>
+                                        <span class="text-[10px] text-slate-400 block mt-0.5">Riwayat lengkap tersimpan di Pusat Notifikasi</span>
                                     </div>
                                 `;
                             }
@@ -260,6 +264,38 @@
                     })
                     .catch(() => {});
             }
+
+            window.loadNavNotifications = loadNavNotifications;
+
+            window.dismissNavbarItem = function(e, id) {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                fetch("{{ url('notifications/dismiss-navbar') }}/" + id, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    }
+                }).then(res => res.json()).then(data => {
+                    if (data.success) {
+                        loadNavNotifications();
+                    }
+                }).catch(() => {});
+            };
+
+            window.dismissAllNavbarNotifications = function(e) {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                fetch("{{ route('notifications.dismiss-navbar-all') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    }
+                }).then(res => res.json()).then(data => {
+                    if (data.success) {
+                        loadNavNotifications();
+                    }
+                }).catch(() => {});
+            };
 
             if (notifBtn && notifDropdown) {
                 notifBtn.addEventListener('click', function (e) {

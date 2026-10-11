@@ -34,13 +34,17 @@ class NotificationController extends Controller
     }
 
     /**
-     * Endpoint API JSON untuk data navbar (jumlah unread & 5 preview notif)
+     * Endpoint API JSON untuk data navbar (jumlah unread & 6 preview notif yang belum di-dismiss dari navbar)
      */
     public function getNavbarData()
     {
-        $unreadCount = SystemNotification::forCurrentUser()->where('is_read', false)->count();
+        $unreadCount = SystemNotification::forCurrentUser()
+            ->where('dismissed_from_navbar', false)
+            ->where('is_read', false)
+            ->count();
 
         $recentNotifications = SystemNotification::forCurrentUser()
+            ->where('dismissed_from_navbar', false)
             ->latest()
             ->take(6)
             ->get()
@@ -95,5 +99,37 @@ class NotificationController extends Controller
             ]);
 
         return redirect()->back()->with('success', 'Semua notifikasi telah ditandai sebagai telah dibaca.');
+    }
+
+    /**
+     * Sembunyikan/hapus satu notifikasi dari popup navbar saja (data aslinya tetap aman di daftar notifikasi)
+     */
+    public function dismissFromNavbar($id)
+    {
+        SystemNotification::forCurrentUser()->where('id', $id)->update([
+            'dismissed_from_navbar' => true,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notifikasi dihapus dari popup navbar.',
+        ]);
+    }
+
+    /**
+     * Bersihkan semua notifikasi dari tampilan popup navbar (data aslinya tetap aman di daftar notifikasi)
+     */
+    public function dismissAllNavbar()
+    {
+        SystemNotification::forCurrentUser()
+            ->where('dismissed_from_navbar', false)
+            ->update([
+                'dismissed_from_navbar' => true,
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Seluruh notifikasi di popup navbar telah dibersihkan.',
+        ]);
     }
 }

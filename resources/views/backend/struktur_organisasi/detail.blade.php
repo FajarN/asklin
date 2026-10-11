@@ -56,21 +56,53 @@
             </p>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
-            @if(!$struktur->is_locked || in_array($struktur->status, ['draft', 'revisi']) || auth()->user()->hasRole('Superadmin'))
-                <button type="button" class="btn btn-success btn-sm" id="btnOpenModalAjukan">
-                    <i class="fas fa-paper-plane mr-1"></i>
-                    <span>Ajukan Pengesahan SK</span>
-                </button>
+            @php
+                $isPusat = ($struktur->id_tingkatan_pengurus == 1);
+            @endphp
+
+            @if($isPusat)
+                {{-- KHUSUS PENGURUS PUSAT: JALUR MANDIRI LANGSUNG KETUA UMUM (TANPA PROSES DAERAH, TANPA SEKJEN, TANPA UPLOAD BERITA ACARA) --}}
+                @if($struktur->status !== 'disetujui' && $struktur->status !== 'aktif')
+                    @if(auth()->user()->hasRole(['Ketua Umum', 'Superadmin']))
+                        <button type="button" class="btn btn-success btn-sm font-bold shadow-sm" onclick="approvePusatLangsung({{ $struktur->id }})">
+                            <i class="fas fa-stamp mr-1"></i>
+                            <span>Sahkan SK (Ketua Umum)</span>
+                        </button>
+                    @else
+                        <span class="badge badge-warning text-xs px-2.5 py-1 font-semibold">
+                            <i class="fas fa-hourglass-half mr-1"></i> Menunggu Pengesahan Ketua Umum
+                        </span>
+                    @endif
+                @else
+                    @if($sk)
+                        <a href="{{ route('sk_pengurus.print', $sk->id) }}" target="_blank" class="btn btn-success btn-sm font-bold">
+                            <i class="fas fa-file-pdf mr-1"></i>
+                            <span>Cetak SK (PDF)</span>
+                        </a>
+                        <a href="{{ route('sk_pengurus.show', $sk->id) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-stamp mr-1"></i>
+                            <span>Lihat Dokumen SK</span>
+                        </a>
+                    @endif
+                @endif
+            @else
+                {{-- PENGURUS DAERAH / CABANG: ALUR BERJENJANG --}}
+                @if(!$struktur->is_locked || in_array($struktur->status, ['draft', 'revisi']) || auth()->user()->hasRole('Superadmin'))
+                    <button type="button" class="btn btn-success btn-sm" id="btnOpenModalAjukan">
+                        <i class="fas fa-paper-plane mr-1"></i>
+                        <span>Ajukan Pengesahan SK</span>
+                    </button>
+                @endif
+
+                @if($sk)
+                    <a href="{{ route('sk_pengurus.show', $sk->id) }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-stamp mr-1"></i>
+                        <span>Ruang Kerja SK & Persetujuan</span>
+                    </a>
+                @endif
             @endif
 
-            @if($sk)
-                <a href="{{ route('sk_pengurus.show', $sk->id) }}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-stamp mr-1"></i>
-                    <span>Ruang Kerja SK & Persetujuan</span>
-                </a>
-            @endif
-
-            @if(auth()->user()->hasRole('Superadmin') && ($struktur->is_locked || $sk))
+            @if(auth()->user()->hasRole('Superadmin') && ($struktur->is_locked || $sk || $struktur->status === 'disetujui'))
                 <button type="button" class="btn btn-warning btn-sm" onclick="resetTestingStruktur({{ $struktur->id }})">
                     <i class="fas fa-undo mr-1"></i>
                     <span>Reset Uji (Superadmin)</span>
@@ -89,63 +121,96 @@
     </div>
 
     <!-- Status Notification Alerts -->
-    @if($struktur->status == 'diajukan_daerah')
-        <div class="p-4 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-sm">
-            <div class="flex items-start gap-3">
-                <i class="fas fa-hourglass-half text-base text-sky-500 mt-0.5"></i>
+    @if($isPusat)
+        {{-- BANNER KHUSUS PENGURUS PUSAT --}}
+        @if($struktur->status !== 'disetujui' && $struktur->status !== 'aktif')
+            <div class="p-4 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-sm">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-shield-alt text-base text-emerald-600 mt-0.5"></i>
+                    <div>
+                        <strong class="font-bold text-sm">Jalur Pengesahan Mandiri Pengurus Pusat (Langsung Ketua Umum)</strong>
+                        <p class="mt-0.5 text-slate-600 dark:text-slate-300">
+                            Khusus kepengurusan tingkat Pusat, SK tidak memerlukan pengajuan ke daerah maupun perantara pemeriksaan Sekjen, dan tidak memerlukan upload berita acara. Setelah susunan pengurus diinputkan, Ketua Umum (atau Superadmin) dapat langsung mengesahkan SK dengan menekan tombol <strong>"Sahkan SK (Ketua Umum)"</strong>.
+                        </p>
+                    </div>
+                </div>
+                @if(auth()->user()->hasRole(['Ketua Umum', 'Superadmin']))
+                <button type="button" class="btn btn-success btn-sm shrink-0 whitespace-nowrap font-bold" onclick="approvePusatLangsung({{ $struktur->id }})">
+                    <i class="fas fa-stamp mr-1"></i> Sahkan SK Sekarang
+                </button>
+                @endif
+            </div>
+        @else
+            <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 flex items-start gap-3 text-xs shadow-sm">
+                <i class="fas fa-check-circle text-base text-emerald-500 mt-0.5"></i>
                 <div>
-                    <strong class="font-bold">Pengajuan Sedang Diverifikasi oleh Pengurus Daerah</strong>
+                    <strong class="font-bold">Surat Keputusan (SK) Pengurus Pusat Telah Resmi Disahkan</strong>
                     <p class="mt-0.5 text-slate-600 dark:text-slate-300">
-                        Susunan kepengurusan cabang telah diajukan dan sedang dalam proses pemeriksaan oleh Pengurus Daerah Provinsi {{ $struktur->provinsi_nama ?? '' }}. Selama proses verifikasi, pengeditan dan penambahan pengurus dinonaktifkan sementara demi kepastian data.
+                        Susunan kepengurusan Pengurus Pusat telah resmi disahkan oleh Ketua Umum PP ASKLIN. Dokumen SK resmi bernomor <strong>{{ $sk->no_sk ?? '-' }}</strong> ber-QR Code telah diterbitkan dan tersimpan dalam arsip digital organisasi.
                     </p>
                 </div>
             </div>
-            @if($sk)
-            <a href="{{ route('sk_pengurus.show', $sk->id) }}" class="btn btn-info btn-sm shrink-0 whitespace-nowrap">
-                <i class="fas fa-user-check mr-1"></i> Buka Verifikasi SK &rarr;
-            </a>
-            @endif
-        </div>
-    @elseif($struktur->status == 'diajukan_pusat')
-        <div class="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-sm">
-            <div class="flex items-start gap-3">
-                <i class="fas fa-clipboard-check text-base text-indigo-500 mt-0.5"></i>
+        @endif
+    @else
+        {{-- BANNER PENGURUS DAERAH / CABANG --}}
+        @if($struktur->status == 'diajukan_daerah')
+            <div class="p-4 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-sm">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-hourglass-half text-base text-sky-500 mt-0.5"></i>
+                    <div>
+                        <strong class="font-bold">Pengajuan Sedang Diverifikasi oleh Pengurus Daerah</strong>
+                        <p class="mt-0.5 text-slate-600 dark:text-slate-300">
+                            Susunan kepengurusan cabang telah diajukan dan sedang dalam proses pemeriksaan oleh Pengurus Daerah Provinsi {{ $struktur->provinsi_nama ?? '' }}. Selama proses verifikasi, pengeditan dan penambahan pengurus dinonaktifkan sementara demi kepastian data.
+                        </p>
+                    </div>
+                </div>
+                @if($sk)
+                <a href="{{ route('sk_pengurus.show', $sk->id) }}" class="btn btn-info btn-sm shrink-0 whitespace-nowrap">
+                    <i class="fas fa-user-check mr-1"></i> Buka Verifikasi SK &rarr;
+                </a>
+                @endif
+            </div>
+        @elseif($struktur->status == 'diajukan_pusat')
+            <div class="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-sm">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-clipboard-check text-base text-indigo-500 mt-0.5"></i>
+                    <div>
+                        <strong class="font-bold">Pengajuan Sedang Dalam Pemeriksaan Pengurus Pusat</strong>
+                        <p class="mt-0.5 text-slate-600 dark:text-slate-300">
+                            Berkas telah diteruskan ke Pengurus Pusat ASKLIN untuk penomoran SK resmi oleh Sekretaris Jenderal dan persetujuan pengesahan akhir oleh Ketua Umum.
+                        </p>
+                    </div>
+                </div>
+                @if($sk)
+                <a href="{{ route('sk_pengurus.show', $sk->id) }}" class="btn btn-primary btn-sm shrink-0 whitespace-nowrap">
+                    <i class="fas fa-stamp mr-1"></i> Buka Ruang Kerja SK &rarr;
+                </a>
+                @endif
+            </div>
+        @elseif($struktur->status == 'revisi')
+            <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-300 flex items-start gap-3 text-xs shadow-sm">
+                <i class="fas fa-exclamation-triangle text-base text-amber-500 mt-0.5"></i>
                 <div>
-                    <strong class="font-bold">Pengajuan Sedang Dalam Pemeriksaan Pengurus Pusat</strong>
-                    <p class="mt-0.5 text-slate-600 dark:text-slate-300">
-                        Berkas telah diteruskan ke Pengurus Pusat ASKLIN untuk penomoran SK resmi oleh Sekretaris Jenderal dan persetujuan pengesahan akhir oleh Ketua Umum.
+                    <strong class="font-bold">Pengajuan Memerlukan Perbaikan / Revisi</strong>
+                    <p class="mt-0.5 text-slate-700 dark:text-slate-300">
+                        Catatan Verifikator: <em>"{{ $struktur->catatan_revisi ?: 'Silakan periksa kembali kelengkapan pengurus dan berita acara Anda.' }}"</em>
+                    </p>
+                    <p class="mt-1 font-semibold text-amber-700 dark:text-amber-400">
+                        Kunci data telah dibuka kembali. Anda dapat menambahkan atau mengedit pengurus, lalu klik tombol "Ajukan Pengesahan SK" kembali setelah perbaikan selesai.
                     </p>
                 </div>
             </div>
-            @if($sk)
-            <a href="{{ route('sk_pengurus.show', $sk->id) }}" class="btn btn-primary btn-sm shrink-0 whitespace-nowrap">
-                <i class="fas fa-stamp mr-1"></i> Buka Ruang Kerja SK &rarr;
-            </a>
-            @endif
-        </div>
-    @elseif($struktur->status == 'revisi')
-        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-300 flex items-start gap-3 text-xs shadow-sm">
-            <i class="fas fa-exclamation-triangle text-base text-amber-500 mt-0.5"></i>
-            <div>
-                <strong class="font-bold">Pengajuan Memerlukan Perbaikan / Revisi</strong>
-                <p class="mt-0.5 text-slate-700 dark:text-slate-300">
-                    Catatan Verifikator: <em>"{{ $struktur->catatan_revisi ?: 'Silakan periksa kembali kelengkapan pengurus dan berita acara Anda.' }}"</em>
-                </p>
-                <p class="mt-1 font-semibold text-amber-700 dark:text-amber-400">
-                    Kunci data telah dibuka kembali. Anda dapat menambahkan atau mengedit pengurus, lalu klik tombol "Ajukan Pengesahan SK" kembali setelah perbaikan selesai.
-                </p>
+        @elseif($struktur->status == 'disetujui' || $struktur->status == 'aktif')
+            <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 flex items-start gap-3 text-xs shadow-sm">
+                <i class="fas fa-check-circle text-base text-emerald-500 mt-0.5"></i>
+                <div>
+                    <strong class="font-bold">Surat Keputusan (SK) Resmi Telah Terbit & Disahkan</strong>
+                    <p class="mt-0.5 text-slate-600 dark:text-slate-300">
+                        Susunan kepengurusan ini telah resmi disahkan oleh Ketua Umum Pengurus Pusat ASKLIN. Dokumen SK resmi ber-QR Code telah diterbitkan dan tersimpan dalam arsip digital organisasi.
+                    </p>
+                </div>
             </div>
-        </div>
-    @elseif($struktur->status == 'disetujui' || $struktur->status == 'aktif')
-        <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 flex items-start gap-3 text-xs shadow-sm">
-            <i class="fas fa-check-circle text-base text-emerald-500 mt-0.5"></i>
-            <div>
-                <strong class="font-bold">Surat Keputusan (SK) Resmi Telah Terbit & Disahkan</strong>
-                <p class="mt-0.5 text-slate-600 dark:text-slate-300">
-                    Susunan kepengurusan ini telah resmi disahkan oleh Ketua Umum Pengurus Pusat ASKLIN. Dokumen SK resmi ber-QR Code telah diterbitkan dan tersimpan dalam arsip digital organisasi.
-                </p>
-            </div>
-        </div>
+        @endif
     @endif
 
     <!-- Metadata Card -->
@@ -278,7 +343,8 @@
 
 </div>
 
-<!-- Modal Ajukan Pengesahan SK -->
+@if(!$isPusat)
+<!-- Modal Ajukan Pengesahan SK (Khusus Daerah / Cabang) -->
 <div class="modal fade" id="modalAjukanSk" tabindex="-1" role="dialog" aria-labelledby="modalAjukanSkLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -324,6 +390,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <!-- Modal for Add/Edit Pengurus -->
 <div class="modal fade" id="pengurusModal" tabindex="-1" role="dialog" aria-labelledby="pengurusModalLabel" aria-hidden="true"
@@ -737,6 +804,77 @@
                                 title: 'Gagal',
                                 message: err.responseJSON ? err.responseJSON.message : 'Terjadi kesalahan sistem',
                                 position: 'topRight'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // Pengesahan Langsung SK Pengurus Pusat oleh Ketua Umum / Superadmin
+        function approvePusatLangsung(id) {
+            Swal.fire({
+                title: 'Sahkan SK Pengurus Pusat?',
+                html: '<div class="text-left text-xs text-slate-600 dark:text-slate-300 mb-2">' +
+                      '<p class="mb-2">Sebagai <strong>Ketua Umum</strong> (atau Superadmin), Anda akan mengesahkan secara langsung susunan Pengurus Pusat ASKLIN.</p>' +
+                      '<p class="mb-3">SK resmi bernomor baku PP ASKLIN dan dilengkapi QR Code keabsahan digital akan diterbitkan otomatis.</p>' +
+                      '<label class="font-bold text-slate-700 dark:text-slate-200 block mb-1">Catatan Pengesahan (Opsional):</label>' +
+                      '<textarea id="swal_catatan_pusat" class="form-control text-xs w-full p-2 border rounded-lg" rows="2" placeholder="Pesan atau amanat pengesahan..."></textarea>' +
+                      '</div>',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#059669',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: '<i class="fas fa-stamp mr-1"></i> Ya, Sahkan SK Sekarang',
+                cancelButtonText: 'Batal',
+                focusConfirm: false,
+                preConfirm: () => {
+                    return document.getElementById('swal_catatan_pusat') ? document.getElementById('swal_catatan_pusat').value : '';
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let catatan = result.value || '';
+                    Swal.fire({
+                        title: 'Memproses Pengesahan...',
+                        text: 'Menerbitkan SK dan QR Code resmi...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('struktur_organisasi.approve-pusat', ':id') }}".replace(':id', id),
+                        type: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            catatan: catatan
+                        },
+                        success: function(res) {
+                            if (res.success) {
+                                Swal.fire({
+                                    title: 'SK Resmi Terbit!',
+                                    text: res.message,
+                                    icon: 'success',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#059669',
+                                    cancelButtonColor: '#475569',
+                                    confirmButtonText: '<i class="fas fa-file-pdf mr-1"></i> Buka / Cetak SK PDF',
+                                    cancelButtonText: 'Tutup'
+                                }).then((swalRes) => {
+                                    if (swalRes.isConfirmed && res.print_url) {
+                                        window.open(res.print_url, '_blank');
+                                    }
+                                    location.reload();
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            Swal.fire({
+                                title: 'Gagal Mengesahkan',
+                                text: err.responseJSON ? err.responseJSON.message : 'Terjadi kesalahan sistem',
+                                icon: 'error',
+                                confirmButtonColor: '#dc2626'
                             });
                         }
                     });

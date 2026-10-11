@@ -60,10 +60,12 @@
                 </button>
             @endif
 
+            @if($sk->tingkatan !== 'pusat')
             <a href="{{ route('sk_pengurus.timeline', $sk->id) }}" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-stream mr-1"></i>
                 <span>Alur & Timeline SK</span>
             </a>
+            @endif
 
             <a href="{{ route('struktur_organisasi.detail', $struktur->id) }}" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-sitemap mr-1"></i>
@@ -146,7 +148,7 @@
             </div>
 
             <!-- ACTION PANEL 1: PENGURUS DAERAH VERIFICATION -->
-            @if($sk->status === 'menunggu_daerah' && auth()->user()->hasRole(['Admin Daerah', 'Superadmin']))
+            @if($sk->tingkatan !== 'pusat' && $sk->status === 'menunggu_daerah' && auth()->user()->hasRole(['Admin Daerah', 'Superadmin']))
             <div class="card border-l-4 border-l-sky-500 shadow-md">
                 <div class="card-header bg-sky-50/40 dark:bg-sky-950/30">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-sky-800 dark:text-sky-300">
@@ -191,7 +193,7 @@
             @endif
 
             <!-- ACTION PANEL 2: SEKRETARIS JENDERAL PP EDITOR & PENOMORAN -->
-            @if($sk->status === 'menunggu_sekjen' && auth()->user()->hasRole(['Sekjen', 'Admin Pusat', 'Superadmin']))
+            @if($sk->tingkatan !== 'pusat' && $sk->status === 'menunggu_sekjen' && auth()->user()->hasRole(['Sekjen', 'Admin Pusat', 'Superadmin']))
             <div class="card border-l-4 border-l-indigo-500 shadow-md">
                 <div class="card-header bg-indigo-50/40 dark:bg-indigo-950/30">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-800 dark:text-indigo-300">
@@ -258,7 +260,7 @@
             @endif
 
             <!-- ACTION PANEL 3: KETUA UMUM PP FINAL APPROVAL -->
-            @if($sk->status === 'menunggu_ketum' && auth()->user()->hasRole(['Ketua Umum', 'Superadmin']))
+            @if(($sk->status === 'menunggu_ketum' || ($sk->tingkatan === 'pusat' && $sk->status !== 'terbit')) && auth()->user()->hasRole(['Ketua Umum', 'Superadmin']))
             <div class="card border-l-4 border-l-emerald-500 shadow-md">
                 <div class="card-header bg-emerald-50/40 dark:bg-emerald-950/30">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">

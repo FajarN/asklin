@@ -127,9 +127,13 @@ class SkApprovalController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $showUrl = route('sk_pengurus.show', $row->id);
-                $timelineUrl = route('sk_pengurus.timeline', $row->id);
                 $btn = '<a href="' . $showUrl . '" class="btn btn-sm btn-info" title="Ruang Kerja SK"><i class="fas fa-eye"></i> Periksa</a>';
-                $btn .= ' <a href="' . $timelineUrl . '" class="btn btn-sm btn-outline-primary" title="Pelacak Alur & Riwayat SK"><i class="fas fa-stream"></i> Timeline</a>';
+                
+                // Khusus Pengurus Pusat menggunakan jalur langsung Ketua Umum tanpa timeline berjenjang
+                if ($row->tingkatan !== 'pusat') {
+                    $timelineUrl = route('sk_pengurus.timeline', $row->id);
+                    $btn .= ' <a href="' . $timelineUrl . '" class="btn btn-sm btn-outline-primary" title="Pelacak Alur & Riwayat SK"><i class="fas fa-stream"></i> Timeline</a>';
+                }
 
                 if ($row->status === 'terbit') {
                     $printUrl = route('sk_pengurus.print', $row->id);
@@ -381,6 +385,16 @@ class SkApprovalController extends Controller
                 $ketumAktif = MasterKetuaUmum::getAktif();
                 if (!$ketumAktif) {
                     return response()->json(['success' => false, 'message' => 'Belum ada data Ketua Umum Aktif yang ditetapkan di sistem!'], 422);
+                }
+
+                if (empty($sk->no_sk)) {
+                    $sk->no_sk = $this->generateNomorSk($sk->tingkatan, $sk->tgl_penetapan ?: now());
+                }
+                if (empty($sk->tgl_penetapan)) {
+                    $sk->tgl_penetapan = now();
+                }
+                if (empty($sk->kota_penetapan)) {
+                    $sk->kota_penetapan = 'Jakarta';
                 }
 
                 $sk->id_ketua_umum = $ketumAktif->id; // Kunci snapshot Ketum yang menjabat saat ini

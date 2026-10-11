@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Models\MasterKetuaUmum;
+use App\Services\NotificationService;
+use Illuminate\Support\Str;
 use Laravolt\Indonesia\Models\City;
 use Laravolt\Indonesia\Models\Province;
 use Yajra\DataTables\Facades\DataTables;
@@ -655,5 +658,124 @@ class StrukturOrganisasiController extends Controller
             'success' => true,
             'message' => 'Status struktur dan SK berhasil di-reset ke Draft. Anda dapat menguji proses pengajuan dari awal!'
         ]);
+    }
+
+    /**
+     * Pengesahan Langsung SK Pengurus Pusat oleh Ketua Umum / Superadmin
+     * (Khusus Pengurus Pusat: Jalur Mandiri Langsung Ketua Umum tanpa pengajuan daerah,
+     *  tanpa perantara sekjen, dan tanpa upload berita acara)
+     */
+    public function approvePusatDirect(Request $request, $id)
+    {
+        $user = Auth::user();
+        if (!$user->hasRole(['Ketua Umum', 'Superadmin'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya Ketua Umum atau Superadmin yang berhak mengesahkan SK Pengurus Pusat!'
+            ], 403);
+        }
+
+        $struktur = StrukturOrganisasi::findOrFail($id);
+
+        if ((int) $struktur->id_tingkatan_pengurus !== 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Fitur pengesahan langsung hanya berlaku khusus untuk Pengurus Pusat.'
+            ], 422);
+        }
+
+        $jumlahPengurus = StrukturPengurus::where('id_struktur_organisasi', $id)->count();
+        if ($jumlahPengurus === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Belum ada data susunan pengurus yang diinputkan. Silakan tambahkan pengurus terlebih dahulu.'
+            ], 422);
+        }
+
+        $ketumAktif = MasterKetuaUmum::getAktif();
+        if (!$ketumAktif) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Belum ada data Ketua Umum aktif di sistem. Silakan tetapkan Ketua Umum aktif di menu Master Ketua Umum terlebih dahulu.'
+            ], 422);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Update status struktur organisasi langsung disetujui & kunci data
+            $struktur->status = 'disetujui';
+            $struktur->is_locked = true;
+            $struktur->diajukan_at = $struktur->diajukan_at ?: now();
+            $struktur->disetujui_pusat_at = now();
+            $struktur->disetujui_pusat_by = $user->id;
+            $struktur->catatan_revisi = null;
+            $struktur->save();
+
+            // Generate nomor urut & format nomor SK baku Pengurus Pusat
+            $tahun = now()->format('Y');
+            $bulanAngka = (int) now()->format('m');
+            $romawiList = [
+                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V', 6 => 'VI',
+                7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'
+            ];
+            $bulanRomawi = $romawiList[$bulanAngka] ?? 'I';
+            $count = SkPengurus::whereYear('created_at', $tahun)->whereNotNull('no_sk')->count() + 1;
+            $nomorUrut = str_pad($count, 2, '0', STR_PAD_LEFT);
+            $noSk = "{$nomorUrut}/SK-PP/PP-ASKLIN/{$bulanRomawi}/{$tahun}";
+
+            // Find or create SK Pengurus
+            $sk = SkPengurus::where('id_struktur_organisasi', $struktur->id)->first();
+            if (!$sk) {
+                $sk = new SkPengurus();
+                $sk->id_struktur_organisasi = $struktur->id;
+            }
+
+            $sk->tingkatan = 'pusat';
+            $sk->id_ketua_umum = $ketumAktif->id;
+            $sk->no_sk = $sk->no_sk ?: $noSk;
+            $sk->perihal = "Pengesahan Susunan Pengurus ASKLIN Pengurus Pusat Periode " . $struktur->periode;
+            $sk->tgl_musyawarah = $struktur->tgl_muscab ?: now();
+            $sk->tgl_penetapan = now();
+            $sk->tgl_pelantikan = $sk->tgl_pelantikan ?: now();
+            $sk->kota_penetapan = 'Jakarta';
+            $sk->show_qr = true;
+            if (!$sk->qr_token) {
+                $sk->qr_token = (string) Str::uuid();
+            }
+            $sk->status = 'terbit';
+            $sk->created_by = $sk->created_by ?: $user->id;
+            $sk->updated_by = $user->id;
+            $sk->save();
+
+            // Record Log Audit Pengesahan Langsung
+            $userRole = $user->hasRole('Ketua Umum') ? 'Ketua Umum' : 'Superadmin';
+            SkPengurusLog::record(
+                $struktur->id,
+                'approve_ketum',
+                $userRole,
+                $user->id,
+                $request->catatan ?: 'Pengesahan Langsung SK Pengurus Pusat oleh Ketua Umum PP ASKLIN (Jalur Mandiri Pusat).',
+                $sk->id
+            );
+
+            // Kirim notifikasi sistem terpusat bahwa SK telah resmi terbit
+            NotificationService::notifySkIssued($sk);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'SK Pengurus Pusat berhasil disahkan secara langsung oleh Ketua Umum!',
+                'sk_id' => $sk->id,
+                'print_url' => route('sk_pengurus.print', $sk->id),
+                'sk_url' => route('sk_pengurus.show', $sk->id)
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

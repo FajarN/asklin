@@ -21,11 +21,13 @@ class SystemNotification extends Model
         'url',
         'is_read',
         'read_at',
+        'dismissed_from_navbar',
     ];
 
     protected $casts = [
         'is_read' => 'boolean',
         'read_at' => 'datetime',
+        'dismissed_from_navbar' => 'boolean',
     ];
 
     public function user()

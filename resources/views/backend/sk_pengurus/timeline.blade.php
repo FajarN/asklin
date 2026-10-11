@@ -63,6 +63,28 @@
         </div>
     </div>
 
+    @if($sk->tingkatan === 'pusat')
+    <!-- Kartu Khusus Alur Mandiri Pengurus Pusat -->
+    <div class="card p-6 rounded-2xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/20 text-center space-y-3 shadow-xs">
+        <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center text-xl">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-800 dark:text-white">Jalur Pengesahan Mandiri Pengurus Pusat</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300 max-w-xl mx-auto">
+            Khusus kepengurusan Pengurus Pusat, pengesahan SK diterbitkan secara langsung oleh Ketua Umum tanpa alur berjenjang daerah maupun perantara verifikasi Sekjen, dan tanpa upload berita acara.
+        </p>
+        <div class="pt-2 flex items-center justify-center gap-2 flex-wrap">
+            <a href="{{ route('struktur_organisasi.detail', $struktur->id) }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-sitemap mr-1"></i> Ke Halaman Struktur Pengurus Pusat
+            </a>
+            @if($sk->status === 'terbit')
+            <a href="{{ route('sk_pengurus.print', $sk->id) }}" target="_blank" class="btn btn-success btn-sm">
+                <i class="fas fa-file-pdf mr-1"></i> Cetak SK Resmi (PDF)
+            </a>
+            @endif
+        </div>
+    </div>
+    @else
     <!-- Stepper Controls (Switch Horizontal / Vertikal) -->
     <div class="flex items-center justify-between gap-4">
         <div class="flex items-center gap-2">
@@ -306,6 +328,7 @@
             @endforeach
         </div>
     </div>
+    @endif
 
     <!-- Riwayat Log Aktivitas Nyata dari Database -->
     <div class="card rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs">
