@@ -21,7 +21,7 @@ class AnggotaRegisteredMail extends Mailable
     public function build()
     {
         return $this->from(config('mail.from.address', 'pp_asklin@asklin.org'), 'Pengurus Pusat ASKLIN')
-                    ->subject("Konfirmasi Pendaftaran Anggota ASKLIN: {$this->anggota->nama_klinik}")
-                    ->view('emails.anggota_registered');
+            ->subject("Konfirmasi Pendaftaran Anggota ASKLIN: {$this->anggota->nama_klinik}")
+            ->view('emails.anggota_registered');
     }
 }

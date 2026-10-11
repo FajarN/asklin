@@ -64,3 +64,4 @@
     Pengurus Cabang & Daerah ASKLIN akan segera meninjau keabsahan berkas permohonan klinik Anda. Anda akan menerima pemberitahuan email lanjutan saat klinik Anda telah lolos verifikasi resmi.
 </p>
 @endsection
+

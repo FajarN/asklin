@@ -31,9 +31,9 @@ class SkApprovalRequestMail extends Mailable
     public function build()
     {
         $strukturNama = $this->sk->strukturOrganisasi->nama_struktur ?? 'Struktur Organisasi';
-        
+
         return $this->from(config('mail.from.address', 'pp_asklin@asklin.org'), 'Pengurus Pusat ASKLIN')
-                    ->subject("[Persetujuan SK] Permohonan Pengesahan SK: {$strukturNama}")
-                    ->view('emails.sk_approval_request');
+            ->subject("[Persetujuan SK] Permohonan Pengesahan SK: {$strukturNama}")
+            ->view('emails.sk_approval_request');
     }
 }

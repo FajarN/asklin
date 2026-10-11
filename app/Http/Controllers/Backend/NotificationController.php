@@ -69,7 +69,7 @@ class NotificationController extends Controller
     public function markAsRead($id)
     {
         $notification = SystemNotification::forCurrentUser()->findOrFail($id);
-        
+
         $notification->update([
             'is_read' => true,
             'read_at' => Carbon::now(),

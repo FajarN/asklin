@@ -21,7 +21,7 @@ class ExpiredSioWarningMail extends Mailable
     public function build()
     {
         return $this->from(config('mail.from.address', 'pp_asklin@asklin.org'), 'Pengurus Pusat ASKLIN')
-                    ->subject("[Penting] Pemberitahuan Masa Berlaku Izin Operasional (SIO): {$this->anggota->nama_klinik}")
-                    ->view('emails.expired_sio_warning');
+            ->subject("[Penting] Pemberitahuan Masa Berlaku Izin Operasional (SIO): {$this->anggota->nama_klinik}")
+            ->view('emails.expired_sio_warning');
     }
 }

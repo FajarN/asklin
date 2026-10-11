@@ -21,7 +21,7 @@ class AnggotaApprovedMail extends Mailable
     public function build()
     {
         return $this->from(config('mail.from.address', 'pp_asklin@asklin.org'), 'Pengurus Pusat ASKLIN')
-                    ->subject("Selamat! Keanggotaan ASKLIN Resmi Disetujui: {$this->anggota->nama_klinik} (#{$this->anggota->no_anggota})")
-                    ->view('emails.anggota_approved');
+            ->subject("Selamat! Keanggotaan ASKLIN Resmi Disetujui: {$this->anggota->nama_klinik} (#{$this->anggota->no_anggota})")
+            ->view('emails.anggota_approved');
     }
 }

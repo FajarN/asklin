@@ -71,11 +71,11 @@
             </h3>
         </div>
         <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200/80 dark:border-slate-700 text-xs">
-            <button type="button" id="btn-view-horizontal" 
+            <button type="button" id="btn-view-horizontal"
                     class="px-3 py-1.5 rounded-lg font-semibold transition-all bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-2xs">
                 <i class="fas fa-arrows-alt-h mr-1"></i> Ke Kiri & Kanan (Horizontal)
             </button>
-            <button type="button" id="btn-view-vertical" 
+            <button type="button" id="btn-view-vertical"
                     class="px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900">
                 <i class="fas fa-arrows-alt-v mr-1"></i> Ke Atas & Bawah (Vertikal)
             </button>
@@ -386,3 +386,4 @@
     });
 </script>
 @endpush
+

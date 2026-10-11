@@ -49,8 +49,8 @@ class SystemNotification extends Model
 
         return $query->where(function ($q) use ($user, $userRoles) {
             $q->where('user_id', $user->id)
-              ->orWhereIn('role_target', $userRoles)
-              ->orWhereNull('role_target');
+                ->orWhereIn('role_target', $userRoles)
+                ->orWhereNull('role_target');
         });
     }
 

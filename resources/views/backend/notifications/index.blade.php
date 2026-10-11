@@ -45,23 +45,23 @@
 
     <!-- Filter Tab Bar -->
     <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-        <a href="{{ route('notifications.index') }}" 
+        <a href="{{ route('notifications.index') }}"
            class="px-3.5 py-2 rounded-xl font-semibold transition-all {{ empty($type) && !$unreadOnly ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50' }}">
             Semua
         </a>
-        <a href="{{ route('notifications.index', ['unread' => 1]) }}" 
+        <a href="{{ route('notifications.index', ['unread' => 1]) }}"
            class="px-3.5 py-2 rounded-xl font-semibold transition-all {{ $unreadOnly ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50' }}">
             Belum Dibaca ({{ $unreadCount }})
         </a>
-        <a href="{{ route('notifications.index', ['type' => 'sk_pengurus']) }}" 
+        <a href="{{ route('notifications.index', ['type' => 'sk_pengurus']) }}"
            class="px-3.5 py-2 rounded-xl font-semibold transition-all {{ $type === 'sk_pengurus' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50' }}">
             <i class="fas fa-stamp mr-1 text-xs"></i> Persetujuan SK
         </a>
-        <a href="{{ route('notifications.index', ['type' => 'anggota']) }}" 
+        <a href="{{ route('notifications.index', ['type' => 'anggota']) }}"
            class="px-3.5 py-2 rounded-xl font-semibold transition-all {{ $type === 'anggota' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50' }}">
             <i class="fas fa-user-check mr-1 text-xs"></i> Keanggotaan
         </a>
-        <a href="{{ route('notifications.index', ['type' => 'expired_sio']) }}" 
+        <a href="{{ route('notifications.index', ['type' => 'expired_sio']) }}"
            class="px-3.5 py-2 rounded-xl font-semibold transition-all {{ $type === 'expired_sio' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50' }}">
             <i class="fas fa-exclamation-triangle mr-1 text-xs"></i> Peringatan SIO
         </a>
@@ -118,13 +118,13 @@
 
                         <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
                             @if(!empty($item->url))
-                                <a href="{{ route('notifications.read', $item->id) }}" 
+                                <a href="{{ route('notifications.read', $item->id) }}"
                                    class="btn btn-primary btn-sm flex items-center gap-1.5 text-xs">
                                     <span>Buka Dokumen / Aksi</span>
                                     <i class="fas fa-arrow-right text-[10px]"></i>
                                 </a>
                             @elseif(!$item->is_read)
-                                <a href="{{ route('notifications.read', $item->id) }}" 
+                                <a href="{{ route('notifications.read', $item->id) }}"
                                    class="btn btn-secondary btn-sm text-xs">
                                     Tandai Dibaca
                                 </a>
@@ -151,3 +151,4 @@
 
 </div>
 @endsection
+
