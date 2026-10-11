@@ -253,13 +253,13 @@ class SkLamaController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Arsip SK Lama berhasil disimpan ke dalam sistem!'
+                'message' => 'History SK berhasil disimpan ke dalam sistem!'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan arsip: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan saat menyimpan history SK: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -373,19 +373,19 @@ class SkLamaController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data arsip SK Lama berhasil diperbarui!'
+                'message' => 'Data History SK berhasil diperbarui!'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui arsip: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan saat memperbarui history SK: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Hapus Arsip SK Lama
+     * Hapus History SK
      */
     public function destroy($id)
     {
@@ -404,26 +404,26 @@ class SkLamaController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Arsip SK Lama berhasil dihapus.'
+                'message' => 'History SK berhasil dihapus.'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus arsip: ' . $e->getMessage()
+                'message' => 'Gagal menghapus history SK: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Download Berkas SK Lama
+     * Download Berkas SK
      */
     public function download($id)
     {
         $skLama = SkLama::findOrFail($id);
 
         if (!$skLama->file_sk || !Storage::disk('public')->exists('sk_lama/' . $skLama->file_sk)) {
-            abort(404, 'File arsip SK tidak ditemukan pada server.');
+            abort(404, 'File dokumen SK tidak ditemukan pada server.');
         }
 
         $filePath = Storage::disk('public')->path('sk_lama/' . $skLama->file_sk);

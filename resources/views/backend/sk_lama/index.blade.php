@@ -1,7 +1,7 @@
 @extends('layouts.backend.layout')
 
-@section('title', 'Arsip SK Lama')
-@section('page_title', 'Arsip Surat Keputusan (SK) Lama')
+@section('title', 'History SK')
+@section('page_title', 'History Surat Keputusan (SK)')
 
 @section('content')
 <div class="space-y-6">
@@ -9,24 +9,24 @@
     <!-- Responsive Standard Breadcrumb -->
     <x-breadcrumb :items="[
         ['label' => 'Surat Keputusan', 'url' => route('sk_pengurus.index')],
-        ['label' => 'Arsip SK Lama'],
+        ['label' => 'History SK'],
     ]" />
 
     <!-- Page Header Banner -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-white flex items-center gap-2">
-                <i class="fas fa-archive text-red-600"></i>
-                <span>Arsip Surat Keputusan (SK) Lama</span>
+                <i class="fas fa-history text-red-600"></i>
+                <span>History Surat Keputusan (SK)</span>
             </h2>
             <p class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400 mt-1">
-                Repository digital arsip SK kepengurusan lama (dokumen Word atau PDF) yang pernah terbit dengan pelacakan masa berlaku (aktif / expired).
+                Repository digital riwayat berkas dokumen SK kepengurusan terdahulu (dokumen Word atau PDF) yang pernah terbit dengan pelacakan masa berlaku (aktif / expired).
             </p>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
             <button type="button" class="btn btn-primary btn-sm" id="btnUploadModal">
                 <i class="fas fa-cloud-upload-alt mr-1"></i>
-                <span>Upload Arsip SK</span>
+                <span>Upload History SK</span>
             </button>
             <a href="{{ route('sk_pengurus.index') }}" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-file-signature mr-1"></i>
@@ -42,10 +42,10 @@
     <!-- Metric Stat Cards -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
         <div class="card p-3.5 border-l-4 border-l-sky-500 shadow-sm">
-            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Total Arsip SK</span>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Total History SK</span>
             <div class="flex items-center justify-between">
                 <span class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white" id="stat-total">{{ $totalSk }}</span>
-                <i class="fas fa-folder-open text-sky-500 text-lg opacity-80"></i>
+                <i class="fas fa-history text-sky-500 text-lg opacity-80"></i>
             </div>
         </div>
 
@@ -87,7 +87,7 @@
         <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
             <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                 <i class="fas fa-filter text-red-500"></i>
-                <span>Filter & Pencarian Arsip SK</span>
+                <span>Filter & Pencarian History SK</span>
             </div>
             <button type="button" id="btnResetFilter" class="text-xs text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition flex items-center gap-1">
                 <i class="fas fa-undo-alt text-[10px]"></i> Reset Filter
@@ -138,7 +138,7 @@
         <div class="card-header flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
             <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <i class="fas fa-table text-slate-400"></i>
-                <span>Daftar Dokumen Arsip SK Lama</span>
+                <span>Daftar Dokumen History SK</span>
             </h3>
             <span class="text-[11px] text-slate-400">Word (.doc, .docx) & PDF (.pdf)</span>
         </div>
@@ -165,7 +165,7 @@
 
 </div>
 
-<!-- Modal Upload / Edit Arsip SK Lama -->
+<!-- Modal Upload / Edit History SK -->
 <div id="modalSkLama" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transform transition-all my-8">
         <!-- Modal Header -->
@@ -173,10 +173,10 @@
             <div>
                 <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2" id="modalTitle">
                     <i class="fas fa-cloud-upload-alt text-red-600"></i>
-                    <span>Upload Arsip SK Lama</span>
+                    <span>Upload History SK</span>
                 </h3>
                 <p class="text-xs text-slate-400 mt-0.5" id="modalSubtitle">
-                    Unggah berkas dokumen SK kepengurusan lama (Word atau PDF).
+                    Unggah berkas dokumen history SK kepengurusan (Word atau PDF).
                 </p>
             </div>
             <button type="button" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition p-1 rounded-lg" id="btnCloseModal">
@@ -318,7 +318,7 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Inisialisasi DataTable Arsip SK Lama
+    // Inisialisasi DataTable History SK
     const table = $('#table-sk-lama').DataTable({
         processing: true,
         serverSide: true,
@@ -359,8 +359,8 @@ $(document).ready(function() {
             search: "Cari SK:",
             searchPlaceholder: "Ketik kata kunci...",
             lengthMenu: "Tampilkan _MENU_ data",
-            info: "Menampilkan _START_ - _END_ dari _TOTAL_ arsip",
-            infoEmpty: "Tidak ada data arsip SK",
+            info: "Menampilkan _START_ - _END_ dari _TOTAL_ history SK",
+            infoEmpty: "Tidak ada data history SK",
             infoFiltered: "(disaring dari _MAX_ total data)",
             zeroRecords: "Tidak ada data yang cocok",
             paginate: {
@@ -502,9 +502,9 @@ $(document).ready(function() {
         $('#file_current_preview').addClass('hidden');
         $('#file_required_marker').removeClass('hidden');
         $('#modal_file_sk').attr('required', 'required');
-        $('#modalTitle span').text('Upload Arsip SK Lama');
-        $('#modalSubtitle').text('Unggah berkas dokumen SK kepengurusan lama (Word atau PDF).');
-        $('#btnSubmitText').text('Simpan Arsip');
+        $('#modalTitle span').text('Upload History SK');
+        $('#modalSubtitle').text('Unggah berkas dokumen history SK kepengurusan (Word atau PDF).');
+        $('#btnSubmitText').text('Simpan Data');
         toggleWilayahForm('pusat');
     }
 
@@ -536,7 +536,7 @@ $(document).ready(function() {
             processData: false,
             success: function(res) {
                 $('#btnSubmitForm').removeAttr('disabled').removeClass('opacity-70 cursor-not-allowed');
-                $('#btnSubmitText').text(id ? 'Simpan Perubahan' : 'Simpan Arsip');
+                $('#btnSubmitText').text(id ? 'Simpan Perubahan' : 'Simpan Data');
 
                 if (res.success) {
                     Swal.fire({
@@ -558,7 +558,7 @@ $(document).ready(function() {
             },
             error: function(xhr) {
                 $('#btnSubmitForm').removeAttr('disabled').removeClass('opacity-70 cursor-not-allowed');
-                $('#btnSubmitText').text(id ? 'Simpan Perubahan' : 'Simpan Arsip');
+                $('#btnSubmitText').text(id ? 'Simpan Perubahan' : 'Simpan Data');
 
                 let errMsg = 'Gagal menyimpan data.';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -607,7 +607,7 @@ $(document).ready(function() {
                     // Tampilkan Wilayah
                     toggleWilayahForm(d.tingkatan, d.id_provinsi, d.id_kota);
 
-                    $('#modalTitle span').text('Edit Arsip SK Lama');
+                    $('#modalTitle span').text('Edit History SK');
                     $('#modalSubtitle').text('Perbarui metadata dokumen atau ganti berkas SK.');
                     $('#btnSubmitText').text('Simpan Perubahan');
 
@@ -619,7 +619,7 @@ $(document).ready(function() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Kesalahan',
-                    text: 'Gagal mengambil data arsip SK.'
+                    text: 'Gagal mengambil data history SK.'
                 });
             }
         });
@@ -631,13 +631,13 @@ $(document).ready(function() {
         let judul = $(this).data('judul');
 
         Swal.fire({
-            title: 'Hapus Arsip SK?',
+            title: 'Hapus History SK?',
             text: `Yakin ingin menghapus dokumen "${judul}"? Tindakan ini tidak dapat dibatalkan.`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#e11d48',
             cancelButtonColor: '#64748b',
-            confirmButtonText: 'Ya, Hapus Arsip',
+            confirmButtonText: 'Ya, Hapus Data',
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
