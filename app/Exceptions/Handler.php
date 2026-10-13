@@ -46,5 +46,60 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        $this->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated: Sesi tidak valid atau token belum disertakan.',
+                ], 401);
+            }
+        });
+
+        $this->renderable(function (\Illuminate\Validation\ValidationException $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validasi data gagal.',
+                    'errors'  => $e->errors(),
+                ], 422);
+            }
+        });
+
+        $this->renderable(function (\Illuminate\Auth\Access\AuthorizationException $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akses ditolak: Anda tidak memiliki wewenang untuk sumber daya ini.',
+                ], 403);
+            }
+        });
+
+        $this->renderable(function (\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage() ?: 'Akses ditolak: Anda tidak memiliki wewenang untuk sumber daya ini.',
+                ], 403);
+            }
+        });
+
+        $this->renderable(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data atau endpoint API tidak ditemukan.',
+                ], 404);
+            }
+        });
+
+        $this->renderable(function (\Illuminate\Http\Exceptions\ThrottleRequestsException $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terlalu banyak permintaan. Silakan tunggu beberapa saat.',
+                ], 429);
+            }
+        });
     }
 }
