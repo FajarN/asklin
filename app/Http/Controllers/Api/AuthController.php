@@ -3,16 +3,66 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\LoginRequest;
+use App\Http\Requests\Api\RegisterRequest;
 use App\Models\Anggota;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravolt\Indonesia\Models\City;
 use Laravolt\Indonesia\Models\Province;
 
 class AuthController extends BaseApiController
 {
+    /**
+     * Registrasi pengguna baru (Klinik) & penerbitan bearer token Sanctum.
+     *
+     * @param RegisterRequest $request
+     * @return JsonResponse
+     */
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        return DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name'      => $request->name,
+                'email'     => $request->email,
+                'password'  => Hash::make($request->password),
+                'provinsi'  => $request->provinsi,
+                'kota'      => $request->kota,
+            ]);
+
+            $user->assignRole('Klinik');
+
+            // Jika informasi klinik atau kontak disertakan, inisialisasi record Anggota
+            if ($request->filled('nama_klinik') || $request->filled('phone')) {
+                Anggota::create([
+                    'nama_klinik'       => $request->nama_klinik ?: ('Klinik ' . $request->name),
+                    'nama_kontak'       => $request->name,
+                    'email'             => $request->email,
+                    'tlf'               => $request->phone,
+                    'id_provinsi'       => $request->provinsi,
+                    'id_kota'           => $request->kota,
+                    'status'            => 'Draft',
+                    'status_pembayaran' => '0',
+                    'id_user'           => $user->id,
+                    'created_by'        => $user->id,
+                    'updated_by'        => $user->id,
+                ]);
+            }
+
+            $deviceName = $request->device_name ?: 'asklin-mobile-app';
+            $token = $user->createToken($deviceName)->plainTextToken;
+            $userData = $this->formatUserData($user);
+
+            return $this->successResponse([
+                'token'      => $token,
+                'token_type' => 'Bearer',
+                'user'       => $userData,
+            ], 'Registrasi berhasil. Akun Anda telah siap digunakan.', 201);
+        });
+    }
+
     /**
      * Login kredensial & penerbitan bearer token Sanctum.
      *

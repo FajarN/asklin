@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\WilayahApiController;
 use App\Http\Controllers\Api\AnggotaProfileApiController;
 use App\Http\Controllers\Api\DocumentApiController;
 use App\Http\Controllers\Api\PengurusDashboardApiController;
+use App\Http\Controllers\Api\BeritaApiController;
+use App\Http\Controllers\Api\AgendaApiController;
+use App\Http\Controllers\Api\OrganisasiApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +45,7 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
     // --- 1. Autentikasi Publik ---
     Route::prefix('auth')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+        Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
     });
 
     // --- 2. Master Data Wilayah (Publik) ---
@@ -50,6 +54,23 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
         Route::get('/kota', [WilayahApiController::class, 'getCities']);
         Route::get('/kecamatan', [WilayahApiController::class, 'getDistricts']);
         Route::get('/kelurahan', [WilayahApiController::class, 'getVillages']);
+    });
+
+    // --- 3. Informasi Berita & Artikel (Publik) ---
+    Route::prefix('berita')->group(function () {
+        Route::get('/', [BeritaApiController::class, 'index']);
+        Route::get('/{identifier}', [BeritaApiController::class, 'show']);
+    });
+
+    // --- 4. Agenda & Kegiatan (Publik) ---
+    Route::prefix('agenda')->group(function () {
+        Route::get('/', [AgendaApiController::class, 'index']);
+        Route::get('/{identifier}', [AgendaApiController::class, 'show']);
+    });
+
+    // --- 5. Direktori Struktur Organisasi (Publik) ---
+    Route::prefix('organisasi')->group(function () {
+        Route::get('/struktur', [OrganisasiApiController::class, 'index']);
     });
 
     // --- 3. Endpoints Terproteksi (Bearer Token Sanctum) ---
