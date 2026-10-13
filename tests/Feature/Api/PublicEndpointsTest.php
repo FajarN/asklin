@@ -271,3 +271,4 @@ class PublicEndpointsTest extends TestCase
                  ]);
     }
 }
+
