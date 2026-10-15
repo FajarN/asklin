@@ -103,6 +103,7 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
             Route::get('/dashboard', [PengurusDashboardApiController::class, 'getDashboard']);
             Route::get('/anggota', [PengurusDashboardApiController::class, 'getAnggotaList']);
             Route::get('/anggota/{id}', [PengurusDashboardApiController::class, 'getAnggotaDetail']);
+            Route::post('/verifikasi/{id}', [PengurusDashboardApiController::class, 'prosesVerifikasi']);
         });
     });
 });

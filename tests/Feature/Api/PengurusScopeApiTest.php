@@ -124,5 +124,82 @@ class PengurusScopeApiTest extends TestCase
                      ],
                  ]);
     }
+
+    public function test_admin_cabang_can_verify_clinic_in_own_city()
+    {
+        $adminBekasi = User::factory()->create([
+            'email'    => 'admin_verify_' . time() . '@asklin.org',
+            'provinsi' => '32',
+            'kota'     => '3216',
+        ]);
+        $adminBekasi->assignRole('Admin Cabang');
+
+        $klinik = Anggota::create([
+            'nama_klinik'       => 'Klinik Baru Menunggu Cabang',
+            'status'            => 'waiting',
+            'id_provinsi'       => '32',
+            'id_kota'           => '3216',
+        ]);
+
+        $token = $adminBekasi->createToken('test_token')->plainTextToken;
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+                         ->postJson('/api/v1/pengurus/verifikasi/' . $klinik->id, [
+                             'status'     => 'Terverifikasi Cabang',
+                             'keterangan' => 'Berkas klinik lengkap dan valid',
+                         ]);
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'success' => true,
+                     'data' => [
+                         'status'     => 'Terverifikasi Cabang',
+                         'keterangan' => 'Berkas klinik lengkap dan valid',
+                     ],
+                 ]);
+
+        $this->assertDatabaseHas('anggota', [
+            'id'     => $klinik->id,
+            'status' => 'Terverifikasi Cabang',
+        ]);
+    }
+
+    public function test_superadmin_can_approve_clinic_with_generated_no_anggota()
+    {
+        $superadmin = User::factory()->create([
+            'email' => 'super_verify_' . time() . '@asklin.org',
+        ]);
+        $superadmin->assignRole('Superadmin');
+
+        $klinik = Anggota::create([
+            'nama_klinik'  => 'Klinik Final Approval',
+            'status'       => 'Terverifikasi Cabang',
+            'jenis_klinik' => 'Pratama',
+            'id_provinsi'  => '32',
+            'id_kota'      => '3216',
+            'id_kelurahan' => '3216023002',
+        ]);
+
+        $token = $superadmin->createToken('test_token')->plainTextToken;
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+                         ->postJson('/api/v1/pengurus/verifikasi/' . $klinik->id, [
+                             'status'     => 'approved',
+                             'keterangan' => 'Disetujui Pengurus Pusat',
+                         ]);
+
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'success' => true,
+                     'data' => [
+                         'status' => 'approved',
+                     ],
+                 ]);
+
+        $updated = Anggota::find($klinik->id);
+        $this->assertEquals('approved', $updated->status);
+        $this->assertNotEmpty($updated->no_anggota);
+        $this->assertNotNull($updated->verifikasi_pusat);
+    }
 }
 

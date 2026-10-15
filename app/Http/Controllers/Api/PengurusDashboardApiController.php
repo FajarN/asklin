@@ -8,6 +8,7 @@ use App\Services\LaporanService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Laravolt\Indonesia\Models\City;
 use Laravolt\Indonesia\Models\Province;
 
@@ -299,6 +300,153 @@ class PengurusDashboardApiController extends BaseApiController
     {
         return $user->hasAnyRole(['Superadmin', 'Admin Pusat', 'Sekjen', 'Ketua Umum', 'Bendahara'])
             || $user->can('laporan-pusat');
+    }
+
+    /**
+     * Memproses verifikasi status anggota klinik oleh Pengurus Cabang atau Pengurus Pusat (Sekjen, Ketum, Superadmin).
+     * POST /api/v1/pengurus/verifikasi/{id}
+     *
+     * @param Request $request
+     * @param int|string $id
+     * @return JsonResponse
+     */
+    public function prosesVerifikasi(Request $request, $id): JsonResponse
+    {
+        $user = $request->user();
+        $validator = Validator::make($request->all(), [
+            'status'     => 'required|string',
+            'keterangan' => 'nullable|string|max:500',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validationErrorResponse($validator->errors());
+        }
+
+        $anggota = Anggota::find($id);
+        if (!$anggota) {
+            return $this->errorResponse('Data anggota tidak ditemukan.', 404);
+        }
+
+        $statusBaru = $request->status;
+        $keterangan = $request->keterangan ?? $anggota->keterangan;
+        $now = date('Y-m-d H:i:s');
+
+        $isNational = $this->isNationalAdmin($user);
+        $isCabang = $user->hasRole('Admin Cabang');
+        $isDaerah = $user->hasRole('Admin Daerah');
+
+        if (!$isNational && !$isCabang && !$isDaerah) {
+            return $this->errorResponse('Anda tidak memiliki wewenang untuk melakukan verifikasi anggota.', 403);
+        }
+
+        // Cek batasan wilayah Cabang
+        if ($isCabang) {
+            if ((string) $anggota->id_kota !== (string) $user->kota) {
+                return $this->errorResponse('Akses ditolak: Anggota ini di luar kabupaten/kota kewenangan Cabang Anda.', 403);
+            }
+
+            $allowedCabang = ['Terverifikasi Cabang', 'Diverifikasi Cabang', 'Verifikasi Sekjen', 'Perlu Perbaikan', 'data tidak sesuai'];
+            if (!in_array($statusBaru, $allowedCabang)) {
+                return $this->errorResponse('Pengurus Cabang hanya dapat memverifikasi status: ' . implode(', ', $allowedCabang), 422);
+            }
+
+            $anggota->update([
+                'status'            => $statusBaru,
+                'keterangan'        => $keterangan,
+                'verifikasi_cabang' => $now,
+                'updated_by'        => $user->id,
+            ]);
+
+            return $this->successResponse([
+                'id'         => $anggota->id,
+                'status'     => $anggota->status,
+                'keterangan' => $anggota->keterangan,
+                'verifikator'=> $user->name,
+                'role'       => 'Admin Cabang',
+            ], 'Verifikasi Cabang berhasil disimpan.');
+        }
+
+        // Cek batasan wilayah Daerah
+        if ($isDaerah) {
+            if ((string) $anggota->id_provinsi !== (string) $user->provinsi) {
+                return $this->errorResponse('Akses ditolak: Anggota ini di luar provinsi kewenangan Daerah Anda.', 403);
+            }
+
+            $allowedDaerah = ['Terverifikasi Daerah', 'Diverifikasi Daerah', 'Verifikasi Sekjen', 'Perlu Perbaikan'];
+            if (!in_array($statusBaru, $allowedDaerah)) {
+                return $this->errorResponse('Pengurus Daerah hanya dapat memverifikasi status: ' . implode(', ', $allowedDaerah), 422);
+            }
+
+            $anggota->update([
+                'status'     => $statusBaru,
+                'keterangan' => $keterangan,
+                'updated_by' => $user->id,
+            ]);
+
+            return $this->successResponse([
+                'id'         => $anggota->id,
+                'status'     => $anggota->status,
+                'keterangan' => $anggota->keterangan,
+                'verifikator'=> $user->name,
+                'role'       => 'Admin Daerah',
+            ], 'Verifikasi Pengurus Daerah berhasil disimpan.');
+        }
+
+        // Pengurus Pusat (Sekjen, Ketua Umum, Superadmin, dsb)
+        if ($isNational) {
+            $updateData = [
+                'status'     => $statusBaru,
+                'keterangan' => $keterangan,
+                'updated_by' => $user->id,
+            ];
+
+            if (strtolower($statusBaru) === 'approved') {
+                $count = Anggota::where('status', 'approved')->count();
+                $numor = $count + 1;
+                $counts = $this->ceknourut($numor);
+                $nourut = str_pad($counts, 5, "0", STR_PAD_LEFT);
+                $jk = ($anggota->jenis_klinik === 'Pratama') ? 1 : 2;
+                $jr = 1;
+                $kliniknya = explode(',', $anggota->id_fasilitas ?? '');
+                if (in_array("2", $kliniknya)) {
+                    $jr = 2;
+                }
+                $kelurahan = $anggota->id_kelurahan ?: ($anggota->id_kota . '0000');
+
+                // Jika belum memiliki nomor anggota, terbitkan nomor resmi
+                if (empty($anggota->no_anggota) || $anggota->no_anggota === '-') {
+                    $updateData['no_anggota'] = $kelurahan . '-' . $nourut . '.' . $jk . '.' . $jr;
+                }
+                $updateData['verifikasi_pusat'] = $now;
+            } elseif ($statusBaru === 'Verifikasi Sekjen') {
+                $updateData['verifikasi_pusat'] = null;
+            }
+
+            $anggota->update($updateData);
+
+            return $this->successResponse([
+                'id'         => $anggota->id,
+                'no_anggota' => $anggota->no_anggota,
+                'status'     => $anggota->status,
+                'keterangan' => $anggota->keterangan,
+                'verifikator'=> $user->name,
+                'role'       => $user->getRoleNames()->first() ?? 'Pengurus Pusat',
+            ], 'Verifikasi Pengurus Pusat berhasil diproses.');
+        }
+
+        return $this->errorResponse('Aksi tidak diizinkan.', 403);
+    }
+
+    /**
+     * Cek nomor urut agar tidak bentrok dengan nomor reserved
+     */
+    private function ceknourut(int $no = 0): int
+    {
+        $reserved = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+        if (in_array($no, $reserved)) {
+            return $this->ceknourut($no + 1);
+        }
+        return $no;
     }
 }
 
