@@ -88,6 +88,8 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
             Route::get('/profil', [AnggotaProfileApiController::class, 'getProfil']);
             Route::get('/status-keanggotaan', [AnggotaProfileApiController::class, 'getStatusKeanggotaan']);
             Route::get('/dokumen-saya', [AnggotaProfileApiController::class, 'getDokumenSaya']);
+            Route::post('/pendaftaran', [AnggotaProfileApiController::class, 'simpanPendaftaran']);
+            Route::post('/sdm', [AnggotaProfileApiController::class, 'simpanSdm']);
         });
 
         // Modul Dokumen Digital (Unduh Aman PDF Anti-IDOR)

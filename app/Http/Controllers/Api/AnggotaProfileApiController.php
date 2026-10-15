@@ -230,5 +230,124 @@ class AnggotaProfileApiController extends BaseApiController
 
         return $this->successResponse($dokumen, 'Daftar dokumen keanggotaan berhasil diambil.');
     }
+
+    /**
+     * Menyimpan atau memperbarui data formulir pendaftaran anggota faskes lengkap.
+     * POST /api/v1/anggota/pendaftaran
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function simpanPendaftaran(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'nama_klinik'         => 'required|string|max:255',
+            'nama_kontak'         => 'required|string|max:255',
+            'email'               => 'required|email|max:255',
+            'tlf'                 => 'required|string|max:30',
+            'id_provinsi'         => 'required|string',
+            'id_kota'             => 'required|string',
+            'id_kecamatan'        => 'nullable|string',
+            'id_kelurahan'        => 'nullable|string',
+            'alamat_klinik'       => 'required|string',
+            'jenis_klinik'        => 'required|string', // Pratama / Utama
+            'status_pendaftar'    => 'nullable|string',
+            'status_kepemilikan'  => 'nullable|string',
+            'nama_pemilik_klinik' => 'nullable|string',
+            'bentuk_badan_hukum'  => 'nullable|string',
+            'nama_badan_usaha'    => 'nullable|string',
+            'no_ijin'             => 'nullable|string',
+            'tgl_ijin'            => 'nullable|date',
+            'tgl_akhir_ijin'      => 'nullable|date',
+        ]);
+
+        $anggota = Anggota::where('id_user', $user->id)->first();
+
+        $data = [
+            'nama_klinik'         => $request->nama_klinik,
+            'nama_kontak'         => $request->nama_kontak,
+            'email'               => $request->email,
+            'tlf'                 => $request->tlf,
+            'id_provinsi'         => $request->id_provinsi,
+            'id_kota'             => $request->id_kota,
+            'id_kecamatan'        => $request->id_kecamatan,
+            'id_kelurahan'        => $request->id_kelurahan,
+            'alamat_klinik'       => $request->alamat_klinik,
+            'rt'                  => $request->rt,
+            'rw'                  => $request->rw,
+            'kode_pos'            => $request->kode_pos,
+            'tlf_klinik'          => $request->tlf_klinik,
+            'jenis_klinik'        => $request->jenis_klinik,
+            'status_pendaftar'    => $request->status_pendaftar,
+            'status_kepemilikan'  => $request->status_kepemilikan,
+            'nama_pemilik_klinik' => $request->nama_pemilik_klinik,
+            'bentuk_badan_hukum'  => $request->bentuk_badan_hukum,
+            'nama_badan_usaha'    => $request->nama_badan_usaha,
+            'bentuk_badan_usaha'  => $request->bentuk_badan_usaha,
+            'no_ijin'             => $request->no_ijin,
+            'tgl_ijin'            => $request->tgl_ijin ? date('Y-m-d', strtotime($request->tgl_ijin)) : null,
+            'tgl_akhir_ijin'      => $request->tgl_akhir_ijin ? date('Y-m-d', strtotime($request->tgl_akhir_ijin)) : null,
+            'status'              => 'create_dokter', // Status transisi sesuai website asklin
+        ];
+
+        if ($anggota) {
+            $anggota->update($data);
+        } else {
+            $data['id_user'] = $user->id;
+            $data['status_pembayaran'] = '0';
+            $anggota = Anggota::create($data);
+        }
+
+        return $this->successResponse($anggota, 'Data pendaftaran klinik berhasil disimpan. Silakan lanjutkan input data SDM/Dokter.');
+    }
+
+    /**
+     * Menyimpan data SDM Dokter (Penanggung Jawab atau Dokter Praktek).
+     * POST /api/v1/anggota/sdm
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function simpanSdm(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $anggota = Anggota::where('id_user', $user->id)->first();
+
+        if (!$anggota) {
+            return $this->errorResponse('Data pendaftaran klinik belum dibuat.', 404);
+        }
+
+        $request->validate([
+            'nama_dokter'     => 'required|string|max:255',
+            'id_kategori_sdm' => 'required|in:1,2', // 1: PJ, 2: Dokter Praktek
+            'npa_idi'         => 'nullable|string|max:100',
+            'no_str'          => 'nullable|string|max:100',
+            'no_sip'          => 'nullable|string|max:100',
+            'tgl_akhir_sip'   => 'nullable|date',
+            'no_tlf'          => 'nullable|string|max:30',
+        ]);
+
+        $sdm = SDM::create([
+            'id_klinik'       => $anggota->id,
+            'nama_dokter'     => $request->nama_dokter,
+            'nama'            => $request->nama_dokter,
+            'id_kategori_sdm' => $request->id_kategori_sdm,
+            'peranan'         => $request->id_kategori_sdm == '1' ? 'penanggung jawab' : 'dokter praktek',
+            'npa_idi'         => $request->npa_idi,
+            'no_str'          => $request->no_str,
+            'no_sip'          => $request->no_sip,
+            'tgl_akhir_sip'   => $request->tgl_akhir_sip ? date('Y-m-d', strtotime($request->tgl_akhir_sip)) : null,
+            'no_tlf'          => $request->no_tlf,
+        ]);
+
+        // Setelah minimal 1 dokter PJ terisi, ubah status klinik menjadi 'waiting' (menunggu verifikasi cabang)
+        if ($anggota->status === 'create_dokter' || empty($anggota->status)) {
+            $anggota->update(['status' => 'waiting']);
+        }
+
+        return $this->successResponse($sdm, 'Data dokter/SDM berhasil ditambahkan. Status pendaftaran: ' . $anggota->status, 201);
+    }
 }
 
