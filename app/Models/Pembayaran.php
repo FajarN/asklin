@@ -26,11 +26,25 @@ class Pembayaran extends Model
     protected static function booted()
     {
         static::creating(function ($model) {
-            $model->created_by = Auth()->user()->id;
-            $model->updated_by = Auth()->user()->id;
+            if (auth()->check()) {
+                $model->created_by = auth()->id();
+                $model->updated_by = auth()->id();
+            }
         });
         static::saving(function ($model) {
-            $model->updated_by = Auth()->user()->id;
+            if (auth()->check()) {
+                $model->updated_by = auth()->id();
+            }
         });
+    }
+
+    public function anggota()
+    {
+        return $this->belongsTo(Anggota::class, 'id_anggota');
+    }
+
+    public function kategori()
+    {
+        return $this->belongsTo(PembayaranKategori::class, 'id_kategori');
     }
 }

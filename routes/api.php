@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\PengurusDashboardApiController;
 use App\Http\Controllers\Api\BeritaApiController;
 use App\Http\Controllers\Api\AgendaApiController;
 use App\Http\Controllers\Api\OrganisasiApiController;
+use App\Http\Controllers\Api\PembayaranApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,6 +97,19 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
         Route::prefix('dokumen')->group(function () {
             Route::get('/sk-anggota/download', [DocumentApiController::class, 'downloadSkAnggota']);
             Route::get('/sertifikat/download', [DocumentApiController::class, 'downloadSertifikatAnggota']);
+        });
+
+        // Modul Pembayaran Iuran (Klinik)
+        Route::prefix('pembayaran')->group(function () {
+            Route::get('/status', [PembayaranApiController::class, 'getStatus']);
+            Route::get('/riwayat', [PembayaranApiController::class, 'getRiwayat']);
+            Route::post('/konfirmasi', [PembayaranApiController::class, 'konfirmasiPembayaran']);
+        });
+
+        // Modul Validasi Pembayaran (Bendahara / Pengurus)
+        Route::prefix('bendahara')->group(function () {
+            Route::get('/pembayaran', [PembayaranApiController::class, 'getBendaharaList']);
+            Route::post('/pembayaran/{id}/verifikasi', [PembayaranApiController::class, 'verifikasiPembayaran']);
         });
 
         // Modul Pengurus (Cabang, Daerah, Pusat)
