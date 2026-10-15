@@ -121,6 +121,38 @@ class AuthController extends BaseApiController
     }
 
     /**
+     * Memperbarui kata sandi pengguna (POST /api/v1/auth/change-password).
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'current_password'      => 'required|string',
+            'password'              => 'required|string|min:8|confirmed',
+        ], [
+            'current_password.required' => 'Password saat ini wajib diisi.',
+            'password.required'         => 'Password baru wajib diisi.',
+            'password.min'              => 'Password baru minimal 8 karakter.',
+            'password.confirmed'        => 'Konfirmasi password baru tidak cocok.',
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return $this->errorResponse('Password saat ini tidak sesuai.', 422, [
+                'current_password' => ['Password saat ini yang Anda masukkan salah.']
+            ]);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return $this->successResponse(null, 'Password Anda berhasil diperbarui.');
+    }
+
+    /**
      * Format representasi data pengguna untuk mobile app.
      *
      * @param User $user

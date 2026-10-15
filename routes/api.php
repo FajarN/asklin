@@ -80,6 +80,7 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
         Route::prefix('auth')->group(function () {
             Route::get('/me', [AuthController::class, 'me']);
             Route::post('/logout', [AuthController::class, 'logout']);
+            Route::post('/change-password', [AuthController::class, 'changePassword']);
         });
 
         // Modul Anggota (Klinik)
