@@ -174,7 +174,17 @@ class Event extends Model
      */
     public function getKategoriNamaAttribute()
     {
-        return $this->kategori ? $this->kategori->nama : 'Event';
+        if ($this->relationLoaded('kategori')) {
+            $rel = $this->getRelation('kategori');
+            if ($rel instanceof EventKategori) {
+                return $rel->nama;
+            }
+        }
+        $rawKategori = $this->attributes['kategori'] ?? null;
+        if (is_string($rawKategori) && trim($rawKategori) !== '') {
+            return trim($rawKategori);
+        }
+        return 'Event';
     }
 
     /**

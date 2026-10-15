@@ -36,8 +36,31 @@ class AnggotaProfileApiController extends BaseApiController
             ->where('anggota.id_user', $user->id)
             ->first();
 
+        $roles = method_exists($user, 'getRoleNames') ? $user->getRoleNames() : collect(['Klinik']);
+        $primaryRole = $roles->first() ?? 'Klinik';
+
         if (!$anggota) {
-            return $this->errorResponse('Data profil klinik anggota belum ditemukan.', 404);
+            $isPengurus = in_array(strtolower($primaryRole), ['superadmin', 'admin', 'pengurus', 'pengurus cabang', 'pengurus daerah', 'pengurus pusat']) 
+                || (method_exists($user, 'hasAnyRole') && $user->hasAnyRole(['superadmin', 'admin', 'pengurus']));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profil pengguna berhasil dimuat.',
+                'data'    => [
+                    'user' => [
+                        'id'           => $user->id,
+                        'name'         => $user->name,
+                        'email'        => $user->email,
+                        'primary_role' => $primaryRole,
+                        'roles'        => $roles,
+                    ],
+                    'klinik'      => null,
+                    'is_pengurus' => $isPengurus,
+                    'nama_klinik' => $isPengurus ? 'Administrator / ' . $primaryRole : 'Klinik Belum Terdaftar',
+                    'no_anggota'  => $isPengurus ? 'Pengurus ASKLIN' : 'Menunggu Pendaftaran',
+                    'status'      => $isPengurus ? 'approved' : 'waiting',
+                ],
+            ], 200);
         }
 
         // Ambil rekap SDM klinik
@@ -103,7 +126,23 @@ class AnggotaProfileApiController extends BaseApiController
             'keterangan'          => $anggota->keterangan,
         ];
 
-        return $this->successResponse($profilData, 'Profil klinik berhasil dimuat.');
+        $userData = [
+            'id'           => $user->id,
+            'name'         => $user->name,
+            'email'        => $user->email,
+            'primary_role' => $primaryRole,
+            'roles'        => $roles,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profil klinik berhasil dimuat.',
+            'data'    => array_merge($profilData, [
+                'user'        => $userData,
+                'klinik'      => $profilData,
+                'is_pengurus' => false,
+            ]),
+        ], 200);
     }
 
     /**
@@ -115,11 +154,29 @@ class AnggotaProfileApiController extends BaseApiController
     public function getStatusKeanggotaan(Request $request): JsonResponse
     {
         $user = $request->user();
+        $roles = method_exists($user, 'getRoleNames') ? $user->getRoleNames() : collect(['Klinik']);
+        $primaryRole = $roles->first() ?? 'Klinik';
+        $isPengurus = in_array(strtolower($primaryRole), ['superadmin', 'admin', 'pengurus', 'pengurus cabang', 'pengurus daerah', 'pengurus pusat']) 
+            || (method_exists($user, 'hasAnyRole') && $user->hasAnyRole(['superadmin', 'admin', 'pengurus']));
 
         $anggota = Anggota::where('id_user', $user->id)->first();
 
         if (!$anggota) {
-            return $this->errorResponse('Data keanggotaan belum ditemukan.', 404);
+            return response()->json([
+                'success' => true,
+                'message' => 'Status akun berhasil dimuat.',
+                'data'    => [
+                    'is_pengurus'             => $isPengurus,
+                    'is_approved'             => $isPengurus,
+                    'status'                  => $isPengurus ? 'approved' : 'waiting',
+                    'status_label'            => $isPengurus ? 'Akun ' . $primaryRole . ' ASKLIN' : 'Pendaftaran Anggota Faskes',
+                    'bisa_edit'               => !$isPengurus,
+                    'can_download_sk'         => false,
+                    'can_download_sertifikat' => false,
+                    'timeline'                => [],
+                    'catatan'                 => $isPengurus ? 'Anda login menggunakan akun Administrator / Pengurus.' : 'Silakan lengkapi formulir pendaftaran anggota.',
+                ],
+            ], 200);
         }
 
         $statusRaw = strtolower($anggota->status ?? 'waiting');
