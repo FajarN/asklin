@@ -134,11 +134,11 @@
 
                             </ul>
                         </li>
-                        <li class="menu-item">
+                        {{-- <li class="menu-item">
                             <a class="menu-link" href="{{ route('rakernas') }}">
                                 <div>Rakernas</div>
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('kontak') }}">
                                 <div>Kontak</div>

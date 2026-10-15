@@ -18,7 +18,7 @@
 							<li>
 								<i class="i-plain icon-email3 m-0"></i>
 								<div class="he-text">
-                                    Email : 
+                                    Email :
 									<span>pp_asklin@asklin.org</span>
 								</div>
 							</li>
@@ -130,11 +130,11 @@
                                 <div>Galery</div>
                             </a>
                         </li>
-                          <li class="menu-item">
+                          {{-- <li class="menu-item">
                             <a class="menu-link" href="{{ route('rakernas') }}">
                                 <div>Rakernas</div>
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('konas') }}">
                                 <div>Konas</div>
