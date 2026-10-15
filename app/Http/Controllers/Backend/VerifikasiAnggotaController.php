@@ -29,6 +29,8 @@ class VerifikasiAnggotaController extends Controller
         if ($request->ajax()) {
             $data = Anggota::select(
                 'anggota.*',
+                \DB::raw("COALESCE(NULLIF(anggota.nama_klinik, ''), users.name, 'Klinik') as nama_klinik"),
+                \DB::raw("COALESCE(NULLIF(anggota.nama_pemilik_klinik, ''), users.name, '-') as nama_pemilik_klinik"),
                 'indonesia_cities.name',
                 'indonesia_villages.name as kelurahan',
                 'indonesia_districts.name as kecamatan',
@@ -44,6 +46,7 @@ class VerifikasiAnggotaController extends Controller
                     END as tanggal_daftar
                 ')
             )
+                ->leftjoin('users', 'users.id', '=', 'anggota.id_user')
                 ->leftjoin("fasilitas_klinik", \DB::raw("FIND_IN_SET(fasilitas_klinik.id, anggota.fasilitas_klinik)"), ">", \DB::raw("'0'"))
                 ->leftjoin("indonesia_cities", 'indonesia_cities.code', '=', 'anggota.id_kota')
                 ->leftjoin("indonesia_villages", 'indonesia_villages.code', '=', 'anggota.id_kelurahan')

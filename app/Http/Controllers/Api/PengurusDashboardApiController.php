@@ -96,11 +96,11 @@ class PengurusDashboardApiController extends BaseApiController
         $query = Anggota::select(
             'anggota.id',
             'anggota.no_anggota',
-            'anggota.nama_klinik',
+            DB::raw("COALESCE(NULLIF(anggota.nama_klinik, ''), u.name, 'Klinik') as nama_klinik"),
             'anggota.jenis_klinik',
             'anggota.status',
             'anggota.status_pembayaran',
-            'anggota.nama_pemilik_klinik',
+            DB::raw("COALESCE(NULLIF(anggota.nama_pemilik_klinik, ''), u.name, '-') as nama_pemilik_klinik"),
             'anggota.nama_kontak',
             'anggota.tlf_klinik',
             'anggota.tgl_akhir_ijin',
@@ -114,6 +114,7 @@ class PengurusDashboardApiController extends BaseApiController
                 ELSE NULL 
             END as tanggal_daftar")
         )
+            ->leftJoin('users as u', 'u.id', '=', 'anggota.id_user')
             ->leftJoin('indonesia_cities as c', 'c.code', '=', 'anggota.id_kota')
             ->leftJoin('indonesia_provinces as p', 'p.code', '=', 'anggota.id_provinsi');
 
@@ -141,6 +142,7 @@ class PengurusDashboardApiController extends BaseApiController
             $keyword = trim($request->search);
             $query->where(function ($q) use ($keyword) {
                 $q->where('anggota.nama_klinik', 'like', "%{$keyword}%")
+                  ->orWhere('u.name', 'like', "%{$keyword}%")
                   ->orWhere('anggota.no_anggota', 'like', "%{$keyword}%")
                   ->orWhere('anggota.nama_pemilik_klinik', 'like', "%{$keyword}%")
                   ->orWhere('c.name', 'like', "%{$keyword}%");
@@ -167,11 +169,15 @@ class PengurusDashboardApiController extends BaseApiController
 
         // Transform data
         $items = collect($paginator->items())->map(function ($row) {
+            $tglDaftarCarbon = $row->tanggal_daftar ? \Carbon\Carbon::parse($row->tanggal_daftar) : null;
+            $menungguSejak = $tglDaftarCarbon ? $tglDaftarCarbon->format('d-m-Y') : '-';
+            $durasiMenunggu = $tglDaftarCarbon ? $tglDaftarCarbon->diffForHumans() : '-';
+
             return [
                 'id'                => $row->id,
                 'no_anggota'        => $row->no_anggota ?: '-',
                 'nama_klinik'       => $row->nama_klinik,
-                'jenis_klinik'      => $row->jenis_klinik,
+                'jenis_klinik'      => $row->jenis_klinik ?: 'Pratama',
                 'status'            => $row->status,
                 'status_pembayaran' => (string) $row->status_pembayaran,
                 'is_lunas'          => (string) $row->status_pembayaran === '1',
@@ -182,6 +188,8 @@ class PengurusDashboardApiController extends BaseApiController
                 'kota'              => $row->kota_name,
                 'provinsi'          => $row->provinsi_name,
                 'tanggal_daftar'    => $row->tanggal_daftar,
+                'menunggu_sejak'    => $menungguSejak,
+                'durasi_menunggu'   => $durasiMenunggu,
             ];
         });
 
@@ -201,11 +209,14 @@ class PengurusDashboardApiController extends BaseApiController
 
         $anggota = Anggota::select(
             'anggota.*',
+            DB::raw("COALESCE(NULLIF(anggota.nama_klinik, ''), u.name, 'Klinik') as resolved_nama_klinik"),
+            DB::raw("COALESCE(NULLIF(anggota.nama_pemilik_klinik, ''), u.name, '-') as resolved_nama_pemilik"),
             'c.name as kota_name',
             'p.name as provinsi_name',
             'd.name as kecamatan_name',
             'v.name as kelurahan_name'
         )
+            ->leftJoin('users as u', 'u.id', '=', 'anggota.id_user')
             ->leftJoin('indonesia_cities as c', 'c.code', '=', 'anggota.id_kota')
             ->leftJoin('indonesia_provinces as p', 'p.code', '=', 'anggota.id_provinsi')
             ->leftJoin('indonesia_districts as d', 'd.code', '=', 'anggota.id_kecamatan')
@@ -237,12 +248,12 @@ class PengurusDashboardApiController extends BaseApiController
         return $this->successResponse([
             'id'                  => $anggota->id,
             'no_anggota'          => $anggota->no_anggota,
-            'nama_klinik'         => $anggota->nama_klinik,
+            'nama_klinik'         => $anggota->resolved_nama_klinik ?: $anggota->nama_klinik,
             'status'              => $anggota->status,
-            'jenis_klinik'        => $anggota->jenis_klinik,
+            'jenis_klinik'        => $anggota->jenis_klinik ?: 'Pratama',
             'status_pembayaran'   => (string) $anggota->status_pembayaran,
             'status_kepemilikan'  => $anggota->status_kepemilikan,
-            'nama_pemilik_klinik' => $anggota->nama_pemilik_klinik,
+            'nama_pemilik_klinik' => $anggota->resolved_nama_pemilik ?: $anggota->nama_pemilik_klinik,
             'bentuk_badan_hukum'  => $anggota->bentuk_badan_hukum,
             'nama_badan_usaha'    => $anggota->nama_badan_usaha,
             'bentuk_badan_usaha'  => $anggota->bentuk_badan_usaha,
