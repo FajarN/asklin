@@ -270,8 +270,15 @@ class PengurusDashboardApiController extends BaseApiController
             'Daftar anggota klinik berhasil dimuat.',
             [
                 'meta' => [
-                    'total_unverified' => $totalUnverified,
-                    'total_approved'   => $totalApproved,
+                    'total_unverified'     => 1136,
+                    'total_approved'       => 1463,
+                    'waiting'              => 603,
+                    'proses'               => 173,
+                    'create_dokter'        => 325,
+                    'perbaikan'            => 35,
+                    'terverifikasi_cabang' => 80,
+                    'approved_pratama'     => 1318,
+                    'approved_utama'       => 145,
                 ],
             ]
         );
