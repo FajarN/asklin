@@ -51,6 +51,8 @@ class AnggotaProfileApiController extends BaseApiController
                         'id'           => $user->id,
                         'name'         => $user->name,
                         'email'        => $user->email,
+                        'foto'         => $user->foto,
+                        'foto_url'     => $user->foto_url,
                         'primary_role' => $primaryRole,
                         'roles'        => $roles,
                     ],
@@ -59,6 +61,7 @@ class AnggotaProfileApiController extends BaseApiController
                     'nama_klinik' => $isPengurus ? 'Administrator / ' . $primaryRole : 'Klinik Belum Terdaftar',
                     'no_anggota'  => $isPengurus ? 'Pengurus ASKLIN' : 'Menunggu Pendaftaran',
                     'status'      => $isPengurus ? 'approved' : 'waiting',
+                    'foto_url'    => $user->foto_url,
                 ],
             ], 200);
         }
@@ -123,13 +126,19 @@ class AnggotaProfileApiController extends BaseApiController
                 'verifikasi_cabang' => $anggota->verifikasi_cabang,
                 'verifikasi_pusat'  => $anggota->verifikasi_pusat,
             ],
+            'logo'                => $anggota->logo,
+            'foto_url'            => $anggota->logo ? asset('images/file/' . $anggota->logo) : $user->foto_url,
             'keterangan'          => $anggota->keterangan,
         ];
+
+        $clinicFotoUrl = $anggota->logo ? asset('images/file/' . $anggota->logo) : $user->foto_url;
 
         $userData = [
             'id'           => $user->id,
             'name'         => $user->name,
             'email'        => $user->email,
+            'foto'         => $user->foto,
+            'foto_url'     => $clinicFotoUrl,
             'primary_role' => $primaryRole,
             'roles'        => $roles,
         ];
@@ -140,6 +149,7 @@ class AnggotaProfileApiController extends BaseApiController
             'data'    => array_merge($profilData, [
                 'user'        => $userData,
                 'klinik'      => $profilData,
+                'foto_url'    => $clinicFotoUrl,
                 'is_pengurus' => false,
             ]),
         ], 200);

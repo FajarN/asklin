@@ -157,6 +157,56 @@ class AuthController extends BaseApiController
      *
      * @param User $user
      * @return array
+    /**
+     * Memperbarui foto profil pengguna (POST /api/v1/auth/update-photo).
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updatePhoto(Request $request): JsonResponse
+    {
+        $request->validate([
+            'foto' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+        ], [
+            'foto.required' => 'File foto wajib diunggah.',
+            'foto.image'    => 'File harus berformat gambar.',
+            'foto.mimes'    => 'Format gambar harus jpeg, png, jpg, atau webp.',
+            'foto.max'      => 'Ukuran foto maksimal 5MB.',
+        ]);
+
+        $user = $request->user();
+        $file = $request->file('foto');
+        $filename = 'profile_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $destinationPath = public_path('images/file');
+
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        $file->move($destinationPath, $filename);
+
+        // Update photo on User
+        $user->foto = $filename;
+        $user->save();
+
+        // If clinic, also update logo in anggota table
+        $anggota = Anggota::where('id_user', $user->id)->first();
+        if ($anggota) {
+            $anggota->logo = $filename;
+            $anggota->foto_logo_klinik = '1';
+            $anggota->save();
+        }
+
+        $fotoUrl = asset('images/file/' . $filename);
+
+        return $this->successResponse([
+            'foto'     => $filename,
+            'foto_url' => $fotoUrl,
+        ], 'Foto profil berhasil diperbarui.');
+    }
+
+    /**
+     * Format standard objek user untuk respon API.
      */
     private function formatUserData(User $user): array
     {
@@ -180,6 +230,8 @@ class AuthController extends BaseApiController
             'id'           => $user->id,
             'name'         => $user->name,
             'email'        => $user->email,
+            'foto'         => $user->foto,
+            'foto_url'     => $user->foto_url,
             'primary_role' => $primaryRole,
             'roles'        => $roles,
             'wilayah'      => [
@@ -196,6 +248,7 @@ class AuthController extends BaseApiController
         // Jika user adalah klinik atau memiliki data anggota terikat
         $anggota = Anggota::where('id_user', $user->id)->first();
         if ($anggota) {
+            $clinicFotoUrl = $anggota->logo ? asset('images/file/' . $anggota->logo) : null;
             $formatted['anggota'] = [
                 'id'                => $anggota->id,
                 'no_anggota'        => $anggota->no_anggota,
@@ -205,7 +258,12 @@ class AuthController extends BaseApiController
                 'status_pembayaran' => (string) $anggota->status_pembayaran,
                 'is_approved'       => strtolower($anggota->status) === 'approved',
                 'is_lunas'          => (string) $anggota->status_pembayaran === '1',
+                'logo'              => $anggota->logo,
+                'foto_url'          => $clinicFotoUrl ?: $user->foto_url,
             ];
+            if (empty($formatted['foto_url']) && !empty($clinicFotoUrl)) {
+                $formatted['foto_url'] = $clinicFotoUrl;
+            }
         }
 
         return $formatted;

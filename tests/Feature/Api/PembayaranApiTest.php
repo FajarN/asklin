@@ -68,8 +68,9 @@ class PembayaranApiTest extends TestCase
                     'is_lunas' => false,
                 ],
                 'rekening' => [
-                    'bank' => 'Bank Mandiri',
-                    'atas_nama' => 'ASOSIASI KLINIK INDONESIA (ASKLIN)',
+                    'bank' => 'BANK SYARIAH INDONESIA',
+                    'no_rekening' => '4000300027',
+                    'atas_nama' => 'ASOSIASI KLINIK INDONESIA',
                 ],
             ]);
     }

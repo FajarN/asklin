@@ -21,12 +21,35 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'foto',
         'password',
         'provinsi',
         'kota',
         'kecamatan',
         'kelurahan'
     ];
+
+    /**
+     * Relasi ke model Anggota (jika akun klinik)
+     */
+    public function anggota()
+    {
+        return $this->hasOne(Anggota::class, 'id_user');
+    }
+
+    /**
+     * Accessor untuk foto URL profil
+     */
+    public function getFotoUrlAttribute()
+    {
+        if ($this->foto && file_exists(public_path('images/file/' . $this->foto))) {
+            return asset('images/file/' . $this->foto);
+        }
+        if ($this->anggota && $this->anggota->logo && file_exists(public_path('images/file/' . $this->anggota->logo))) {
+            return asset('images/file/' . $this->anggota->logo);
+        }
+        return null;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

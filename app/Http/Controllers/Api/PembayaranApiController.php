@@ -19,10 +19,10 @@ class PembayaranApiController extends Controller
     private function getRekeningResmi(): array
     {
         return [
-            'bank' => 'Bank Mandiri',
-            'no_rekening' => '123-00-0987654-1',
-            'atas_nama' => 'ASOSIASI KLINIK INDONESIA (ASKLIN)',
-            'cabang' => 'KCP Jakarta Salemba',
+            'bank' => 'BANK SYARIAH INDONESIA',
+            'no_rekening' => '4000300027',
+            'atas_nama' => 'ASOSIASI KLINIK INDONESIA',
+            'cabang' => 'Kantor Pusat ASKLIN',
             'nominal_iuran_tahunan' => 1200000,
             'nominal_uang_pangkal' => 500000,
             'petunjuk' => 'Silakan transfer sesuai nominal ke rekening resmi ASKLIN di atas. Harap cantumkan Nama Klinik & No Anggota pada berita transfer, lalu unggah foto bukti transfer di form konfirmasi.',
