@@ -60,21 +60,28 @@ trait ApiResponseFormatter
      * @param string $message
      * @return JsonResponse
      */
-    protected function paginatedResponse($paginator, $data = null, string $message = 'Data berhasil dimuat'): JsonResponse
+    protected function paginatedResponse($paginator, $data = null, string $message = 'Data berhasil dimuat', array $extra = []): JsonResponse
     {
-        return response()->json([
+        $meta = [
+            'current_page' => $paginator->currentPage(),
+            'last_page'    => $paginator->lastPage(),
+            'per_page'     => $paginator->perPage(),
+            'total'        => $paginator->total(),
+            'from'         => $paginator->firstItem(),
+            'to'           => $paginator->lastItem(),
+        ];
+
+        if (isset($extra['meta']) && is_array($extra['meta'])) {
+            $meta = array_merge($meta, $extra['meta']);
+            unset($extra['meta']);
+        }
+
+        return response()->json(array_merge([
             'success' => true,
             'message' => $message,
             'data'    => $data ?? $paginator->items(),
-            'meta'    => [
-                'current_page' => $paginator->currentPage(),
-                'last_page'    => $paginator->lastPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'from'         => $paginator->firstItem(),
-                'to'           => $paginator->lastItem(),
-            ],
-        ], 200);
+            'meta'    => $meta,
+        ], $extra), 200);
     }
 }
 

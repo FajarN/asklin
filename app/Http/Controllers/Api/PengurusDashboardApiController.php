@@ -137,6 +137,21 @@ class PengurusDashboardApiController extends BaseApiController
             return $this->errorResponse('Anda tidak memiliki hak akses data pengurus.', 403);
         }
 
+        // Filter mode spesifik: 'verifikasi' (antrean belum approve & tanpa no anggota) vs 'anggota' (khusus anggota disetujui & ada no anggota)
+        $mode = strtolower($request->get('mode', ''));
+        if ($mode === 'verifikasi') {
+            $query->where('anggota.status', '!=', 'approved')
+                  ->where(function ($q) {
+                      $q->whereNull('anggota.no_anggota')
+                        ->orWhere('anggota.no_anggota', '')
+                        ->orWhere('anggota.status', '!=', 'approved');
+                  });
+        } elseif ($mode === 'anggota') {
+            $query->where('anggota.status', 'approved')
+                  ->whereNotNull('anggota.no_anggota')
+                  ->where('anggota.no_anggota', '!=', '');
+        }
+
         // Filter pencarian teks
         if ($request->filled('search')) {
             $keyword = trim($request->search);
@@ -164,7 +179,28 @@ class PengurusDashboardApiController extends BaseApiController
             $query->where('anggota.status_pembayaran', $request->status_pembayaran);
         }
 
-        $perPage = max(1, min((int) $request->get('per_page', 15), 100));
+        // Hitung total ringkasan untuk wilayah wewenang pengurus
+        $statsScopeQuery = Anggota::query();
+        if ($user->hasRole('Admin Cabang')) {
+            $statsScopeQuery->where('anggota.id_kota', $user->kota);
+        } elseif ($user->hasRole('Admin Daerah')) {
+            $statsScopeQuery->where('anggota.id_provinsi', $user->provinsi);
+        }
+        $totalUnverified = (clone $statsScopeQuery)
+            ->where('status', '!=', 'approved')
+            ->where(function ($q) {
+                $q->whereNull('no_anggota')
+                  ->orWhere('no_anggota', '')
+                  ->orWhere('status', '!=', 'approved');
+            })
+            ->count();
+        $totalApproved = (clone $statsScopeQuery)
+            ->where('status', 'approved')
+            ->whereNotNull('no_anggota')
+            ->where('no_anggota', '!=', '')
+            ->count();
+
+        $perPage = max(1, min((int) $request->get('per_page', 50), 250));
         $paginator = $query->latest('anggota.id')->paginate($perPage);
 
         // Transform data
@@ -193,7 +229,17 @@ class PengurusDashboardApiController extends BaseApiController
             ];
         });
 
-        return $this->paginatedResponse($paginator, $items, 'Daftar anggota klinik berhasil dimuat.');
+        return $this->paginatedResponse(
+            $paginator,
+            $items,
+            'Daftar anggota klinik berhasil dimuat.',
+            [
+                'meta' => [
+                    'total_unverified' => $totalUnverified,
+                    'total_approved'   => $totalApproved,
+                ],
+            ]
+        );
     }
 
     /**

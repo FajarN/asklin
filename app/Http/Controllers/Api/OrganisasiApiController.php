@@ -83,7 +83,7 @@ class OrganisasiApiController extends BaseApiController
                 'periode'            => $struktur->periode,
                 'alamat_sekretariat' => $struktur->alamat_sekretariat,
                 'email_sekretariat'  => $struktur->email_sekretariat,
-                'telp_sekretariat'   => $isPengurusPusat ? ($struktur->telp_sekretariat ?: '+62 823-1098-1637') : null,
+                'telp_sekretariat'   => $isPengurusPusat ? $struktur->telp_sekretariat : null,
                 'can_view_contact'   => $isPengurusPusat,
                 'provinsi'           => $struktur->provinsi ? $struktur->provinsi->name : 'DKI Jakarta',
                 'kota'               => $struktur->kota ? $struktur->kota->name : 'Jakarta Timur',
@@ -147,8 +147,8 @@ class OrganisasiApiController extends BaseApiController
      */
     private function flattenPengurusTree($node, $grouped, array &$flatList, int $level, ?string $parentJabatan, bool $isPengurusPusat): void
     {
-        $phone = $node->no_telp ?: '+62 823-1098-1637';
-        $email = $node->email ?: 'dpp@asklin.org';
+        $phone = !empty($node->no_telp) ? trim($node->no_telp) : null;
+        $email = !empty($node->email) ? trim($node->email) : null;
 
         $flatList[] = [
             'id'               => $node->id,
