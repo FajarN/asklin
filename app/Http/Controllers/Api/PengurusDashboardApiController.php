@@ -52,6 +52,40 @@ class PengurusDashboardApiController extends BaseApiController
             $filterOptions['cities'] = City::where('province_code', $scope['provinsi_id'])->orderBy('name')->get(['code', 'name', 'province_code']);
         }
 
+        // Query status pendaftaran akurat berdasarkan wewenang wilayah pengurus
+        $kpiQuery = Anggota::query();
+        if ($user->hasRole('Admin Cabang')) {
+            $kpiQuery->where('anggota.id_kota', $user->kota);
+        } elseif ($user->hasRole('Admin Daerah')) {
+            $kpiQuery->where('anggota.id_provinsi', $user->provinsi);
+            if ($request->filled('kota')) {
+                $kpiQuery->where('anggota.id_kota', $request->kota);
+            }
+        } elseif ($this->isNationalAdmin($user)) {
+            if ($request->filled('provinsi')) {
+                $kpiQuery->where('anggota.id_provinsi', $request->provinsi);
+            }
+            if ($request->filled('kota')) {
+                $kpiQuery->where('anggota.id_kota', $request->kota);
+            }
+        }
+
+        $statusCounts = (clone $kpiQuery)
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(CASE WHEN LOWER(anggota.status) = 'approved' AND anggota.no_anggota IS NOT NULL AND anggota.no_anggota != '' THEN 1 ELSE 0 END) as approved,
+                SUM(CASE WHEN LOWER(anggota.status) = 'waiting' THEN 1 ELSE 0 END) as waiting,
+                SUM(CASE WHEN LOWER(anggota.status) LIKE '%perbaikan%' THEN 1 ELSE 0 END) as perbaikan,
+                SUM(CASE WHEN LOWER(anggota.status) != 'approved' OR anggota.no_anggota IS NULL OR anggota.no_anggota = '' THEN 1 ELSE 0 END) as unverified
+            ")
+            ->first();
+
+        $totalAnggota = (int) ($statusCounts->total ?? ($stats['total_anggota'] ?? 0));
+        $totalApproved = (int) ($statusCounts->approved ?? ($stats['anggota_aktif'] ?? 0));
+        $totalWaiting = (int) ($statusCounts->waiting ?? 0);
+        $totalPerbaikan = (int) ($statusCounts->perbaikan ?? 0);
+        $totalUnverified = (int) ($statusCounts->unverified ?? ($stats['anggota_inaktif'] ?? 0));
+
         return $this->successResponse([
             'scope'          => [
                 'level'              => $scope['level'],
@@ -65,12 +99,13 @@ class PengurusDashboardApiController extends BaseApiController
                 'title'              => $scope['title'],
             ],
             'kpi_stats'      => [
-                'total_anggota'        => (int) ($stats['total'] ?? 0),
-                'disetujui'            => (int) ($stats['approved'] ?? 0),
-                'menunggu_verifikasi'  => (int) ($stats['waiting'] ?? 0),
-                'perlu_perbaikan'      => (int) ($stats['perbaikan'] ?? 0),
-                'iuran_lunas'          => (int) ($stats['lunas'] ?? 0),
-                'iuran_tertunda'       => (int) ($stats['belum_lunas'] ?? 0),
+                'total_anggota'        => $totalAnggota,
+                'disetujui'            => $totalApproved,
+                'menunggu_verifikasi'  => $totalWaiting,
+                'perlu_perbaikan'      => $totalPerbaikan,
+                'total_unverified'     => $totalUnverified,
+                'iuran_lunas'          => (int) ($stats['anggota_bayar_lunas'] ?? 0),
+                'iuran_tertunda'       => (int) ($stats['anggota_bayar_pending'] ?? 0),
                 'sertifikat_aktif'     => (int) ($stats['sertifikat_aktif'] ?? 0),
                 'sertifikat_expired'   => (int) ($stats['sertifikat_expired'] ?? 0),
             ],
