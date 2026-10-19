@@ -58,6 +58,8 @@ return [
 
     'asset_url' => env('ASSET_URL'),
 
+    'mobile_app_key' => env('MOBILE_APP_KEY', null),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

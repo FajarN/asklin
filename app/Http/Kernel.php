@@ -39,6 +39,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
+            \App\Http\Middleware\ValidateMobileAppKey::class,
             \App\Http\Middleware\SanctumQueryTokenMiddleware::class,
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
@@ -69,6 +70,6 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
         'limit.contact' => \App\Http\Middleware\LimitContactSubmission::class,
-
+        'validate.app_key' => \App\Http\Middleware\ValidateMobileAppKey::class,
     ];
 }
