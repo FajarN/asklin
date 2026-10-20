@@ -146,6 +146,42 @@
             </div>
         @endcanany
 
+        <!-- Section: Sistem Pemilihan Ketua (5 Tahunan) -->
+        @canany(['pemilihan-list', 'pemilihan-dashboard'])
+            <div class="sidebar-dropdown-group" data-group="pemilihan-ketua">
+                <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition group sidebar-dropdown-btn">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-vote-yea text-sm {{ Str::contains(Request::url(), 'pemilihan') ? 'text-red-600 dark:text-red-400' : 'text-slate-400 group-hover:text-red-600' }}"></i>
+                        <span>Pemilihan Ketua</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-[10px] text-slate-400 transition-transform dropdown-arrow"></i>
+                </button>
+                <ul class="dropdown-submenu {{ Str::contains(Request::url(), 'pemilihan') ? '' : 'hidden' }} pl-7 pr-1 mt-1 space-y-1">
+                    @can('pemilihan-dashboard')
+                        <li>
+                            <a href="{{ route('pemilihan.dashboard') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::routeIs('pemilihan.dashboard*') ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Dashboard Hasil
+                            </a>
+                        </li>
+                    @endcan
+                    @can('pemilihan-list')
+                        <li>
+                            <a href="{{ route('pemilihan.index') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::routeIs('pemilihan.index') || Request::routeIs('pemilihan.create') || Request::routeIs('pemilihan.edit') || Request::routeIs('pemilihan.show') ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Data Agenda Pemilihan
+                            </a>
+                        </li>
+                    @endcan
+                    @can('pemilihan-laporan')
+                        <li>
+                            <a href="{{ route('pemilihan.laporan') }}" class="block px-3 py-1.5 rounded-lg text-[11px] {{ Request::routeIs('pemilihan.laporan*') ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                Laporan & Rekap Suara
+                            </a>
+                        </li>
+                    @endcan
+                </ul>
+            </div>
+        @endcanany
+
         <!-- Section: Struktur Organisasi (Tersendiri) -->
         @can('struktur-organisasi-list')
             <div>

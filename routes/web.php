@@ -609,6 +609,29 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'backend'], function () {
     //     Route::post('/delete', 'destroy')->name('kategori_operasional.delete');
     // });
 
+    // Dashboard Pemilihan Ketua (Terpisah dari dashboard utama)
+    Route::get('pemilihan/dashboard', [App\Http\Controllers\Backend\pemilihan\PemilihanDashboardController::class, 'index'])->name('pemilihan.dashboard');
+
+    // Laporan & Rekapitulasi Suara Pemilihan
+    Route::get('pemilihan/laporan', [App\Http\Controllers\Backend\pemilihan\PemilihanLaporanController::class, 'index'])->name('pemilihan.laporan');
+    Route::get('pemilihan/laporan/export/{id}', [App\Http\Controllers\Backend\pemilihan\PemilihanLaporanController::class, 'exportExcel'])->name('pemilihan.laporan.export');
+    Route::get('pemilihan/audit/{id}', [App\Http\Controllers\Backend\pemilihan\PemilihanLaporanController::class, 'audit'])->name('pemilihan.audit');
+    Route::get('pemilihan/audit/export/{id}', [App\Http\Controllers\Backend\pemilihan\PemilihanLaporanController::class, 'auditExport'])->name('pemilihan.audit.export');
+
+    // Modul Sistem Pemilihan Ketua Cabang & Daerah (5 Tahunan)
+    Route::prefix('pemilihan')->controller(App\Http\Controllers\Backend\pemilihan\PemilihanController::class)->group(function () {
+        Route::get('/', 'index')->name('pemilihan.index');
+        Route::get('/list', 'list')->name('pemilihan.list');
+        Route::get('/create', 'create')->name('pemilihan.create');
+        Route::post('/store', 'store')->name('pemilihan.store');
+        Route::get('/show/{id}', 'show')->name('pemilihan.show');
+        Route::get('/edit/{id}', 'edit')->name('pemilihan.edit');
+        Route::put('/update/{id}', 'update')->name('pemilihan.update');
+        Route::post('/delete/{id}', 'destroy')->name('pemilihan.delete');
+        Route::post('/toggle-status/{id}', 'toggleStatus')->name('pemilihan.toggle_status');
+        Route::get('/get-cities', 'getCities')->name('pemilihan.get_cities');
+    });
+
     // Route::prefix('operasional')->controller(App\Http\Controllers\Backend\ruang_pengurus\OperasionalController::class)->group(function () {
     //     Route::get('/', 'index')->name('operasional.index');
     //     Route::get('/list', 'list')->name('operasional.list');
