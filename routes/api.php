@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\BeritaApiController;
 use App\Http\Controllers\Api\AgendaApiController;
 use App\Http\Controllers\Api\OrganisasiApiController;
 use App\Http\Controllers\Api\PembayaranApiController;
+use App\Http\Controllers\Api\PemilihanApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,6 +112,14 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
         Route::prefix('bendahara')->group(function () {
             Route::get('/pembayaran', [PembayaranApiController::class, 'getBendaharaList']);
             Route::post('/pembayaran/{id}/verifikasi', [PembayaranApiController::class, 'verifikasiPembayaran']);
+        });
+
+        // Modul Pemilihan Ketua Cabang & Daerah (5 Tahunan)
+        Route::prefix('pemilihan')->group(function () {
+            Route::get('/aktif', [PemilihanApiController::class, 'getPemilihanAktif']);
+            Route::get('/{id}', [PemilihanApiController::class, 'getDetail']);
+            Route::post('/{id}/vote', [PemilihanApiController::class, 'submitVote']);
+            Route::get('/{id}/hasil', [PemilihanApiController::class, 'getHasil']);
         });
 
         // Modul Pengurus (Cabang, Daerah, Pusat)
