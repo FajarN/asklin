@@ -55,6 +55,11 @@ class Anggota extends Model
 
     protected $dates = ['created_at', 'updated_at'];
 
+    public function suaraPemilihan()
+    {
+        return $this->hasMany(PemilihanSuara::class, 'anggota_id');
+    }
+
     protected static function booted()
     {
         static::creating(function ($model) {
@@ -71,5 +76,4 @@ class Anggota extends Model
             }
         });
     }
-    
 }
