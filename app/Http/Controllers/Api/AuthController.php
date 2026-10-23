@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravolt\Indonesia\Models\City;
 use Laravolt\Indonesia\Models\Province;
+use App\Services\FirebaseNotificationService;
 
 class AuthController extends BaseApiController
 {
@@ -36,19 +37,26 @@ class AuthController extends BaseApiController
 
             // Jika informasi klinik atau kontak disertakan, inisialisasi record Anggota
             if ($request->filled('nama_klinik') || $request->filled('phone')) {
-                Anggota::create([
+                $anggota = Anggota::create([
                     'nama_klinik'       => $request->nama_klinik ?: ('Klinik ' . $request->name),
                     'nama_kontak'       => $request->name,
                     'email'             => $request->email,
                     'tlf'               => $request->phone,
                     'id_provinsi'       => $request->provinsi,
                     'id_kota'           => $request->kota,
-                    'status'            => 'Draft',
+                    'status'            => 'waiting',
                     'status_pembayaran' => '0',
                     'id_user'           => $user->id,
                     'created_by'        => $user->id,
                     'updated_by'        => $user->id,
                 ]);
+
+                // Notifikasi ke Pengurus Cabang saat anggota baru daftar
+                try {
+                    FirebaseNotificationService::notifyNewMemberRegistration($anggota);
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('Gagal kirim notifikasi register: ' . $e->getMessage());
+                }
             }
 
             $deviceName = $request->device_name ?: 'asklin-mobile-app';

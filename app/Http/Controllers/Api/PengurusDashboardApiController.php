@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Laravolt\Indonesia\Models\City;
 use Laravolt\Indonesia\Models\Province;
+use App\Services\FirebaseNotificationService;
 
 class PengurusDashboardApiController extends BaseApiController
 {
@@ -456,6 +457,17 @@ class PengurusDashboardApiController extends BaseApiController
                 'updated_by'        => $user->id,
             ]);
 
+            // Notifikasi Firebase untuk Ketum / Sekjen atau Perbaikan
+            try {
+                if (in_array($statusBaru, ['Terverifikasi Cabang', 'Diverifikasi Cabang', 'Verifikasi Sekjen'])) {
+                    FirebaseNotificationService::notifyCabangVerificationDone($anggota, $user, $keterangan);
+                } elseif ($statusBaru === 'Perlu Perbaikan') {
+                    FirebaseNotificationService::notifyPerbaikanDokumen($anggota, $user, $keterangan);
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Gagal kirim notifikasi cabang: ' . $e->getMessage());
+            }
+
             return $this->successResponse([
                 'id'         => $anggota->id,
                 'status'     => $anggota->status,
@@ -522,6 +534,17 @@ class PengurusDashboardApiController extends BaseApiController
             }
 
             $anggota->update($updateData);
+
+            // Notifikasi Firebase ke Klinik / Cabang
+            try {
+                if (strtolower($statusBaru) === 'approved') {
+                    FirebaseNotificationService::notifyClinicApproved($anggota, $user);
+                } elseif ($statusBaru === 'Perlu Perbaikan') {
+                    FirebaseNotificationService::notifyPerbaikanDokumen($anggota, $user, $keterangan);
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Gagal kirim notifikasi pusat: ' . $e->getMessage());
+            }
 
             return $this->successResponse([
                 'id'         => $anggota->id,

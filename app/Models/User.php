@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'foto',
+        'fcm_token',
         'password',
         'provinsi',
         'kota',

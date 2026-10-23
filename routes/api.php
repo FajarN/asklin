@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\AgendaApiController;
 use App\Http\Controllers\Api\OrganisasiApiController;
 use App\Http\Controllers\Api\PembayaranApiController;
 use App\Http\Controllers\Api\PemilihanApiController;
+use App\Http\Controllers\Api\NotifikasiApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +85,15 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']);
             Route::post('/change-password', [AuthController::class, 'changePassword']);
             Route::post('/update-photo', [AuthController::class, 'updatePhoto']);
+            Route::post('/fcm-token', [NotifikasiApiController::class, 'updateFcmToken']);
+        });
+
+        // Modul Notifikasi Terpadu (Firebase & In-App)
+        Route::prefix('notifikasi')->group(function () {
+            Route::get('/', [NotifikasiApiController::class, 'index']);
+            Route::get('/unread-count', [NotifikasiApiController::class, 'unreadCount']);
+            Route::post('/{id}/read', [NotifikasiApiController::class, 'markAsRead']);
+            Route::post('/read-all', [NotifikasiApiController::class, 'markAllAsRead']);
         });
 
         // Modul Anggota (Klinik)
@@ -93,6 +103,7 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
             Route::get('/dokumen-saya', [AnggotaProfileApiController::class, 'getDokumenSaya']);
             Route::post('/pendaftaran', [AnggotaProfileApiController::class, 'simpanPendaftaran']);
             Route::post('/sdm', [AnggotaProfileApiController::class, 'simpanSdm']);
+            Route::post('/request-verifikasi', [NotifikasiApiController::class, 'requestVerifikasiKlinik']);
         });
 
         // Modul Dokumen Digital (Unduh Aman PDF Anti-IDOR)
@@ -128,6 +139,7 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
             Route::get('/anggota', [PengurusDashboardApiController::class, 'getAnggotaList']);
             Route::get('/anggota/{id}', [PengurusDashboardApiController::class, 'getAnggotaDetail']);
             Route::post('/verifikasi/{id}', [PengurusDashboardApiController::class, 'prosesVerifikasi']);
+            Route::post('/request-verifikasi-pusat/{id}', [NotifikasiApiController::class, 'requestVerifikasiPusat']);
         });
     });
 });
